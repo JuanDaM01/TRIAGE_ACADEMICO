@@ -1,51 +1,68 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
 import { CommonModule } from '@angular/common';
+import {
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators
+} from '@angular/forms';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [ReactiveFormsModule, CommonModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
 
-    loginForm: FormGroup;
-    loading = false;
-    error = '';
+    form: FormGroup;
 
-    constructor(
-        private fb: FormBuilder,
-        private authService: AuthService,
-        private router: Router
-    ) {
-        this.loginForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
-            password: ['', [Validators.required, Validators.minLength(4)]]
+    showPassword = false;
+
+    constructor(private fb: FormBuilder) {
+
+        this.form = this.fb.group({
+            email: [
+                '',
+                [
+                    Validators.required,
+                    Validators.email
+                ]
+            ],
+
+            password: [
+                '',
+                Validators.required
+            ],
+
+            remember: [false]
         });
+    }
+
+    togglePassword(): void {
+        this.showPassword = !this.showPassword;
     }
 
     onSubmit(): void {
-        if (this.loginForm.invalid) return;
 
-        this.loading = true;
-        this.error = '';
+        if (this.form.invalid) {
+            this.form.markAllAsTouched();
+            return;
+        }
 
-        this.authService.login(this.loginForm.value).subscribe({
-            next: () => {
-                this.router.navigate(['/dashboard']);
-            },
-            error: (err) => {
-                this.error = err.error?.message || 'Credenciales incorrectas';
-                this.loading = false;
-            }
-        });
+        console.log(this.form.value);
+
+        /**
+         * AQUÍ VA TU LOGIN
+         */
     }
 
-    goToRegistro(): void {
-        this.router.navigate(['/registro']);
+    get email() {
+        return this.form.get('email');
+    }
+
+    get password() {
+        return this.form.get('password');
     }
 }
