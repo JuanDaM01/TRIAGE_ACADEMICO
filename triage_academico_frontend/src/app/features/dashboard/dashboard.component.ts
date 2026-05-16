@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth/auth.service';
 import { Usuario } from '../../core/models';
-import { SolicitudService } from '../solicitudes/services/solicitud.service'; // Lo crearemos pronto
+import { SolicitudService } from '../../core/services/solicitud.service';
 
 @Component({
     selector: 'app-dashboard',

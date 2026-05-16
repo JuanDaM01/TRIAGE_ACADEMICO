@@ -1,0 +1,50 @@
+<div class="detalle-container" *ngIf="!loading && solicitud">
+    <div class="page-header">
+        <button (click)="volverALaLista()" class="btn-back">← Volver</button>
+        <h1>Solicitud #{{ solicitud.id }}</h1>
+        <span [class]="'estado-badge ' + solicitud.estado">{{ solicitud.estado | estado }}</span>
+    </div>
+
+    <div class="card">
+        <h2>Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Tipo:</strong> {{ solicitud.tipoSolicitud }}
+            </div>
+            <div class="info-item">
+                <strong>Prioridad:</strong>
+                <span [class]="'prioridad-badge ' + solicitud.nivelPrioridad">
+                    {{ solicitud.nivelPrioridad | prioridad }}
+                </span>
+            </div>
+            <div class="info-item">
+                <strong>Canal:</strong> {{ solicitud.canalOrigen }}
+            </div>
+            <div class="info-item">
+                <strong>Fecha Creación:</strong> {{ solicitud.fechaCreacion | date:'medium' }}
+            </div>
+        </div>
+
+        <div class="descripcion">
+            <h3>Descripción</h3>
+            <p>{{ solicitud.descripcion }}</p>
+        </div>
+    </div>
+
+    <!-- Acciones según rol -->
+    <div class="actions-section">
+        <h3>Acciones Disponibles</h3>
+        <button
+            *ngIf="authService.hasRole('ADMINISTRATIVO') || authService.hasRole('COORDINADOR') || authService.hasRole('DIRECTOR')"
+            (click)="clasificar()" class="btn btn-warning">
+            Clasificar Solicitud
+        </button>
+
+        <button *ngIf="authService.hasRole('DOCENTE') || authService.hasRole('ADMINISTRATIVO')" (click)="atender()"
+            class="btn btn-success">
+            Atender Solicitud
+        </button>
+    </div>
+</div>
+
+<div *ngIf="loading" class="loading">Cargando detalle de la solicitud...</div>

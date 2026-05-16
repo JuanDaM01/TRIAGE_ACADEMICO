@@ -1,0 +1,33 @@
+<div class="page-header">
+    <h1>Solicitudes Académicas</h1>
+    <a routerLink="/solicitudes/crear" class="btn btn-primary">+ Nueva Solicitud</a>
+</div>
+
+<div *ngIf="loading" class="loading">Cargando solicitudes...</div>
+
+<table *ngIf="!loading" class="solicitudes-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Descripción</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Prioridad</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let sol of solicitudes">
+            <td>{{ sol.id }}</td>
+            <td>{{ sol.descripcion | slice:0:60 }}...</td>
+            <td>{{ sol.tipoSolicitud }}</td>
+            <td><span [class]="'estado-badge ' + sol.estado">{{ sol.estado }}</span></td>
+            <td><span [class]="'prioridad-badge ' + sol.nivelPrioridad">{{ sol.nivelPrioridad }}</span></td>
+            <td>{{ sol.fechaCreacion | date:'short' }}</td>
+            <td>
+                <a [routerLink]="['/solicitudes', sol.id]" class="btn btn-sm">Ver</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

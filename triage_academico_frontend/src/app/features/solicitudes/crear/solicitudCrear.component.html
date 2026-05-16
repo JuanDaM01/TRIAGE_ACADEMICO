@@ -1,0 +1,48 @@
+<div class="crear-container">
+    <div class="form-card">
+        <h1>Nueva Solicitud Académica</h1>
+        <p>Completa los datos de tu solicitud</p>
+
+        <form [formGroup]="solicitudForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group">
+                <label>Descripción de la Solicitud</label>
+                <textarea formControlName="descripcion" rows="5" class="form-control"
+                    placeholder="Describe detalladamente tu solicitud..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tipo de Solicitud</label>
+                    <select formControlName="tipoSolicitud" class="form-control">
+                        <option *ngFor="let tipo of tiposSolicitud" [value]="tipo">
+                            {{ tipo }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Canal de Origen</label>
+                    <select formControlName="canalOrigen" class="form-control">
+                        <option *ngFor="let canal of canalesOrigen" [value]="canal">
+                            {{ canal }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Fecha Límite (opcional)</label>
+                <input type="date" formControlName="fechaLimite" class="form-control">
+            </div>
+
+            <button type="submit" [disabled]="loading || solicitudForm.invalid" class="btn btn-primary btn-block">
+                {{ loading ? 'Enviando Solicitud...' : 'Registrar Solicitud' }}
+            </button>
+        </form>
+
+        <div *ngIf="success" class="alert alert-success">
+            ¡Solicitud registrada exitosamente!
+        </div>
+    </div>
+</div>
