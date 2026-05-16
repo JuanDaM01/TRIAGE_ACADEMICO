@@ -17,15 +17,6 @@ export const routes: Routes = [
                 path: 'solicitudes',
                 loadChildren: () => import('./features/solicitudes/solicitudes.routes').then(m => m.SOLICITUDES_ROUTES)
             },
-            {
-                path: 'usuarios',
-                canActivate: [roleGuard(['COORDINADOR', 'DIRECTOR'])],
-                loadComponent: () => import('./features/usuarios/usuarios.component').then(m => m.UsuariosComponent)
-            },
-            {
-                path: 'ia',
-                loadComponent: () => import('./features/ia/ia.component').then(m => m.IaComponent)
-            },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },

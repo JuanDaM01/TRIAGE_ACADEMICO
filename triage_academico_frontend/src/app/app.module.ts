@@ -4,19 +4,18 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './appRouting.module';   // Si aún lo usas
 
 @NgModule({
-  declarations: [],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [
-    provideAnimations(),
-    provideHttpClient(withInterceptors([authInterceptor]))
-  ],
-  bootstrap: []   // ← vacío
+    declarations: [],
+    imports: [
+        BrowserModule
+    ],
+    providers: [
+        provideAnimations(),
+        provideHttpClient(
+            withInterceptors([authInterceptor])
+        )
+    ],
+    bootstrap: []
 })
 export class AppModule { }
