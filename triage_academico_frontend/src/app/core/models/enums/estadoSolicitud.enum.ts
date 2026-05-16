@@ -1,0 +1,7 @@
+export enum EstadoSolicitud {
+    REGISTRADA = 'REGISTRADA',
+    CLASIFICADA = 'CLASIFICADA',
+    EN_ATENCION = 'EN_ATENCION',
+    ATENDIDA = 'ATENDIDA',
+    CERRADA = 'CERRADA'
+}

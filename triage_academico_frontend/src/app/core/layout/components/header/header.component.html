@@ -1,0 +1,16 @@
+<header class="header">
+    <div class="header-left">
+        <h2>Sistema de Triage Académico</h2>
+    </div>
+
+    <div class="header-right">
+        <div *ngIf="currentUser as user" class="user-info">
+            <span class="user-name">{{ user.nombre }} {{ user.apellido }}</span>
+            <span class="user-role">{{ user.rol }}</span>
+        </div>
+
+        <button (click)="logout()" class="btn-logout">
+            Cerrar Sesión
+        </button>
+    </div>
+</header>
