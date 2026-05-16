@@ -34,9 +34,9 @@ export class AuthService {
         localStorage.setItem('token', response.token);
 
         const usuario: Usuario = {
-            id: 0,
+            id: response.id,
             nombre: response.nombre,
-            apellido: '',
+            apellido: response.apellido ?? '',
             email: response.email,
             rol: response.rol,
             activo: true

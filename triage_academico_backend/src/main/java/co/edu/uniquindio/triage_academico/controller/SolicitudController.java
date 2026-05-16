@@ -27,6 +27,7 @@ import co.edu.uniquindio.triage_academico.dto.request.ClasificarSolicitudRequest
 import co.edu.uniquindio.triage_academico.dto.request.CrearSolicitudRequest;
 import co.edu.uniquindio.triage_academico.dto.request.EditarSolicitudRequest;
 import co.edu.uniquindio.triage_academico.dto.response.SolicitudResponse;
+import co.edu.uniquindio.triage_academico.service.AuthService;
 import co.edu.uniquindio.triage_academico.service.SolicitudService;
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +41,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public class SolicitudController {
 
     private final SolicitudService solicitudService;
+    private final AuthService authService;
 
     // RF-06: Obtener solicitud con historial
     @GetMapping("/{id}")
@@ -52,7 +54,10 @@ public class SolicitudController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ESTUDIANTE', 'ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<SolicitudResponse> crearSolicitud(@Valid @RequestBody CrearSolicitudRequest request) {
-        Long usuarioId = request.getSolicitanteId() != null ? request.getSolicitanteId() : 0L;
+        Long usuarioId = request.getSolicitanteId();
+        if (usuarioId == null || usuarioId == 0L) {
+            usuarioId = authService.getUsuarioAutenticado().getId();
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(solicitudService.crearSolicitud(request, usuarioId));
     }

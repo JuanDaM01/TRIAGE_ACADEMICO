@@ -17,6 +17,7 @@ export class SolicitudesListaComponent implements OnInit {
 
     solicitudes: SolicitudAcademica[] = [];
     loading = true;
+    errorMessage = '';
 
     constructor(private solicitudService: SolicitudService) { }
 
@@ -25,12 +26,18 @@ export class SolicitudesListaComponent implements OnInit {
     }
 
     cargarSolicitudes(): void {
+        this.loading = true;
+        this.errorMessage = '';
+
         this.solicitudService.getAllSolicitudes().subscribe({
             next: (data) => {
                 this.solicitudes = data;
                 this.loading = false;
             },
-            error: () => this.loading = false
+            error: () => {
+                this.errorMessage = 'No se pudieron cargar las solicitudes.';
+                this.loading = false;
+            }
         });
     }
 }

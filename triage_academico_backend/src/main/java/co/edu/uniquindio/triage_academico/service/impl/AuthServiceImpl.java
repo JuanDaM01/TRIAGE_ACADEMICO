@@ -61,8 +61,10 @@ public class AuthServiceImpl implements AuthService {
         return TokenResponse.builder()
                 .token(token)
                 .tipo("Bearer")
+                .id(usuario.getId())
                 .email(usuario.getEmail())
                 .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
                 .rol(usuario.getRol().getNombre().name())
                 .build();
     }
@@ -96,8 +98,10 @@ public class AuthServiceImpl implements AuthService {
         return TokenResponse.builder()
                 .token(token)
                 .tipo("Bearer")
+                .id(usuario.getId())
                 .email(usuario.getEmail())
                 .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
                 .rol(rol.getNombre().name())
                 .build();
     }

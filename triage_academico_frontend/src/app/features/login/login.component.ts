@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     FormBuilder,
@@ -6,39 +6,46 @@ import {
     ReactiveFormsModule,
     Validators
 } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
+
 import { AuthLandingBgComponent } from '../../shared/ui/auth-landing-bg/auth-landing-bg.component';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, AuthLandingBgComponent],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, AuthLandingBgComponent],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+
+    readonly logoSrc = 'assets/logo-uq.png';
 
     form: FormGroup;
-
     showPassword = false;
+    loading = false;
+    errorMessage = '';
 
-    constructor(private fb: FormBuilder) {
-
+    constructor(
+        private fb: FormBuilder,
+        private authService: AuthService,
+        private router: Router,
+        private route: ActivatedRoute
+    ) {
         this.form = this.fb.group({
-            email: [
-                '',
-                [
-                    Validators.required,
-                    Validators.email
-                ]
-            ],
-
-            password: [
-                '',
-                Validators.required
-            ],
-
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', Validators.required],
             remember: [false]
         });
+    }
+
+    ngOnInit(): void {
+        const remembered = localStorage.getItem('rememberedEmail');
+        if (remembered) {
+            this.form.patchValue({ email: remembered, remember: true });
+        }
     }
 
     togglePassword(): void {
@@ -46,17 +53,36 @@ export class LoginComponent {
     }
 
     onSubmit(): void {
-
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
         }
 
-        console.log(this.form.value);
+        this.loading = true;
+        this.errorMessage = '';
 
-        /**
-         * AQUÍ VA TU LOGIN
-         */
+        const { email, password, remember } = this.form.value;
+
+        this.authService.login({ email, password }).pipe(
+            finalize(() => this.loading = false)
+        ).subscribe({
+            next: () => {
+                if (remember) {
+                    localStorage.setItem('rememberedEmail', email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+
+                const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+                this.router.navigateByUrl(returnUrl);
+            },
+            error: (err) => {
+                this.errorMessage =
+                    err.error?.message
+                    ?? err.error?.error
+                    ?? 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+            }
+        });
     }
 
     get email() {

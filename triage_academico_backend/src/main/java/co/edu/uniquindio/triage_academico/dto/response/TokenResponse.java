@@ -9,7 +9,9 @@ import lombok.*;
 public class TokenResponse {
     private String token;
     private String tipo;
+    private Long id;
     private String email;
     private String nombre;
+    private String apellido;
     private String rol;
 }

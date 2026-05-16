@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SolicitudService } from '../../../core/services/solicitud.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { CrearSolicitudRequest, CanalOrigen, TipoSolicitud } from '../../../core/models';
 
 @Component({
@@ -17,6 +18,7 @@ export class SolicitudCrearComponent {
     solicitudForm: FormGroup;
     loading = false;
     success = false;
+    errorMessage = '';
 
     readonly canalesOrigen = Object.values(CanalOrigen);
     readonly tiposSolicitud = Object.values(TipoSolicitud);
@@ -24,6 +26,7 @@ export class SolicitudCrearComponent {
     constructor(
         private fb: FormBuilder,
         private solicitudService: SolicitudService,
+        private authService: AuthService,
         private router: Router
     ) {
         this.solicitudForm = this.fb.group({
@@ -38,10 +41,12 @@ export class SolicitudCrearComponent {
         if (this.solicitudForm.invalid) return;
 
         this.loading = true;
+        this.errorMessage = '';
 
+        const user = this.authService.getCurrentUser();
         const request: CrearSolicitudRequest = {
             ...this.solicitudForm.value,
-            solicitanteId: 1 // Temporal - luego vendrá del usuario logueado
+            solicitanteId: user?.id ?? 0
         };
 
         this.solicitudService.crearSolicitud(request).subscribe({
@@ -49,10 +54,12 @@ export class SolicitudCrearComponent {
                 this.success = true;
                 setTimeout(() => {
                     this.router.navigate(['/solicitudes']);
-                }, 2000);
+                }, 1500);
             },
             error: (err) => {
-                console.error(err);
+                this.errorMessage =
+                    err.error?.message
+                    ?? 'No se pudo crear la solicitud.';
                 this.loading = false;
             }
         });

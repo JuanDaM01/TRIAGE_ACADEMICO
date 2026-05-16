@@ -5,7 +5,13 @@
 
 <div *ngIf="loading" class="loading">Cargando solicitudes...</div>
 
-<table *ngIf="!loading" class="solicitudes-table">
+<div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+
+<div *ngIf="!loading && !errorMessage && solicitudes.length === 0" class="empty-state">
+    No hay solicitudes registradas.
+</div>
+
+<table *ngIf="!loading && solicitudes.length > 0" class="solicitudes-table">
     <thead>
         <tr>
             <th>ID</th>

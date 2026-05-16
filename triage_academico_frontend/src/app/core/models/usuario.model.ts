@@ -31,7 +31,9 @@ export interface LoginResponse {
 export interface TokenResponse {
     token: string;
     tipo: string;
+    id: number;
     email: string;
     nombre: string;
+    apellido: string;
     rol: Rol;
 }

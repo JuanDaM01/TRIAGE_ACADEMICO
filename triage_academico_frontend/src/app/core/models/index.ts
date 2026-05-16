@@ -9,6 +9,7 @@ export * from './enums/motivoRechazo.enum';
 
 // Interfaces
 export * from './usuario.model';
+export * from './page.model';
 export * from './solicitud.model';
 export * from './historial.model';
 export * from './ia.model';

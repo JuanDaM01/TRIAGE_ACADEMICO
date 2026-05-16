@@ -19,11 +19,12 @@
 .register-page {
     min-height: 100vh;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 2.5rem 2rem 3rem;
     font-family: 'Instrument Sans', sans-serif;
     background: #f8fafc;
 }
@@ -34,29 +35,26 @@
     max-width: 520px;
     margin: 0 auto;
     z-index: 2;
+    flex-shrink: 0;
 }
 
 .brand-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-
     margin-bottom: 1.6rem;
-
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 .logo {
+    display: block;
     width: 92px;
     height: 92px;
-
     object-fit: contain;
-
     margin-bottom: 0.9rem;
-
-    filter: drop-shadow(
-        0 10px 20px rgba(0, 0, 0, 0.08)
-    );
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.08));
 }
 
 .brand-subtitle {

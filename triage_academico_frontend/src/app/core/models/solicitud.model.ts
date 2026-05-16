@@ -29,7 +29,7 @@ export interface CrearSolicitudRequest {
     descripcion: string;
     tipoSolicitud?: TipoSolicitud;
     canalOrigen: CanalOrigen;
-    solicitanteId: number;
+    solicitanteId?: number;
     fechaLimite?: Date;
 }
 

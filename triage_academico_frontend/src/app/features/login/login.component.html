@@ -10,7 +10,7 @@
 
         <header class="brand-header">
 
-            <img src="assets/logo-uq.png" alt="Logo Universidad del Quindío" class="logo">
+            <img [src]="logoSrc" alt="Logo Universidad del Quindío" class="logo">
 
             <p class="brand-subtitle">
                 Universidad del Quindío
@@ -48,7 +48,9 @@
 
             </div>
 
-            <!-- FORM -->
+            <div *ngIf="errorMessage" class="alert-error" role="alert">
+                {{ errorMessage }}
+            </div>
 
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
 
@@ -115,8 +117,8 @@
 
                 <!-- BUTTON -->
 
-                <button type="submit" class="login-button">
-                    Ingresar al sistema
+                <button type="submit" class="login-button" [disabled]="loading">
+                    {{ loading ? 'Ingresando...' : 'Ingresar al sistema' }}
                 </button>
 
             </form>
@@ -128,7 +130,7 @@
                 <p>
                     ¿No tienes una cuenta?
 
-                    <a href="#">
+                    <a routerLink="/registro">
                         Registrarse
                     </a>
                 </p>

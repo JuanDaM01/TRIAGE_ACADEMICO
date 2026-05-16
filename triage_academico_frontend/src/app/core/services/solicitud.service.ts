@@ -1,15 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { SolicitudAcademica, CrearSolicitudRequest, ClasificarSolicitudRequest } from '../../core/models';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import {
+    SolicitudAcademica,
+    CrearSolicitudRequest,
+    ClasificarSolicitudRequest,
+    PageResponse
+} from '../models';
 import { environment } from '../../../environments/environment';
+
+export interface SolicitudFiltros {
+    estado?: string;
+    tipoSolicitud?: string;
+    nivelPrioridad?: string;
+    responsableId?: number;
+    page?: number;
+    size?: number;
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class SolicitudService {
 
-    private readonly API_URL = `${environment.apiUrl}/solicitudes`;
+    private readonly API_URL = `${environment.apiUrl}/api/solicitudes`;
 
     constructor(private http: HttpClient) { }
 
@@ -17,8 +31,23 @@ export class SolicitudService {
         return this.http.post<SolicitudAcademica>(this.API_URL, request);
     }
 
+    consultarSolicitudes(filtros: SolicitudFiltros = {}): Observable<PageResponse<SolicitudAcademica>> {
+        let params = new HttpParams();
+
+        if (filtros.estado) params = params.set('estado', filtros.estado);
+        if (filtros.tipoSolicitud) params = params.set('tipoSolicitud', filtros.tipoSolicitud);
+        if (filtros.nivelPrioridad) params = params.set('nivelPrioridad', filtros.nivelPrioridad);
+        if (filtros.responsableId != null) params = params.set('responsableId', filtros.responsableId);
+        params = params.set('page', String(filtros.page ?? 0));
+        params = params.set('size', String(filtros.size ?? 20));
+
+        return this.http.get<PageResponse<SolicitudAcademica>>(this.API_URL, { params });
+    }
+
     getAllSolicitudes(): Observable<SolicitudAcademica[]> {
-        return this.http.get<SolicitudAcademica[]>(this.API_URL);
+        return this.consultarSolicitudes({ size: 100 }).pipe(
+            map(page => page.content)
+        );
     }
 
     getSolicitudById(id: number): Observable<SolicitudAcademica> {
@@ -29,15 +58,15 @@ export class SolicitudService {
         return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/clasificar`, request);
     }
 
-    asignarResponsable(id: number, responsableId: number): Observable<any> {
-        return this.http.patch(`${this.API_URL}/${id}/asignar`, { responsableId });
+    asignarResponsable(id: number, responsableId: number): Observable<SolicitudAcademica> {
+        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/asignar`, { responsableId });
     }
 
-    atenderSolicitud(id: number, observaciones: string): Observable<any> {
-        return this.http.patch(`${this.API_URL}/${id}/atender`, { observaciones });
+    atenderSolicitud(id: number, observaciones: string): Observable<SolicitudAcademica> {
+        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/atender`, { observaciones });
     }
 
-    cerrarSolicitud(id: number, observaciones: string): Observable<any> {
-        return this.http.patch(`${this.API_URL}/${id}/cerrar`, { observaciones });
+    cerrarSolicitud(id: number, observaciones: string): Observable<SolicitudAcademica> {
+        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/cerrar`, { observaciones });
     }
 }
