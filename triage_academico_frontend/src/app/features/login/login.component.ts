@@ -6,11 +6,12 @@ import {
     ReactiveFormsModule,
     Validators
 } from '@angular/forms';
+import { AuthLandingBgComponent } from '../../shared/ui/auth-landing-bg/auth-landing-bg.component';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, AuthLandingBgComponent],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })

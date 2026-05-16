@@ -1,64 +1,127 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
 import { CommonModule } from '@angular/common';
+import {
+    AbstractControl,
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    ValidationErrors,
+    Validators
+} from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
+
+import { AuthService } from '../../core/auth/auth.service';
 import { Rol } from '../../core/models';
+import { AuthLandingBgComponent } from '../../shared/ui/auth-landing-bg/auth-landing-bg.component';
 
 @Component({
     selector: 'app-registro',
     standalone: true,
-    imports: [ReactiveFormsModule, CommonModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, AuthLandingBgComponent],
     templateUrl: './registro.component.html',
     styleUrls: ['./registro.component.scss']
 })
 export class RegistroComponent {
 
-    registroForm: FormGroup;
+    form: FormGroup;
+    showPassword = false;
+    showConfirmPassword = false;
     loading = false;
-    error = '';
-    success = false;
-
-    readonly rolesDisponibles = [
-        { value: Rol.ESTUDIANTE, label: 'Estudiante' },
-        { value: Rol.DOCENTE, label: 'Docente' }
-    ];
+    errorMessage = '';
 
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
         private router: Router
     ) {
-        this.registroForm = this.fb.group({
-            nombre: ['', [Validators.required, Validators.minLength(2)]],
-            apellido: ['', [Validators.required, Validators.minLength(2)]],
-            email: ['', [Validators.required, Validators.email]],
-            password: ['', [Validators.required, Validators.minLength(6)]],
-            rol: [Rol.ESTUDIANTE, Validators.required]
-        });
+        this.form = this.fb.group({
+            nombre: ['', Validators.required],
+            apellido: ['', Validators.required],
+            email: [
+                '',
+                [
+                    Validators.required,
+                    Validators.email,
+                    Validators.pattern(/@uniquindio\.edu\.co$/i)
+                ]
+            ],
+            password: ['', [Validators.required, Validators.minLength(4)]],
+            confirmPassword: ['', Validators.required]
+        }, { validators: this.passwordsMatchValidator });
+    }
+
+    togglePassword(): void {
+        this.showPassword = !this.showPassword;
+    }
+
+    toggleConfirmPassword(): void {
+        this.showConfirmPassword = !this.showConfirmPassword;
     }
 
     onSubmit(): void {
-        if (this.registroForm.invalid) return;
+        if (this.form.invalid) {
+            this.form.markAllAsTouched();
+            return;
+        }
 
         this.loading = true;
-        this.error = '';
+        this.errorMessage = '';
 
-        this.authService.registro(this.registroForm.value).subscribe({
-            next: () => {
-                this.success = true;
-                setTimeout(() => {
-                    this.router.navigate(['/login']);
-                }, 2500);
-            },
+        const { nombre, apellido, email, password } = this.form.value;
+
+        this.authService.registro({
+            nombre,
+            apellido,
+            email,
+            password,
+            rol: Rol.ESTUDIANTE
+        }).pipe(
+            finalize(() => this.loading = false)
+        ).subscribe({
+            next: () => this.router.navigate(['/dashboard']),
             error: (err) => {
-                this.error = err.error?.message || 'Error al registrar usuario';
-                this.loading = false;
+                this.errorMessage =
+                    err.error?.message
+                    ?? err.error?.error
+                    ?? 'No se pudo completar el registro. Verifica los datos e intenta de nuevo.';
             }
         });
     }
 
-    goToLogin(): void {
-        this.router.navigate(['/login']);
+    private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+        const password = group.get('password')?.value;
+        const confirm = group.get('confirmPassword')?.value;
+
+        if (!password || !confirm) {
+            return null;
+        }
+
+        return password === confirm ? null : { passwordMismatch: true };
+    }
+
+    get nombre() {
+        return this.form.get('nombre');
+    }
+
+    get apellido() {
+        return this.form.get('apellido');
+    }
+
+    get email() {
+        return this.form.get('email');
+    }
+
+    get password() {
+        return this.form.get('password');
+    }
+
+    get confirmPassword() {
+        return this.form.get('confirmPassword');
+    }
+
+    get passwordsMismatch(): boolean {
+        return this.form.hasError('passwordMismatch')
+            && (this.confirmPassword?.touched ?? false);
     }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse, Usuario, UsuarioRegistro } from '.././models';
+import { LoginRequest, LoginResponse, TokenResponse, Usuario, UsuarioRegistro } from '.././models';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -12,24 +12,38 @@ export class AuthService {
     private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
     public currentUser$ = this.currentUserSubject.asObservable();
 
-    private readonly API_URL = `${environment.apiUrl}/auth`;
+    private readonly API_URL = `${environment.apiUrl}/api/auth`;
 
     constructor(private http: HttpClient) {
         this.loadUserFromStorage();
     }
 
-    login(credentials: LoginRequest): Observable<LoginResponse> {
-        return this.http.post<LoginResponse>(`${this.API_URL}/login`, credentials).pipe(
-            tap(response => {
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('usuario', JSON.stringify(response.usuario));
-                this.currentUserSubject.next(response.usuario);
-            })
+    login(credentials: LoginRequest): Observable<TokenResponse> {
+        return this.http.post<TokenResponse>(`${this.API_URL}/login`, credentials).pipe(
+            tap(response => this.persistSession(response))
         );
     }
 
-    registro(usuario: UsuarioRegistro): Observable<any> {
-        return this.http.post(`${this.API_URL}/registro`, usuario);
+    registro(usuario: UsuarioRegistro): Observable<TokenResponse> {
+        return this.http.post<TokenResponse>(`${this.API_URL}/registro`, usuario).pipe(
+            tap(response => this.persistSession(response))
+        );
+    }
+
+    private persistSession(response: TokenResponse): void {
+        localStorage.setItem('token', response.token);
+
+        const usuario: Usuario = {
+            id: 0,
+            nombre: response.nombre,
+            apellido: '',
+            email: response.email,
+            rol: response.rol,
+            activo: true
+        };
+
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+        this.currentUserSubject.next(usuario);
     }
 
     logout(): void {

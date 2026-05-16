@@ -1,30 +1,340 @@
-/* Similar al login, puedes copiar y ajustar */
-.registro-container {
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap');
+
+:host {
+    display: block;
+
+    --uq-green: #166534;
+    --uq-green-light: #22c55e;
+
+    --text-main: #0f172a;
+    --text-soft: #64748b;
+
+    --glass: rgba(255, 255, 255, 0.72);
+    --border: rgba(255, 255, 255, 0.6);
+
+    --shadow:
+        0 25px 60px rgba(15, 23, 42, 0.10);
+}
+
+.register-page {
     min-height: 100vh;
+    position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #1e2937 0%, #334155 100%);
-    padding: 20px;
+    padding: 2rem;
+    font-family: 'Instrument Sans', sans-serif;
+    background: #f8fafc;
 }
 
-.registro-card {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+.register-wrapper {
+    position: relative;
     width: 100%;
-    max-width: 480px;
+    max-width: 520px;
+    margin: 0 auto;
+    z-index: 2;
 }
 
-.form-row {
+.brand-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-bottom: 1.6rem;
+
+    text-align: center;
+}
+
+.logo {
+    width: 92px;
+    height: 92px;
+
+    object-fit: contain;
+
+    margin-bottom: 0.9rem;
+
+    filter: drop-shadow(
+        0 10px 20px rgba(0, 0, 0, 0.08)
+    );
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    letter-spacing: 0.22em;
+
+    text-transform: uppercase;
+
+    color: rgba(15, 23, 42, 0.55);
+
+    margin-bottom: 0.45rem;
+}
+
+.brand-header h1 {
+    font-size: 1.9rem;
+    line-height: 1.15;
+
+    font-weight: 700;
+
+    color: var(--text-main);
+}
+
+.register-card {
+    padding: 2.6rem;
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.register-header {
+    margin-bottom: 2rem;
+
+    text-align: center;
+}
+
+.icon-wrapper {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 1.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 1.1rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dcfce7,
+            #bbf7d0
+        );
+}
+
+.icon-wrapper svg {
+    width: 34px;
+    height: 34px;
+
+    color: #166534;
+}
+
+.register-header h2 {
+    font-size: 1.55rem;
+
+    font-weight: 700;
+
+    color: var(--text-main);
+
+    margin-bottom: 0.45rem;
+}
+
+.register-header p {
+    color: rgba(15, 23, 42, 0.78);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.alert-error {
+    margin-bottom: 1.2rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #b91c1c;
+    background: rgba(254, 226, 226, 0.85);
+    border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.name-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    row-gap: 0;
+    width: 100%;
 }
 
-.btn-block {
+.name-row .input-group {
+    min-width: 0;
+}
+
+.input-group small {
+    margin-top: 0.45rem;
+    color: #dc2626;
+    font-size: 0.76rem;
+}
+
+.input-group input {
+    color: var(--text-main);
+}
+
+.input-group input::placeholder {
+    color: rgba(15, 23, 42, 0.32);
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.92rem;
+
+    font-weight: 500;
+
+    color: rgba(15, 23, 42, 0.85);
+
+    margin-bottom: 0.55rem;
+}
+
+.input-group input {
     width: 100%;
-    padding: 0.85rem;
-    margin-top: 1.5rem;
+    height: 46px;
+    box-sizing: border-box;
+    border-radius: 0.9rem;
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    background: rgba(255, 255, 255, 0.65);
+
+    padding: 0 1rem;
+
+    font-size: 0.94rem;
+
+    transition: all 0.25s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+
+    background: white;
+
+    border-color: rgba(22, 101, 52, 0.5);
+
+    box-shadow:
+        0 0 0 4px rgba(22, 163, 74, 0.10);
+}
+
+.password-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.55rem;
+}
+
+.password-header label {
+    margin-bottom: 0;
+}
+
+.toggle-password {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--uq-green);
+    padding: 0;
+    transition: opacity 0.2s ease;
+}
+
+.toggle-password:hover {
+    opacity: 0.75;
+}
+
+.register-button {
+    width: 100%;
+    height: 48px;
+
+    border: none;
+
+    border-radius: 1rem;
+
+    cursor: pointer;
+
+    font-size: 0.96rem;
+    font-weight: 600;
+
+    color: white;
+
+    margin-top: 0.5rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            #166534,
+            #22c55e
+        );
+
+    transition: all 0.25s ease;
+
+    box-shadow:
+        0 12px 24px rgba(22, 163, 74, 0.18);
+}
+
+.register-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 30px rgba(22, 163, 74, 0.24);
+}
+
+.register-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.login-section {
+    margin-top: 2rem;
+
+    padding-top: 1.5rem;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+
+    text-align: center;
+}
+
+.login-section p {
+    font-size: 0.9rem;
+
+    color: rgba(15, 23, 42, 0.55);
+}
+
+.login-section a {
+    color: var(--uq-green);
+
+    text-decoration: none;
+
+    font-weight: 600;
+}
+
+.login-section a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .register-page {
+        padding: 1.2rem;
+    }
+
+    .register-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .brand-header h1 {
+        font-size: 1.7rem;
+    }
+
+    .name-row {
+        grid-template-columns: 1fr;
+    }
 }

@@ -27,3 +27,11 @@ export interface LoginResponse {
     token: string;
     usuario: Usuario;
 }
+
+export interface TokenResponse {
+    token: string;
+    tipo: string;
+    email: string;
+    nombre: string;
+    rol: Rol;
+}

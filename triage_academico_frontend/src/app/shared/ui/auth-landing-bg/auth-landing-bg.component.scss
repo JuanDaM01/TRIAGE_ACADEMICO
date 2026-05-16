@@ -1,0 +1,341 @@
+:host {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.auth-landing {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+/* ── Base mesh & grid ── */
+
+.auth-landing__mesh {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 90% 70% at 85% 5%, rgba(34, 197, 94, 0.18), transparent 55%),
+        radial-gradient(ellipse 80% 60% at 5% 95%, rgba(22, 163, 74, 0.14), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(187, 247, 208, 0.12), transparent 70%),
+        linear-gradient(160deg, #f0fdf4 0%, #f8fafc 40%, #ecfdf5 100%);
+    animation: mesh-shift 18s ease-in-out infinite alternate;
+}
+
+.auth-landing__grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.45;
+    background-image:
+        linear-gradient(rgba(22, 101, 52, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 101, 52, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 75%);
+}
+
+/* ── SVG network lines (triage metaphor) ── */
+
+.auth-landing__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.55;
+}
+
+.line {
+    fill: none;
+    stroke: rgba(22, 163, 74, 0.22);
+    stroke-width: 1.5;
+    stroke-dasharray: 8 12;
+    animation: dash-flow 22s linear infinite;
+}
+
+.line-2 {
+    animation-duration: 28s;
+    animation-direction: reverse;
+}
+
+.line-3 {
+    animation-duration: 32s;
+}
+
+.node {
+    fill: #22c55e;
+    opacity: 0.5;
+    animation: node-pulse 3s ease-in-out infinite;
+}
+
+.node-2 { animation-delay: 0.6s; }
+.node-3 { animation-delay: 1.2s; }
+.node-4 { animation-delay: 1.8s; }
+.node-5 { animation-delay: 2.4s; }
+
+/* ── Soft glow orbs ── */
+
+.glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.28;
+}
+
+.glow-top {
+    width: 560px;
+    height: 560px;
+    top: -200px;
+    right: -160px;
+    background: #4ade80;
+    animation: float-orb 14s ease-in-out infinite;
+}
+
+.glow-bottom {
+    width: 480px;
+    height: 480px;
+    bottom: -180px;
+    left: -140px;
+    background: #16a34a;
+    animation: float-orb 16s ease-in-out infinite reverse;
+}
+
+.glow-center {
+    width: 320px;
+    height: 320px;
+    top: 45%;
+    left: 8%;
+    background: #86efac;
+    opacity: 0.15;
+    animation: float-orb 20s ease-in-out infinite;
+    animation-delay: -5s;
+}
+
+/* ── Rings ── */
+
+.shape {
+    position: absolute;
+    pointer-events: none;
+}
+
+.ring {
+    border-radius: 50%;
+    border: 1.5px solid rgba(22, 163, 74, 0.2);
+}
+
+.ring-1 {
+    width: 180px;
+    height: 180px;
+    top: 12%;
+    left: 6%;
+    animation: spin-slow 40s linear infinite, ring-glow 6s ease-in-out infinite;
+}
+
+.ring-2 {
+    width: 120px;
+    height: 120px;
+    bottom: 18%;
+    right: 10%;
+    border-color: rgba(34, 197, 94, 0.28);
+    animation: spin-slow 30s linear infinite reverse, ring-glow 5s ease-in-out infinite reverse;
+}
+
+.ring-3 {
+    width: 90px;
+    height: 90px;
+    top: 55%;
+    right: 22%;
+    border-style: dashed;
+    animation: spin-slow 25s linear infinite, ring-glow 7s ease-in-out infinite;
+    animation-delay: -3s;
+}
+
+/* ── Organic blobs ── */
+
+.blob {
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    background: linear-gradient(135deg, rgba(187, 247, 208, 0.5), rgba(134, 239, 172, 0.25));
+    backdrop-filter: blur(2px);
+}
+
+.blob-1 {
+    width: 140px;
+    height: 140px;
+    top: 8%;
+    right: 18%;
+    animation: morph-blob 14s ease-in-out infinite, float-shape 11s ease-in-out infinite;
+}
+
+.blob-2 {
+    width: 100px;
+    height: 100px;
+    bottom: 25%;
+    left: 12%;
+    animation: morph-blob 18s ease-in-out infinite reverse, float-shape 13s ease-in-out infinite reverse;
+}
+
+.blob-3 {
+    width: 70px;
+    height: 70px;
+    top: 38%;
+    left: 3%;
+    opacity: 0.7;
+    animation: morph-blob 12s ease-in-out infinite, float-shape 9s ease-in-out infinite;
+    animation-delay: -4s;
+}
+
+/* ── Floating “document” cards ── */
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px rgba(22, 101, 52, 0.08);
+    backdrop-filter: blur(8px);
+}
+
+.card span {
+    display: block;
+    height: 5px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(22, 163, 74, 0.25), rgba(34, 197, 94, 0.12));
+}
+
+.card span:first-child {
+    width: 70%;
+    background: linear-gradient(90deg, rgba(22, 101, 52, 0.35), rgba(22, 163, 74, 0.2));
+}
+
+.card-1 {
+    width: 88px;
+    top: 22%;
+    right: 6%;
+    animation: float-card 16s ease-in-out infinite;
+}
+
+.card-2 {
+    width: 72px;
+    bottom: 14%;
+    left: 5%;
+    animation: float-card 13s ease-in-out infinite reverse;
+    animation-delay: -4s;
+}
+
+.card-3 {
+    width: 80px;
+    top: 62%;
+    right: 5%;
+    opacity: 0.85;
+    animation: float-card 18s ease-in-out infinite;
+    animation-delay: -7s;
+}
+
+/* ── Particle dots ── */
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    opacity: 0.35;
+    animation: twinkle 4s ease-in-out infinite;
+}
+
+.dot-1 { top: 15%; left: 25%; animation-delay: 0s; }
+.dot-2 { top: 30%; right: 30%; animation-delay: 0.8s; width: 8px; height: 8px; }
+.dot-3 { top: 48%; left: 18%; animation-delay: 1.6s; }
+.dot-4 { top: 70%; right: 35%; animation-delay: 2.2s; }
+.dot-5 { bottom: 30%; left: 35%; animation-delay: 1s; }
+.dot-6 { top: 10%; right: 45%; animation-delay: 2.8s; width: 5px; height: 5px; }
+.dot-7 { bottom: 20%; right: 18%; animation-delay: 0.4s; }
+.dot-8 { top: 42%; right: 8%; animation-delay: 3.2s; width: 7px; height: 7px; }
+
+/* ── Keyframes ── */
+
+@keyframes mesh-shift {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    100% { filter: hue-rotate(8deg) brightness(1.03); }
+}
+
+@keyframes dash-flow {
+    to { stroke-dashoffset: -200; }
+}
+
+@keyframes node-pulse {
+    0%, 100% { opacity: 0.35; r: 4; }
+    50% { opacity: 0.75; r: 6; }
+}
+
+@keyframes float-orb {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.05); }
+    66% { transform: translate(-20px, 25px) scale(0.95); }
+}
+
+@keyframes float-shape {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-18px) translateX(12px); }
+}
+
+@keyframes spin-slow {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes ring-glow {
+    0%, 100% { opacity: 0.6; border-color: rgba(22, 163, 74, 0.18); }
+    50% { opacity: 1; border-color: rgba(34, 197, 94, 0.35); }
+}
+
+@keyframes morph-blob {
+    0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+    33% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    66% { border-radius: 30% 70% 50% 50% / 50% 60% 40% 60%; }
+}
+
+@keyframes float-card {
+    0%, 100% {
+        transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+        transform: translateY(-22px) rotate(3deg);
+    }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-landing__mesh,
+    .line,
+    .node,
+    .glow,
+    .ring,
+    .blob,
+    .card,
+    .dot {
+        animation: none !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .card,
+    .ring-3,
+    .blob-3,
+    .auth-landing__lines {
+        opacity: 0.35;
+    }
+
+    .card-3,
+    .dot-6,
+    .dot-8 {
+        display: none;
+    }
+}
