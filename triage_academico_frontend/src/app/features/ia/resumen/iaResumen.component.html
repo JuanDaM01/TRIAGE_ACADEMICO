@@ -1,0 +1,70 @@
+<div class="ia-resumen-container">
+    <div class="header">
+        <h1>Resumen de Solicitud con IA</h1>
+        <p>Genere resúmenes automáticos de solicitudes académicas</p>
+    </div>
+
+    <form [formGroup]="resumenForm" (ngSubmit)="generarResumen()" class="resumen-form">
+        <div class="form-group">
+            <label for="solicitudId">ID de la Solicitud *</label>
+            <input 
+                id="solicitudId" 
+                formControlName="solicitudId" 
+                type="number" 
+                placeholder="Ingrese el ID de la solicitud"
+                min="1"
+            >
+            <div *ngIf="resumenForm.get('solicitudId')?.touched && resumenForm.get('solicitudId')?.invalid" class="error-message">
+                <span *ngIf="resumenForm.get('solicitudId')?.errors?.['required']">El ID es requerido.</span>
+                <span *ngIf="resumenForm.get('solicitudId')?.errors?.['min']">El ID debe ser mayor a 0.</span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" [disabled]="resumenForm.invalid || loading" class="btn-primary">
+                {{ loading ? 'Generando...' : 'Generar Resumen' }}
+            </button>
+            <button type="button" (click)="limpiar()" class="btn-secondary" [disabled]="loading">
+                Limpiar
+            </button>
+        </div>
+    </form>
+
+    <div *ngIf="loading" class="loading">
+        <p>Generando resumen con IA...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+    </div>
+
+    <div *ngIf="resumen" class="resumen-result">
+        <h2>📋 Resumen Generado por IA</h2>
+        <div class="resumen-content">
+            <div class="resumen-section">
+                <h3>Resumen</h3>
+                <p class="resumen-text">{{ resumen.resumen }}</p>
+            </div>
+
+            <div class="resumen-section" *ngIf="resumen.puntosClave && resumen.puntosClave.length > 0">
+                <h3>Puntos Clave</h3>
+                <ul class="puntos-list">
+                    <li *ngFor="let punto of resumen.puntosClave">{{ punto }}</li>
+                </ul>
+            </div>
+
+            <div class="resumen-section" *ngIf="resumen.recomendaciones && resumen.recomendaciones.length > 0">
+                <h3>Recomendaciones</h3>
+                <ul class="recomendaciones-list">
+                    <li *ngFor="let recomendacion of resumen.recomendaciones">{{ recomendacion }}</li>
+                </ul>
+            </div>
+
+            <div class="resumen-footer">
+                <span class="fecha-generacion">
+                    Generado: {{ resumen.fechaGeneracion | date:'medium' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

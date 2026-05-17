@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SolicitudService } from '../../../core/services/solicitud.service';
-import { SolicitudAcademica } from '../../../core/models';
+import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '../../../core/models';
 import { EstadoPipe } from '../../../shared/pipes/estado.pipe';
 import { PrioridadPipe } from '../../../shared/pipes/prioridad.pipe';
 
@@ -39,5 +39,49 @@ export class SolicitudesListaComponent implements OnInit {
                 this.loading = false;
             }
         });
+    }
+
+    getEstadoLabel(estado: EstadoSolicitud): string {
+        const map: Record<string, string> = {
+            REGISTRADA: 'Registrada',
+            CLASIFICADA: 'Clasificada',
+            EN_ATENCION: 'En Atención',
+            ATENDIDA: 'Atendida',
+            CERRADA: 'Cerrada'
+        };
+        return map[estado] ?? estado;
+    }
+
+    getPrioridadLabel(p?: NivelPrioridad): string {
+        if (!p) return '—';
+        const map: Record<string, string> = {
+            BAJA: 'Baja',
+            MEDIA: 'Media',
+            ALTA: 'Alta',
+            CRITICA: 'Crítica'
+        };
+        return map[p] ?? p;
+    }
+
+    getProgressPercentage(estado: EstadoSolicitud): number {
+        switch (estado) {
+            case EstadoSolicitud.REGISTRADA: return 20;
+            case EstadoSolicitud.CLASIFICADA: return 40;
+            case EstadoSolicitud.EN_ATENCION: return 65;
+            case EstadoSolicitud.ATENDIDA: return 85;
+            case EstadoSolicitud.CERRADA: return 100;
+            default: return 0;
+        }
+    }
+
+    getProgressColorClass(estado: EstadoSolicitud): string {
+        switch (estado) {
+            case EstadoSolicitud.REGISTRADA: return 'bg-[#6e7976]';
+            case EstadoSolicitud.CLASIFICADA: return 'bg-[#745900]';
+            case EstadoSolicitud.EN_ATENCION: return 'bg-[#0369a1]';
+            case EstadoSolicitud.ATENDIDA: return 'bg-[#004f45]';
+            case EstadoSolicitud.CERRADA: return 'bg-[#2c3131]';
+            default: return 'bg-gray-400';
+        }
     }
 }

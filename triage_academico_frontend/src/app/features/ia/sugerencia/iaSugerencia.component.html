@@ -1,0 +1,72 @@
+<div class="ia-sugerencia-container">
+    <div class="header">
+        <h1>Sugerencia de Clasificación con IA</h1>
+        <p>Obtenga sugerencias automáticas para clasificar solicitudes académicas</p>
+    </div>
+
+    <form [formGroup]="sugerenciaForm" (ngSubmit)="obtenerSugerencia()" class="sugerencia-form">
+        <div class="form-group">
+            <label for="descripcion">Descripción de la solicitud *</label>
+            <textarea 
+                id="descripcion" 
+                formControlName="descripcion" 
+                rows="5" 
+                placeholder="Escriba la descripción de la solicitud para obtener una sugerencia de clasificación..."
+            ></textarea>
+            <div *ngIf="sugerenciaForm.get('descripcion')?.touched && sugerenciaForm.get('descripcion')?.invalid" class="error-message">
+                <span *ngIf="sugerenciaForm.get('descripcion')?.errors?.['required']">La descripción es requerida.</span>
+                <span *ngIf="sugerenciaForm.get('descripcion')?.errors?.['minlength']">Mínimo 10 caracteres.</span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" [disabled]="sugerenciaForm.invalid || loading" class="btn-primary">
+                {{ loading ? 'Analizando...' : 'Obtener Sugerencia' }}
+            </button>
+            <button type="button" (click)="limpiar()" class="btn-secondary" [disabled]="loading">
+                Limpiar
+            </button>
+        </div>
+    </form>
+
+    <div *ngIf="loading" class="loading">
+        <p>Analizando la solicitud con IA...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+    </div>
+
+    <div *ngIf="sugerencia" class="sugerencia-result">
+        <h2>🤖 Sugerencia de IA</h2>
+        <div class="sugerencia-content">
+            <div class="sugerencia-item">
+                <span class="label">Tipo Sugerido:</span>
+                <span class="value tipo-badge">{{ sugerencia.tipoSugerido }}</span>
+            </div>
+            <div class="sugerencia-item">
+                <span class="label">Prioridad Sugerida:</span>
+                <span class="value prioridad-badge" [style.background-color]="getConfianzaColor()">
+                    {{ sugerencia.prioridadSugerida }}
+                </span>
+            </div>
+            <div class="sugerencia-item">
+                <span class="label">Confianza:</span>
+                <span class="value confianza-bar">
+                    <div class="bar-container">
+                        <div class="bar-fill" [style.width.%]="sugerencia.confianza * 100" [style.background-color]="getConfianzaColor()"></div>
+                    </div>
+                    <span class="porcentaje">{{ (sugerencia.confianza * 100).toFixed(0) }}%</span>
+                </span>
+            </div>
+            <div class="sugerencia-item full-width">
+                <span class="label">Explicación:</span>
+                <p class="value explicacion">{{ sugerencia.explicacion }}</p>
+            </div>
+            <div class="sugerencia-item">
+                <span class="label">Fecha de Sugerencia:</span>
+                <span class="value">{{ sugerencia.fechaSugerencia | date:'medium' }}</span>
+            </div>
+        </div>
+    </div>
+</div>

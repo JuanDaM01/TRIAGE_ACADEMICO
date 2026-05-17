@@ -1,0 +1,131 @@
+.historial-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+        margin: 0;
+        color: #333;
+    }
+
+    .back-link {
+        color: #1976d2;
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.loading,
+.error,
+.empty {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.error {
+    color: #d32f2f;
+}
+
+.historial-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.historial-item {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    .historial-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #f0f0f0;
+
+        .accion-badge {
+            background: #1976d2;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .fecha {
+            color: #666;
+            font-size: 0.875rem;
+        }
+    }
+
+    .historial-content {
+        p {
+            margin: 0.5rem 0;
+            color: #333;
+
+            strong {
+                color: #555;
+            }
+        }
+
+        .observaciones {
+            background: #f5f5f5;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .estados {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.75rem 0;
+
+            .estado-antes,
+            .estado-despues {
+                padding: 0.25rem 0.5rem;
+                border-radius: 4px;
+                font-size: 0.875rem;
+            }
+
+            .estado-antes {
+                background: #ffebee;
+                color: #c62828;
+            }
+
+            .estado-despues {
+                background: #e8f5e9;
+                color: #2e7d32;
+            }
+
+            .arrow {
+                color: #666;
+                font-weight: bold;
+            }
+        }
+
+        .motivo-rechazo {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin: 0.75rem 0;
+        }
+    }
+}

@@ -1,0 +1,88 @@
+<div class="usuarios-container">
+    <div class="header">
+        <h1>Gestión de Usuarios</h1>
+        <button routerLink="/usuarios/gestion" class="btn-primary">
+            + Nuevo Usuario
+        </button>
+    </div>
+
+    <div class="filtros">
+        <h3>Filtros</h3>
+        <div class="filtros-grid">
+            <div class="filtro-item">
+                <label for="rol">Rol:</label>
+                <select id="rol" [(ngModel)]="filtros.rol">
+                    <option value="">Todos</option>
+                    <option *ngFor="let rol of roles" [value]="rol">{{ getRolNombre(rol) }}</option>
+                </select>
+            </div>
+            <div class="filtro-item">
+                <label for="activo">Estado:</label>
+                <select id="activo" [(ngModel)]="filtros.activo">
+                    <option [ngValue]="undefined">Todos</option>
+                    <option [ngValue]="true">Activos</option>
+                    <option [ngValue]="false">Inactivos</option>
+                </select>
+            </div>
+            <div class="filtro-actions">
+                <button (click)="aplicarFiltros()" class="btn-secondary">Aplicar</button>
+                <button (click)="limpiarFiltros()" class="btn-tertiary">Limpiar</button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        <p>Cargando usuarios...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && usuarios.length === 0" class="empty">
+        <p>No hay usuarios que coincidan con los filtros.</p>
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && usuarios.length > 0" class="usuarios-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Fecha Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let usuario of usuarios">
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ getRolNombre(usuario.rol) }}</td>
+                    <td>
+                        <span [class]="usuario.activo ? 'status-active' : 'status-inactive'">
+                            {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </td>
+                    <td>{{ usuario.fechaCreacion | date:'medium' }}</td>
+                    <td class="actions">
+                        <button routerLink="/usuarios/gestion/{{ usuario.id }}" class="btn-edit" title="Editar">
+                            ✏️
+                        </button>
+                        <button (click)="toggleActivo(usuario)" 
+                                [class]="usuario.activo ? 'btn-deactivate' : 'btn-activate'"
+                                [title]="usuario.activo ? 'Desactivar' : 'Activar'">
+                            {{ usuario.activo ? '🔒' : '🔓' }}
+                        </button>
+                        <button (click)="eliminarUsuario(usuario.id)" class="btn-delete" title="Eliminar">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

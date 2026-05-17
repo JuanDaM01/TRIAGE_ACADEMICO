@@ -1,0 +1,47 @@
+<div class="historial-container">
+    <div class="header">
+        <h1>Historial de Solicitud #{{ solicitudId }}</h1>
+        <a routerLink="/solicitudes/{{ solicitudId }}" class="back-link">← Volver al detalle</a>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        <p>Cargando historial...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && historial.length === 0" class="empty">
+        <p>No hay historial disponible para esta solicitud.</p>
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && historial.length > 0" class="historial-list">
+        <div *ngFor="let item of historial" class="historial-item">
+            <div class="historial-header">
+                <span class="accion-badge">{{ item.accion | accion }}</span>
+                <span class="fecha">{{ formatearFecha(item.fecha) }}</span>
+            </div>
+            <div class="historial-content">
+                <p class="usuario">
+                    <strong>Usuario:</strong> {{ item.usuario.nombre }} {{ item.usuario.apellido }} ({{ item.usuario.email }})
+                </p>
+                <p *ngIf="item.observaciones" class="observaciones">
+                    <strong>Observaciones:</strong> {{ item.observaciones }}
+                </p>
+                <div *ngIf="item.estadoAnterior || item.estadoNuevo" class="estados">
+                    <span *ngIf="item.estadoAnterior" class="estado-antes">
+                        Antes: {{ item.estadoAnterior }}
+                    </span>
+                    <span class="arrow">→</span>
+                    <span *ngIf="item.estadoNuevo" class="estado-despues">
+                        Después: {{ item.estadoNuevo }}
+                    </span>
+                </div>
+                <p *ngIf="item.motivoRechazo" class="motivo-rechazo">
+                    <strong>Motivo de rechazo:</strong> {{ item.motivoRechazo }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,18 +1,8 @@
-.app-wrapper {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+/* All styling handled by Tailwind CSS. Custom scrollbar hidden class */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-
-.main-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-}
-
-.content-area {
-    flex: 1;
-    padding: 2rem;
-    overflow-y: auto;
-    background-color: #f8f9fa;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

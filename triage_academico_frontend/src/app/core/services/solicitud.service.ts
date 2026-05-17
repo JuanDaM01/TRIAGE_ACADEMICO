@@ -5,7 +5,8 @@ import {
     SolicitudAcademica,
     CrearSolicitudRequest,
     ClasificarSolicitudRequest,
-    PageResponse
+    PageResponse,
+    HistorialSolicitud
 } from '../models';
 import { environment } from '../../../environments/environment';
 
@@ -68,5 +69,9 @@ export class SolicitudService {
 
     cerrarSolicitud(id: number, observaciones: string): Observable<SolicitudAcademica> {
         return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/cerrar`, { observaciones });
+    }
+
+    getHistorialSolicitud(id: number): Observable<HistorialSolicitud[]> {
+        return this.http.get<HistorialSolicitud[]>(`${this.API_URL}/${id}/historial`);
     }
 }

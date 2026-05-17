@@ -1,0 +1,82 @@
+<div class="usuario-gestion-container">
+    <div class="header">
+        <h1>{{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h1>
+        <button (click)="cancelar()" class="btn-back">← Volver</button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        <p>Cargando...</p>
+    </div>
+
+    <div *ngIf="success" class="success">
+        <p>{{ isEditMode ? 'Usuario actualizado exitosamente.' : 'Usuario creado exitosamente.' }}</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+    </div>
+
+    <form *ngIf="!loading && !success" [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" class="usuario-form">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="nombre">Nombre *</label>
+                <input id="nombre" formControlName="nombre" type="text" placeholder="Nombre">
+                <div *ngIf="usuarioForm.get('nombre')?.touched && usuarioForm.get('nombre')?.invalid" class="error-message">
+                    <span *ngIf="usuarioForm.get('nombre')?.errors?.['required']">El nombre es requerido.</span>
+                    <span *ngIf="usuarioForm.get('nombre')?.errors?.['minlength']">Mínimo 2 caracteres.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="apellido">Apellido *</label>
+                <input id="apellido" formControlName="apellido" type="text" placeholder="Apellido">
+                <div *ngIf="usuarioForm.get('apellido')?.touched && usuarioForm.get('apellido')?.invalid" class="error-message">
+                    <span *ngIf="usuarioForm.get('apellido')?.errors?.['required']">El apellido es requerido.</span>
+                    <span *ngIf="usuarioForm.get('apellido')?.errors?.['minlength']">Mínimo 2 caracteres.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input id="email" formControlName="email" type="email" placeholder="email@ejemplo.com">
+                <div *ngIf="usuarioForm.get('email')?.touched && usuarioForm.get('email')?.invalid" class="error-message">
+                    <span *ngIf="usuarioForm.get('email')?.errors?.['required']">El email es requerido.</span>
+                    <span *ngIf="usuarioForm.get('email')?.errors?.['email']">Email inválido.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="rol">Rol *</label>
+                <select id="rol" formControlName="rol">
+                    <option *ngFor="let rol of roles" [value]="rol">{{ getRolNombre(rol) }}</option>
+                </select>
+            </div>
+
+            <div class="form-group" *ngIf="!isEditMode">
+                <label for="password">Contraseña *</label>
+                <input id="password" formControlName="password" type="password" placeholder="Mínimo 6 caracteres">
+                <div *ngIf="usuarioForm.get('password')?.touched && usuarioForm.get('password')?.invalid" class="error-message">
+                    <span *ngIf="usuarioForm.get('password')?.errors?.['required']">La contraseña es requerida.</span>
+                    <span *ngIf="usuarioForm.get('password')?.errors?.['minlength']">Mínimo 6 caracteres.</span>
+                </div>
+            </div>
+
+            <div class="form-group" *ngIf="isEditMode">
+                <label for="password">Contraseña (dejar vacío para mantener actual)</label>
+                <input id="password" formControlName="password" type="password" placeholder="Nueva contraseña">
+                <div *ngIf="usuarioForm.get('password')?.touched && usuarioForm.get('password')?.invalid" class="error-message">
+                    <span *ngIf="usuarioForm.get('password')?.errors?.['minlength']">Mínimo 6 caracteres.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" [disabled]="usuarioForm.invalid || loading" class="btn-primary">
+                {{ loading ? 'Guardando...' : (isEditMode ? 'Actualizar' : 'Crear') }}
+            </button>
+            <button type="button" (click)="cancelar()" class="btn-secondary" [disabled]="loading">
+                Cancelar
+            </button>
+        </div>
+    </form>
+</div>

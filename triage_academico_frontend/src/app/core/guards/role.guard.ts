@@ -13,7 +13,8 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
             return true;
         }
 
-        router.navigate(['/dashboard']);
+        // Redirigir a solicitudes si el usuario no tiene el rol requerido
+        router.navigate(['/app/solicitudes']);
         return false;
     };
 };

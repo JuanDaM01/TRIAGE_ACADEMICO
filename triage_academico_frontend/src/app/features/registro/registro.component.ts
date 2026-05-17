@@ -30,6 +30,12 @@ export class RegistroComponent {
     loading = false;
     errorMessage = '';
 
+    rolesDisponibles = [
+        { label: 'Estudiante', value: Rol.ESTUDIANTE },
+        { label: 'Docente', value: Rol.DOCENTE },
+        { label: 'Administrativo', value: Rol.ADMINISTRATIVO }
+    ];
+
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
@@ -46,8 +52,14 @@ export class RegistroComponent {
                     Validators.pattern(/@uniquindio\.edu\.co$/i)
                 ]
             ],
-            password: ['', [Validators.required, Validators.minLength(4)]],
-            confirmPassword: ['', Validators.required]
+            rol: ['', Validators.required],
+            password: ['', [
+                Validators.required,
+                Validators.minLength(8),
+                Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/)
+            ]],
+            confirmPassword: ['', Validators.required],
+            terminos: [false, Validators.requiredTrue]
         }, { validators: this.passwordsMatchValidator });
     }
 
@@ -68,14 +80,14 @@ export class RegistroComponent {
         this.loading = true;
         this.errorMessage = '';
 
-        const { nombre, apellido, email, password } = this.form.value;
+        const { nombre, apellido, email, password, rol } = this.form.value;
 
         this.authService.registro({
             nombre,
             apellido,
             email,
             password,
-            rol: Rol.ESTUDIANTE
+            rol
         }).pipe(
             finalize(() => this.loading = false)
         ).subscribe({
@@ -100,25 +112,23 @@ export class RegistroComponent {
         return password === confirm ? null : { passwordMismatch: true };
     }
 
-    get nombre() {
-        return this.form.get('nombre');
+    getPasswordStrength(): number {
+        const val = this.password?.value || '';
+        if (!val) return 0;
+        let score = 0;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/\d/.test(val)) score++;
+        return score;
     }
 
-    get apellido() {
-        return this.form.get('apellido');
-    }
-
-    get email() {
-        return this.form.get('email');
-    }
-
-    get password() {
-        return this.form.get('password');
-    }
-
-    get confirmPassword() {
-        return this.form.get('confirmPassword');
-    }
+    get nombre() { return this.form.get('nombre'); }
+    get apellido() { return this.form.get('apellido'); }
+    get email() { return this.form.get('email'); }
+    get rol() { return this.form.get('rol'); }
+    get password() { return this.form.get('password'); }
+    get confirmPassword() { return this.form.get('confirmPassword'); }
+    get terminos() { return this.form.get('terminos'); }
 
     get passwordsMismatch(): boolean {
         return this.form.hasError('passwordMismatch')
