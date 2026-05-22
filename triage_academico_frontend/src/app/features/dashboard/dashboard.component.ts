@@ -1,16 +1,22 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
-import { AuthService } from '../../core/auth/auth.service';
-import { SolicitudService } from '../../core/services/solicitud.service';
-import { Usuario, SolicitudAcademica, EstadoSolicitud, NivelPrioridad, Rol } from '../../core/models';
+import { AuthService } from '@core/auth/auth.service';
+import { SolicitudService } from '@core/services/solicitud.service';
+import {
+    Usuario,
+    SolicitudAcademica,
+    EstadoSolicitud,
+    NivelPrioridad,
+    Rol
+} from '@models';
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [CommonModule, RouterLink, RouterLinkActive],
+    imports: [CommonModule, RouterLink],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -28,27 +34,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         pendientes: 0,
         enAtencion: 0,
         criticas: 0,
-        completadas: 0,
-        promedioDias: 0
+        completadas: 0
     };
 
     loadingStats = true;
-    sidebarCollapsed = false;
-    mobileMenuOpen = false;
-
-    readonly today = new Date();
-
-    readonly navItems = [
-        { icon: '⬡', label: 'Dashboard', route: '/app/dashboard', roles: [] },
-        { icon: '📋', label: 'Solicitudes', route: '/app/solicitudes', roles: [] },
-        { icon: '➕', label: 'Nueva Solicitud', route: '/app/solicitudes/crear', roles: [] },
-        { icon: '🕒', label: 'Mi Historial', route: '/app/solicitudes/historial', roles: [] },
-    ];
 
     constructor(
         private authService: AuthService,
         private solicitudService: SolicitudService,
-        private router: Router,
         private cdr: ChangeDetectorRef
     ) {}
 
@@ -57,7 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe(user => {
                 this.currentUser = user;
-                this.rol = user?.rol || null;
+                this.rol = user?.rol ?? null;
                 this.cdr.markForCheck();
             });
 
@@ -71,6 +64,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     cargarDatos(): void {
         this.loadingStats = true;
+
         this.solicitudService.getAllSolicitudes()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
@@ -88,11 +82,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
                             s.nivelPrioridad === NivelPrioridad.CRITICA
                         ).length,
                         completadas: solicitudes.filter(s =>
-                            s.estado === EstadoSolicitud.CERRADA
-                        ).length,
-                        promedioDias: this.calcularPromedioDias(solicitudes)
+                            s.estado === EstadoSolicitud.CERRADA ||
+                            s.estado === EstadoSolicitud.ATENDIDA
+                        ).length
                     };
-                    // Últimas 5 solicitudes
+
                     this.solicitudesRecientes = [...solicitudes]
                         .sort((a, b) => {
                             const da = a.fechaCreacion ? new Date(a.fechaCreacion).getTime() : 0;
@@ -100,6 +94,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                             return db - da;
                         })
                         .slice(0, 5);
+
                     this.loadingStats = false;
                     this.cdr.markForCheck();
                 },
@@ -108,46 +103,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     this.cdr.markForCheck();
                 }
             });
-    }
-
-    private calcularPromedioDias(solicitudes: SolicitudAcademica[]): number {
-        if (solicitudes.length === 0) return 0;
-        const totalDias = solicitudes.reduce((sum, s) => {
-            if (s.fechaCreacion && s.fechaActualizacion) {
-                const inicio = new Date(s.fechaCreacion).getTime();
-                const fin = new Date(s.fechaActualizacion).getTime();
-                return sum + (fin - inicio) / (1000 * 60 * 60 * 24);
-            }
-            return sum;
-        }, 0);
-        return Math.round(totalDias / solicitudes.length);
-    }
-
-    isStudentRole(): boolean {
-        return this.rol === Rol.ESTUDIANTE;
-    }
-
-    isTeacherRole(): boolean {
-        return this.rol === Rol.DOCENTE;
-    }
-
-    isAdminRole(): boolean {
-        return [Rol.ADMINISTRATIVO, Rol.COORDINADOR, Rol.DIRECTOR].includes(this.rol!);
-    }
-
-    isCoordinatorOrDirector(): boolean {
-        return [Rol.COORDINADOR, Rol.DIRECTOR].includes(this.rol!);
-    }
-
-    getRolEmoji(): string {
-        switch (this.rol) {
-            case Rol.ESTUDIANTE: return '🎓';
-            case Rol.DOCENTE: return '👨‍🏫';
-            case Rol.ADMINISTRATIVO: return '💼';
-            case Rol.COORDINADOR: return '📋';
-            case Rol.DIRECTOR: return '🏛️';
-            default: return '👤';
-        }
     }
 
     getRolLabel(): string {
@@ -159,45 +114,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             case Rol.DIRECTOR: return 'Director';
             default: return 'Usuario';
         }
-    }
-}
-                }
-            });
-    }
-
-    logout(): void {
-        this.authService.logout();
-        this.router.navigate(['/login']);
-    }
-
-    toggleSidebar(): void {
-        this.sidebarCollapsed = !this.sidebarCollapsed;
-    }
-
-    toggleMobileMenu(): void {
-        this.mobileMenuOpen = !this.mobileMenuOpen;
-    }
-
-    getRolLabel(): string {
-        const rolMap: Record<string, string> = {
-            'ESTUDIANTE': 'Estudiante',
-            'DOCENTE': 'Docente',
-            'ADMINISTRATIVO': 'Administrativo',
-            'COORDINADOR': 'Coordinador',
-            'DIRECTOR': 'Director'
-        };
-        return rolMap[this.currentUser?.rol ?? ''] ?? (this.currentUser?.rol ?? 'Usuario');
-    }
-
-    getRolEmoji(): string {
-        const emojiMap: Record<string, string> = {
-            'ESTUDIANTE': '🎓',
-            'DOCENTE': '📚',
-            'ADMINISTRATIVO': '🏛️',
-            'COORDINADOR': '🗂️',
-            'DIRECTOR': '🏅'
-        };
-        return emojiMap[this.currentUser?.rol ?? ''] ?? '👤';
     }
 
     getEstadoLabel(estado: EstadoSolicitud): string {
@@ -212,7 +128,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     getPrioridadLabel(p?: NivelPrioridad): string {
-        if (!p) return '—';
+        if (!p) return 'Sin prioridad';
         const map: Record<string, string> = {
             BAJA: 'Baja',
             MEDIA: 'Media',
@@ -220,11 +136,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             CRITICA: 'Crítica'
         };
         return map[p] ?? p;
-    }
-
-    isAdmin(): boolean {
-        const adminRoles = ['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'];
-        return adminRoles.includes(this.currentUser?.rol ?? '');
     }
 
     getProgressPercentage(estado: EstadoSolicitud): number {

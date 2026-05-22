@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { UsuarioService, UsuarioFiltros } from '../../../core/services/usuario.service';
-import { Usuario, Rol } from '../../../core/models';
+import { UsuarioService, UsuarioFiltros } from '@core/services/usuario.service';
+import { Usuario, Rol } from '@models';
 
 @Component({
     selector: 'app-usuarios-lista',

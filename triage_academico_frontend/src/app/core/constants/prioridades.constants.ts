@@ -1,4 +1,4 @@
-import { NivelPrioridad } from '.././models';
+﻿import { NivelPrioridad } from '@models';
 
 export const PRIORIDADES = {
     BAJA: NivelPrioridad.BAJA,

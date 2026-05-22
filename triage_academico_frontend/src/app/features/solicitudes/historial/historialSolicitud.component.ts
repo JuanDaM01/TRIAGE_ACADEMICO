@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { SolicitudService } from '../../../core/services/solicitud.service';
-import { HistorialSolicitud } from '../../../core/models';
-import { AccionPipe } from '../../../shared/pipes/accion.pipe';
+import { SolicitudService } from '@core/services/solicitud.service';
+import { HistorialSolicitud } from '@models';
+import { AccionPipe } from '@shared/pipes/accion.pipe';
 
 @Component({
     selector: 'app-historial-solicitud',

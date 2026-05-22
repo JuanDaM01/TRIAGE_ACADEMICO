@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     AbstractControl,
@@ -11,9 +11,10 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { AuthService } from '../../core/auth/auth.service';
-import { Rol } from '../../core/models';
-import { AuthLandingBgComponent } from '../../shared/ui/auth-landing-bg/auth-landing-bg.component';
+import { AuthService } from '@core/auth/auth.service';
+import { getDefaultAppRoute } from '@core/utils/auth-routes';
+import { Rol } from '@models';
+import { AuthLandingBgComponent } from '@shared/ui/auth-landing-bg/auth-landing-bg.component';
 
 @Component({
     selector: 'app-registro',
@@ -91,7 +92,9 @@ export class RegistroComponent {
         }).pipe(
             finalize(() => this.loading = false)
         ).subscribe({
-            next: () => this.router.navigate(['/dashboard']),
+            next: () => this.router.navigate([
+                getDefaultAppRoute(this.authService.getCurrentUser()?.rol)
+            ]),
             error: (err) => {
                 this.errorMessage =
                     err.error?.message

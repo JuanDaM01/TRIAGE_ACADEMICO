@@ -1,4 +1,4 @@
-import { EstadoSolicitud } from '.././models';
+﻿import { EstadoSolicitud } from '@models';
 
 export const ESTADOS_SOLICITUD = {
     REGISTRADA: EstadoSolicitud.REGISTRADA,

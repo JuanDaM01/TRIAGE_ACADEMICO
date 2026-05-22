@@ -159,3 +159,17 @@ Para verificar los cambios:
    - Ve "Panel de Control" + "Administración" en menú ✅
    - Puede acceder a `/usuarios` ✅
 
+---
+
+## Reorganización de arquitectura frontend (SOLID) ✅
+
+- **Modelos** centralizados en `src/app/models/` (antes `core/models/`).
+- **Layout** dividido en `header/`, `sidebar/` y `main-layout/` (SRP; orquestación en main-layout).
+- **Alias TypeScript**: `@core/*`, `@shared/*`, `@models`, `@features/*`, `@env`.
+- **Barrels** en `core/auth`, `core/services`, `core/layout`, `shared/ui`.
+- Eliminados restos: `core/layout/components/`, `pages/`, layout monolítico `mainLayout.*`.
+- Documentación: `triage_academico_frontend/src/app/ESTRUCTURA.md`.
+- **Build**: `npm run build` exitoso.
+
+Rutas autenticadas: prefijo `/app/` (ej. `/app/dashboard`, `/app/solicitudes`).
+

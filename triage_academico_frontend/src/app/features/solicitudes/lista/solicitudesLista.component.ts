@@ -1,15 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { SolicitudService } from '../../../core/services/solicitud.service';
-import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '../../../core/models';
-import { EstadoPipe } from '../../../shared/pipes/estado.pipe';
-import { PrioridadPipe } from '../../../shared/pipes/prioridad.pipe';
+import { SolicitudService } from '@core/services/solicitud.service';
+import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '@models';
 
 @Component({
     selector: 'app-solicitudes-lista',
     standalone: true,
-    imports: [CommonModule, RouterLink, EstadoPipe, PrioridadPipe],
+    imports: [CommonModule, RouterLink],
     templateUrl: './solicitudesLista.component.html',
     styleUrls: ['./solicitudesLista.component.scss']
 })

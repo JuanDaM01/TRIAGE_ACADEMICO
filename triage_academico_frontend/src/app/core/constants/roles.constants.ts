@@ -1,4 +1,4 @@
-import { Rol } from '.././models';
+﻿import { Rol } from '@models';
 
 export const ROLES = {
     ESTUDIANTE: Rol.ESTUDIANTE,

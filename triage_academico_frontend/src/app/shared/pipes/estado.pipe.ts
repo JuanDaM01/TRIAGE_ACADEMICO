@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { EstadoSolicitud } from '../../core/models';
+﻿import { Pipe, PipeTransform } from '@angular/core';
+import { EstadoSolicitud } from '@models';
 
 @Pipe({
     name: 'estado',

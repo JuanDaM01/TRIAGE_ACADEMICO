@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     FormBuilder,
@@ -9,8 +9,9 @@ import {
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { AuthLandingBgComponent } from '../../shared/ui/auth-landing-bg/auth-landing-bg.component';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthLandingBgComponent } from '@shared/ui/auth-landing-bg/auth-landing-bg.component';
+import { AuthService } from '@core/auth/auth.service';
+import { getDefaultAppRoute } from '@core/utils/auth-routes';
 
 @Component({
     selector: 'app-login',
@@ -73,7 +74,8 @@ export class LoginComponent implements OnInit {
                     localStorage.removeItem('rememberedEmail');
                 }
 
-                const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+                const returnUrl = this.route.snapshot.queryParams['returnUrl']
+                    || getDefaultAppRoute(this.authService.getCurrentUser()?.rol);
                 this.router.navigateByUrl(returnUrl);
             },
             error: (err) => {

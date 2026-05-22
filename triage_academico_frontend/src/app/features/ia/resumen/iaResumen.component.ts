@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IAService, ResumenRequest } from '../../../core/services/ia.service';
-import { ResumenIA } from '../../../core/models';
+import { IAService, ResumenRequest } from '@core/services/ia.service';
+import { ResumenIA } from '@models';
 
 @Component({
     selector: 'app-ia-resumen',

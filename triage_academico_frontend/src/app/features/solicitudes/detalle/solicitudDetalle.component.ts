@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SolicitudService } from '../../../core/services/solicitud.service';
-import { SolicitudAcademica } from '../../../core/models';
-import { AuthService } from '../../../core/auth/auth.service';
-import { EstadoPipe } from '../../../shared/pipes/estado.pipe';
-import { PrioridadPipe } from '../../../shared/pipes/prioridad.pipe';
+import { SolicitudService } from '@core/services/solicitud.service';
+import { SolicitudAcademica } from '@models';
+import { AuthService } from '@core/auth/auth.service';
+import { EstadoPipe } from '@shared/pipes/estado.pipe';
+import { PrioridadPipe } from '@shared/pipes/prioridad.pipe';
 
 @Component({
     selector: 'app-solicitud-detalle',
@@ -40,14 +40,14 @@ export class SolicitudDetalleComponent implements OnInit {
             },
             error: () => {
                 this.loading = false;
-                this.router.navigate(['/solicitudes']);
+                this.router.navigate(['/app/solicitudes']);
             }
         });
     }
 
     // Método público para el template
     volverALaLista(): void {
-        this.router.navigate(['/solicitudes']);
+        this.router.navigate(['/app/solicitudes']);
     }
 
     clasificar(): void {

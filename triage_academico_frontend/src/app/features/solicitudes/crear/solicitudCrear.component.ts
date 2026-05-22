@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SolicitudService } from '../../../core/services/solicitud.service';
-import { AuthService } from '../../../core/auth/auth.service';
-import { CrearSolicitudRequest, CanalOrigen, TipoSolicitud } from '../../../core/models';
+import { SolicitudService } from '@core/services/solicitud.service';
+import { AuthService } from '@core/auth/auth.service';
+import { CrearSolicitudRequest, CanalOrigen, TipoSolicitud } from '@models';
 
 @Component({
     selector: 'app-solicitud-crear',
@@ -53,7 +53,7 @@ export class SolicitudCrearComponent {
             next: () => {
                 this.success = true;
                 setTimeout(() => {
-                    this.router.navigate(['/solicitudes']);
+                    this.router.navigate(['/app/solicitudes']);
                 }, 1500);
             },
             error: (err) => {

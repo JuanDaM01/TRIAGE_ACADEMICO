@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UsuarioService } from '../../../core/services/usuario.service';
-import { Usuario, UsuarioRegistro, Rol } from '../../../core/models';
+import { UsuarioService } from '@core/services/usuario.service';
+import { Usuario, UsuarioRegistro, Rol } from '@models';
 
 @Component({
     selector: 'app-usuario-gestion',
@@ -84,7 +84,7 @@ export class UsuarioGestionComponent implements OnInit {
                 next: () => {
                     this.success = true;
                     setTimeout(() => {
-                        this.router.navigate(['/usuarios']);
+                        this.router.navigate(['/app/usuarios']);
                     }, 1500);
                 },
                 error: (err) => {
@@ -98,7 +98,7 @@ export class UsuarioGestionComponent implements OnInit {
                 next: () => {
                     this.success = true;
                     setTimeout(() => {
-                        this.router.navigate(['/usuarios']);
+                        this.router.navigate(['/app/usuarios']);
                     }, 1500);
                 },
                 error: (err) => {
@@ -110,7 +110,7 @@ export class UsuarioGestionComponent implements OnInit {
     }
 
     cancelar(): void {
-        this.router.navigate(['/usuarios']);
+        this.router.navigate(['/app/usuarios']);
     }
 
     getRolNombre(rol: Rol): string {

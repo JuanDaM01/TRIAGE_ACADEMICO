@@ -199,3 +199,18 @@
 - [ ] Menú se adapta al rol del usuario
 - [ ] Rutas protegidas con roleGuard correcto
 - [ ] No hay funcionalidades ocultas en UI (si no puedes ver, no accedes)
+
+---
+
+## Estructura de carpetas (frontend)
+
+Rutas autenticadas bajo prefijo **`/app/`**. Detalle completo en `triage_academico_frontend/src/app/ESTRUCTURA.md`.
+
+| Capa | Responsabilidad |
+|------|-----------------|
+| `core/` | Auth, guards, interceptors, layout (header / sidebar / main-layout), services HTTP, constants |
+| `shared/` | UI reutilizable, pipes, directives |
+| `models/` | Interfaces y enums de dominio |
+| `features/` | Pantallas por vertical slice (login, registro, dashboard, solicitudes, usuarios, ia) |
+
+Imports con alias: `@core/*`, `@shared/*`, `@models`, `@features/*`, `@env`.

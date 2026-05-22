@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SugerenciaIA, ResumenIA } from '../models';
-import { environment } from '../../../environments/environment';
+import { SugerenciaIA, ResumenIA } from '@models';
+import { environment } from '@env';
 
 export interface SugerenciaRequest {
     descripcion: string;

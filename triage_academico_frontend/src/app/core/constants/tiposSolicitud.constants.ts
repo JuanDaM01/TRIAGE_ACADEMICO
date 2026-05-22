@@ -1,4 +1,4 @@
-import { TipoSolicitud } from '.././models';
+﻿import { TipoSolicitud } from '@models';
 
 export const TIPOS_SOLICITUD = {
     REGISTRO_ASIGNATURAS: TipoSolicitud.REGISTRO_ASIGNATURAS,

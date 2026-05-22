@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import {
@@ -7,8 +7,8 @@ import {
     ClasificarSolicitudRequest,
     PageResponse,
     HistorialSolicitud
-} from '../models';
-import { environment } from '../../../environments/environment';
+} from '@models';
+import { environment } from '@env';
 
 export interface SolicitudFiltros {
     estado?: string;

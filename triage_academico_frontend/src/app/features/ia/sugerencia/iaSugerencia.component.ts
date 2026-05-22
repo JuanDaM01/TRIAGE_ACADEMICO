@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IAService, SugerenciaRequest } from '../../../core/services/ia.service';
-import { SugerenciaIA } from '../../../core/models';
+import { IAService, SugerenciaRequest } from '@core/services/ia.service';
+import { SugerenciaIA } from '@models';
 
 @Component({
     selector: 'app-ia-sugerencia',

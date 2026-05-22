@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { AccionHistorial } from '../../core/models';
+﻿import { Pipe, PipeTransform } from '@angular/core';
+import { AccionHistorial } from '@models';
 
 @Pipe({
     name: 'accion',

@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Usuario, UsuarioRegistro, PageResponse } from '../models';
-import { environment } from '../../../environments/environment';
+import { Usuario, UsuarioRegistro, PageResponse } from '@models';
+import { environment } from '@env';
 
 export interface UsuarioFiltros {
     rol?: string;
