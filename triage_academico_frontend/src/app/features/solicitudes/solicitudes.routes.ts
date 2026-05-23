@@ -4,7 +4,7 @@ export const SOLICITUDES_ROUTES: Routes = [
     {
         path: '',
         loadComponent: () => import('./lista/solicitudesLista.component').then(m => m.SolicitudesListaComponent),
-        title: 'Mis Solicitudes'
+        title: 'Lista de Solicitudes'
     },
     {
         path: 'crear',
@@ -22,9 +22,9 @@ export const SOLICITUDES_ROUTES: Routes = [
         title: 'Clasificar Solicitud'
     },
     {
-        path: ':id/clasificacion-ia',
+        path: ':id/clasificar-ia',
         loadComponent: () => import('./clasificarIA/solicitudClasificarIA.component').then(m => m.SolicitudClasificarIAComponent),
-        title: 'Clasificación con IA'
+        title: 'Clasificar Solicitud'
     },
     {
         path: ':id/historial',

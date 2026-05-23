@@ -1,142 +1,374 @@
-<!-- LOADING DETALLE -->
-<div *ngIf="loadingDetalle" class="space-y-4 animate-pulse w-full max-w-2xl mx-auto font-['Inter']">
-  <div class="h-32 bg-white/40 rounded-3xl"></div>
-  <div class="h-56 bg-white/30 rounded-2xl"></div>
+<!-- ═══════ LOADING INICIAL ═══════ -->
+<div *ngIf="loading" class="space-y-4 pb-12 font-['Inter'] w-full max-w-2xl mx-auto">
+  <div class="animate-pulse space-y-4">
+    <div class="h-24 bg-white/40 rounded-3xl"></div>
+    <div class="h-48 bg-white/30 rounded-2xl"></div>
+    <div class="h-36 bg-white/20 rounded-2xl"></div>
+  </div>
 </div>
 
-<!-- CONTENIDO -->
-<div *ngIf="!loadingDetalle && solicitud" class="w-full max-w-2xl mx-auto pb-12 font-['Inter'] space-y-5">
+<!-- ═══════ CONTENIDO PRINCIPAL ═══════ -->
+<div *ngIf="!loading && solicitud" class="pb-12 font-['Inter'] w-full max-w-2xl mx-auto">
 
-  <!-- HEADER -->
-  <div class="relative overflow-hidden rounded-3xl bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_0_rgba(0,79,69,0.05)] p-8">
-    <div class="absolute top-0 right-0 w-56 h-56 bg-gradient-to-br from-[#dded49]/30 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-    <div class="relative z-10 flex justify-between items-start gap-4">
+  <!-- ── HEADER ── -->
+  <div class="relative overflow-hidden rounded-3xl bg-white/40 dark:bg-black/20 backdrop-blur-xl border border-white/60 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,79,69,0.05)] p-8 mb-6">
+    <div class="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#84d5c5]/30 to-[#dded49]/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h2 class="text-2xl font-black text-[#004f45] flex items-center gap-2 mb-1">
-          <span class="material-symbols-outlined text-[28px]">auto_awesome</span>
-          Clasificación con IA
+        <h2 class="text-2xl font-black text-[#004f45] dark:text-[#84d5c5] mb-1 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[28px]">category</span>
+          Clasificar solicitud #{{ solicitud.id }}
         </h2>
-        <p class="text-xs text-[#3e4946]/50 font-medium">Solicitud #{{ solicitud.id }} · {{ solicitud.tipoSolicitud }}</p>
-        <p class="text-sm text-[#3e4946]/70 mt-2 leading-relaxed line-clamp-2">{{ solicitud.descripcion }}</p>
+        <p class="text-sm text-[#3e4946]/70 dark:text-white/60">
+          {{ solicitud.tipoSolicitud }} · {{ solicitud.canalOrigen }} · {{ solicitud.fechaCreacion | date:'d MMM yyyy':'':'es' }}
+        </p>
       </div>
-      <button (click)="volver()"
-        class="shrink-0 flex items-center gap-1.5 text-xs font-bold text-[#004f45] bg-white/60 px-3 py-2 rounded-xl border border-white shadow-sm hover:bg-white/90 transition-all">
-        <span class="material-symbols-outlined text-[15px]">arrow_back</span> Volver
+      <button (click)="volverADetalle()"
+        class="flex items-center gap-2 text-xs font-bold text-[#004f45] dark:text-[#84d5c5] bg-white/60 dark:bg-[#181c1c]/60 px-4 py-2.5 rounded-xl border border-white dark:border-[#3e4946]/20 shadow-sm hover:bg-white/90 transition-all shrink-0">
+        <span class="material-symbols-outlined text-[15px]">arrow_back</span>
+        Volver al detalle
       </button>
     </div>
   </div>
 
-  <!-- ERROR -->
-  <div *ngIf="errorMessage" class="bg-[#fee2e2] border border-[#fca5a5] rounded-2xl px-5 py-4 text-sm text-[#93000a] font-medium flex items-center gap-2">
-    <span class="material-symbols-outlined text-[18px]">error</span>
-    {{ errorMessage }}
-    <button (click)="pedirSugerencia()" class="ml-auto text-xs font-bold underline underline-offset-2">Reintentar</button>
+  <!-- ── DESCRIPCIÓN (siempre visible) ── -->
+  <div class="bg-white/40 dark:bg-black/10 backdrop-blur-sm rounded-2xl border border-white/50 dark:border-white/10 p-5 mb-6">
+    <p class="text-[10px] font-black text-[#3e4946]/50 dark:text-white/30 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-[13px]">chat_bubble</span>
+      Descripción de la solicitud
+    </p>
+    <p class="text-sm text-[#181c1c] dark:text-white leading-relaxed">{{ solicitud.descripcion }}</p>
   </div>
 
-  <!-- ANALIZANDO CON IA -->
-  <div *ngIf="loadingIA" class="bg-white/50 backdrop-blur-lg rounded-2xl border border-white/50 p-10 flex flex-col items-center gap-4 text-center">
-    <div class="w-14 h-14 rounded-2xl bg-[#dded49]/30 flex items-center justify-center">
-      <span class="animate-spin material-symbols-outlined text-[28px] text-[#594400]">progress_activity</span>
+  <!-- ══════════════════════════════════════════════════
+       PASO 1 — ELEGIR MÉTODO
+  ══════════════════════════════════════════════════ -->
+  <div *ngIf="paso === 'elegir'" class="space-y-4">
+
+    <p class="text-[10px] font-black text-[#3e4946]/50 dark:text-white/30 uppercase tracking-widest text-center mb-6">
+      ¿Cómo deseas clasificar esta solicitud?
+    </p>
+
+    <!-- Error IA (si vino de un intento fallido) -->
+    <div *ngIf="errorIA"
+      class="flex items-start gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 text-red-700 dark:text-red-400 text-sm px-5 py-4 rounded-2xl mb-2">
+      <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
+      <span>{{ errorIA }}</span>
     </div>
-    <div>
-      <p class="font-black text-[#004f45] text-base mb-1">Analizando solicitud...</p>
-      <p class="text-xs text-[#3e4946]/50">La IA está procesando la descripción para sugerir tipo y prioridad.</p>
-    </div>
-  </div>
 
-  <!-- SUGERENCIA DE IA -->
-  <div *ngIf="sugerencia && !loadingIA" class="space-y-4">
-
-    <!-- Tarjeta principal -->
-    <div class="bg-white/50 backdrop-blur-lg rounded-2xl border border-white/50 overflow-hidden">
-
-      <!-- Cabecera -->
-      <div class="bg-[#dded49]/15 border-b border-[#dded49]/30 px-6 py-4 flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px] text-[#594400]">auto_awesome</span>
-        <p class="text-xs font-black text-[#594400] uppercase tracking-widest">Sugerencia generada por IA</p>
-        <span class="ml-auto text-[10px] font-bold px-2.5 py-1 rounded-full"
-          [ngClass]="{
-            'bg-[#dcfce7] text-[#166534]': sugerencia.confianza >= 0.8,
-            'bg-[#fff8e1] text-[#594400]': sugerencia.confianza >= 0.5 && sugerencia.confianza < 0.8,
-            'bg-[#fee2e2] text-[#93000a]': sugerencia.confianza < 0.5
-          }">
-          Confianza {{ getConfianzaLabel(sugerencia.confianza) }} · {{ (sugerencia.confianza * 100).toFixed(0) }}%
-        </span>
-      </div>
-
-      <div class="p-6 space-y-4">
-
-        <!-- Tipo y prioridad -->
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-[#f0f7f6] rounded-xl p-4">
-            <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest mb-1">Tipo sugerido</p>
-            <p class="text-sm font-bold text-[#004f45]">{{ sugerencia.tipoSugerido }}</p>
-          </div>
-          <div class="bg-[#f0f7f6] rounded-xl p-4">
-            <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest mb-1">Prioridad sugerida</p>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full" [ngClass]="getNivelColor(sugerencia.prioridadSugerida)">
-              {{ sugerencia.prioridadSugerida }}
+    <!-- Tarjeta IA -->
+    <button (click)="elegirIA()"
+      class="w-full text-left group relative overflow-hidden rounded-2xl border-2 border-[#004f45]/20 hover:border-[#004f45] bg-gradient-to-br from-[#004f45]/5 to-[#dded49]/10 dark:from-[#84d5c5]/5 dark:to-[#dded49]/5 p-6 transition-all duration-300 hover:shadow-lg hover:shadow-[#004f45]/10 hover:-translate-y-0.5 cursor-pointer">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-[#004f45] flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300">
+          <span class="material-symbols-outlined text-[22px] text-white">auto_awesome</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-base font-black text-[#004f45] dark:text-[#84d5c5] mb-1">Clasificar con IA</p>
+          <p class="text-sm text-[#3e4946]/70 dark:text-white/50 leading-relaxed">
+            La IA analiza la descripción y sugiere tipo y prioridad. Tú revisas y confirmas antes de guardar.
+          </p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#004f45] bg-[#004f45]/10 px-2.5 py-1 rounded-full uppercase tracking-wide">
+              <span class="material-symbols-outlined text-[11px]">bolt</span> Rápido
+            </span>
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#004f45] bg-[#004f45]/10 px-2.5 py-1 rounded-full uppercase tracking-wide">
+              <span class="material-symbols-outlined text-[11px]">verified</span> Revisión humana
             </span>
           </div>
         </div>
+        <span class="material-symbols-outlined text-[#004f45]/30 dark:text-[#84d5c5]/30 text-[24px] shrink-0 mt-1 group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+      </div>
+    </button>
 
-        <!-- Barra de confianza -->
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest">Nivel de confianza</p>
-            <p class="text-xs font-bold text-[#004f45]">{{ (sugerencia.confianza * 100).toFixed(0) }}%</p>
-          </div>
-          <div class="w-full h-2 bg-[#ebefee] rounded-full overflow-hidden">
-            <div class="h-full rounded-full transition-all duration-700"
-              [ngClass]="getConfianzaBarColor(sugerencia.confianza)"
-              [style.width]="(sugerencia.confianza * 100) + '%'">
-            </div>
-          </div>
+    <!-- Tarjeta Manual -->
+    <button (click)="elegirManual()"
+      class="w-full text-left group relative overflow-hidden rounded-2xl border-2 border-[#bec9c5]/30 hover:border-[#3e4946]/40 bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-sm p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-[#ebefee] dark:bg-[#2a3030] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+          <span class="material-symbols-outlined text-[22px] text-[#3e4946] dark:text-[#84d5c5]">edit_note</span>
         </div>
-
-        <!-- Justificación -->
-        <div class="bg-[#f0f7f6] rounded-xl p-4">
-          <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest mb-2 flex items-center gap-1">
-            <span class="material-symbols-outlined text-[13px]">psychology</span>
-            Justificación de la IA
+        <div class="flex-1 min-w-0">
+          <p class="text-base font-black text-[#3e4946] dark:text-white mb-1">Clasificar manualmente</p>
+          <p class="text-sm text-[#3e4946]/70 dark:text-white/50 leading-relaxed">
+            Selecciona el tipo y prioridad basándote en tu criterio profesional.
           </p>
-          <p class="text-sm text-[#3e4946] leading-relaxed">{{ sugerencia.explicacion }}</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#3e4946]/60 bg-[#3e4946]/8 px-2.5 py-1 rounded-full uppercase tracking-wide">
+              <span class="material-symbols-outlined text-[11px]">person</span> Control total
+            </span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined text-[#3e4946]/20 dark:text-white/20 text-[24px] shrink-0 mt-1 group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+      </div>
+    </button>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       PASO 2A — IA CARGANDO
+  ══════════════════════════════════════════════════ -->
+  <div *ngIf="paso === 'ia-cargando'"
+    class="bg-gradient-to-br from-[#004f45]/5 to-[#dded49]/10 dark:from-[#84d5c5]/5 dark:to-[#dded49]/5 backdrop-blur-lg rounded-2xl border border-[#004f45]/20 dark:border-[#84d5c5]/20 p-10 text-center">
+    <div class="w-16 h-16 rounded-3xl bg-[#004f45] flex items-center justify-center mx-auto mb-5 shadow-lg">
+      <span class="material-symbols-outlined text-[28px] text-white animate-spin">progress_activity</span>
+    </div>
+    <p class="text-base font-black text-[#004f45] dark:text-[#84d5c5] mb-2">Analizando con IA…</p>
+    <p class="text-sm text-[#3e4946]/60 dark:text-white/40">Esto puede tomar unos segundos</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       PASO 2B — REVISIÓN DE SUGERENCIA IA
+  ══════════════════════════════════════════════════ -->
+  <div *ngIf="paso === 'ia-revision' && sugerenciaIA" class="space-y-5">
+
+    <!-- Cabecera de la sugerencia -->
+    <div class="bg-gradient-to-br from-[#004f45]/5 to-[#dded49]/10 dark:from-[#84d5c5]/5 dark:to-[#dded49]/5 backdrop-blur-lg rounded-2xl border border-[#004f45]/20 dark:border-[#84d5c5]/20 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-[#004f45] flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[18px] text-white">auto_awesome</span>
+          </div>
+          <div>
+            <p class="text-sm font-black text-[#004f45] dark:text-[#84d5c5]">Sugerencia de la IA</p>
+            <p class="text-xs text-[#3e4946]/50 dark:text-white/40">Revisa y edita antes de confirmar</p>
+          </div>
         </div>
 
-        <!-- Aviso confirmación humana -->
-        <div class="bg-[#dbeafe] border border-[#bfdbfe] rounded-xl px-4 py-3 flex items-start gap-2">
-          <span class="material-symbols-outlined text-[16px] text-[#1e40af] shrink-0 mt-0.5">info</span>
-          <p class="text-xs text-[#1e40af] leading-relaxed">
-            Esta sugerencia requiere <strong>confirmación humana</strong>. Revisa los valores antes de aceptar.
-            Si no estás de acuerdo, puedes clasificar manualmente.
-          </p>
+        <!-- Badge de confianza -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <div class="flex gap-0.5">
+            <span *ngFor="let i of [1,2,3,4,5]"
+              class="w-1.5 h-4 rounded-full transition-colors"
+              [class.bg-green-500]="confianzaColor === 'green' && i <= 5"
+              [class.bg-amber-500]="confianzaColor === 'amber' && i <= 3"
+              [class.bg-red-400]="confianzaColor === 'red' && i <= 2"
+              [class.bg-[#ebefee]]="
+                (confianzaColor === 'green' && false) ||
+                (confianzaColor === 'amber' && i > 3) ||
+                (confianzaColor === 'red' && i > 2)
+              ">
+            </span>
+          </div>
+          <span class="text-xs font-bold"
+            [class.text-green-600]="confianzaColor === 'green'"
+            [class.text-amber-600]="confianzaColor === 'amber'"
+            [class.text-red-500]="confianzaColor === 'red'">
+            {{ confianzaPorcentaje }}% — {{ confianzaLabel }}
+          </span>
         </div>
+      </div>
 
+      <!-- Sugerencia resumida (read-only) -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="bg-white/60 dark:bg-black/20 rounded-xl px-4 py-3">
+          <p class="text-[10px] font-black text-[#3e4946]/40 dark:text-white/30 uppercase tracking-widest mb-0.5">Tipo sugerido</p>
+          <p class="text-sm font-bold text-[#004f45] dark:text-[#84d5c5]">{{ sugerenciaIA.tipoSugerido }}</p>
+        </div>
+        <div class="bg-white/60 dark:bg-black/20 rounded-xl px-4 py-3">
+          <p class="text-[10px] font-black text-[#3e4946]/40 dark:text-white/30 uppercase tracking-widest mb-0.5">Prioridad sugerida</p>
+          <p class="text-sm font-bold text-[#004f45] dark:text-[#84d5c5]">{{ sugerenciaIA.prioridadSugerida }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="sugerenciaIA.explicacion" class="bg-white/50 dark:bg-black/15 rounded-xl px-4 py-3">
+        <p class="text-[10px] font-black text-[#3e4946]/40 dark:text-white/30 uppercase tracking-widest mb-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[11px]">psychology</span> Razonamiento de la IA
+        </p>
+        <p class="text-xs text-[#3e4946]/70 dark:text-white/60 leading-relaxed">{{ sugerenciaIA.explicacion }}</p>
       </div>
     </div>
 
-    <!-- BOTONES DE DECISIÓN -->
-    <div class="grid grid-cols-2 gap-3">
-      <button (click)="aceptar()" [disabled]="loadingAplicar"
-        class="flex items-center justify-center gap-2 bg-[#004f45] hover:bg-[#003d35] text-white font-bold text-sm py-3.5 rounded-2xl transition-all shadow-sm hover:shadow disabled:opacity-60 disabled:cursor-not-allowed">
-        <span *ngIf="!loadingAplicar" class="material-symbols-outlined text-[18px]">check_circle</span>
-        <span *ngIf="loadingAplicar" class="animate-spin material-symbols-outlined text-[18px]">progress_activity</span>
-        {{ loadingAplicar ? 'Aplicando...' : 'Aceptar sugerencia' }}
+    <!-- Aviso de revisión humana obligatoria -->
+    <div class="flex items-center gap-3 bg-[#dded49]/20 border border-[#dded49]/50 rounded-xl px-4 py-3">
+      <span class="material-symbols-outlined text-[18px] text-[#594400] shrink-0">warning</span>
+      <p class="text-xs font-semibold text-[#594400]">
+        La sugerencia de la IA puede modificarse. Revisa los campos y ajusta si es necesario antes de confirmar.
+      </p>
+    </div>
+
+    <!-- Error al clasificar -->
+    <div *ngIf="errorClasificar"
+      class="flex items-start gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 text-red-700 dark:text-red-400 text-sm px-5 py-4 rounded-2xl">
+      <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
+      <span>{{ errorClasificar }}</span>
+    </div>
+
+    <!-- Formulario editable para revisar/ajustar la sugerencia -->
+    <div class="bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-lg rounded-2xl border border-white/50 dark:border-white/10 p-6 space-y-5">
+      <p class="text-[10px] font-black text-[#3e4946]/50 dark:text-white/30 uppercase tracking-widest flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[13px]">edit</span>
+        Ajustar si es necesario
+      </p>
+
+      <!-- Tipo de solicitud -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Tipo de solicitud
+        </label>
+        <select [(ngModel)]="form.tipoSolicitud"
+          class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] transition-all">
+          <option value="" disabled>Selecciona un tipo…</option>
+          <option *ngFor="let tipo of tiposSolicitud" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+
+      <!-- Nivel de prioridad -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Nivel de prioridad
+        </label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <label *ngFor="let nivel of nivelesPrioridad" class="relative cursor-pointer">
+            <input type="radio" [(ngModel)]="form.nivelPrioridad" [value]="nivel" class="sr-only peer" />
+            <div class="w-full text-center py-2.5 px-2 rounded-xl border-2 text-xs font-bold uppercase tracking-wide transition-all
+              peer-checked:border-[#004f45] peer-checked:bg-[#004f45] peer-checked:text-white
+              border-[#bec9c5]/40 text-[#3e4946]/60 hover:border-[#004f45]/40"
+              [class.peer-checked:bg-red-700]="nivel === 'CRITICA'"
+              [class.peer-checked:border-red-700]="nivel === 'CRITICA'">
+              {{ nivel }}
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Fecha límite -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Fecha límite
+        </label>
+        <input type="date" [(ngModel)]="form.fechaLimite" [min]="today"
+          class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] transition-all" />
+      </div>
+
+      <!-- Justificación -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Justificación <span class="font-normal normal-case tracking-normal">(opcional)</span>
+        </label>
+        <textarea [(ngModel)]="form.justificacion" rows="3"
+          placeholder="Ajusta o complementa el razonamiento de la IA…"
+          class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] transition-all resize-none">
+        </textarea>
+      </div>
+    </div>
+
+    <!-- Botones IA-revisión -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <button (click)="volver()"
+        class="flex-1 py-3 rounded-2xl border border-[#bec9c5]/40 text-[#3e4946] text-sm font-semibold hover:bg-[#ebefee] transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        Cambiar método
       </button>
-      <button (click)="rechazar()" [disabled]="loadingAplicar"
-        class="flex items-center justify-center gap-2 bg-white/60 hover:bg-white/90 text-[#3e4946] font-bold text-sm py-3.5 rounded-2xl border border-white/50 transition-all disabled:opacity-60">
-        <span class="material-symbols-outlined text-[18px]">edit_note</span>
-        Clasificar manualmente
+      <button (click)="regenerarSugerencia()"
+        class="flex-1 py-3 rounded-2xl border-2 border-[#004f45]/30 text-[#004f45] dark:text-[#84d5c5] text-sm font-bold hover:bg-[#004f45]/5 transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">refresh</span>
+        Regenerar IA
+      </button>
+      <button (click)="confirmar()"
+        [disabled]="!formularioValido"
+        class="flex-[2] py-3 rounded-2xl bg-[#dded49] hover:bg-[#c1d02c] text-[#1a1d00] text-sm font-black transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm">
+        <span class="material-symbols-outlined text-[17px]">check_circle</span>
+        Confirmar clasificación
       </button>
     </div>
 
-    <!-- Nueva sugerencia -->
-    <button (click)="pedirSugerencia()" [disabled]="loadingIA"
-      class="w-full flex items-center justify-center gap-1.5 text-xs font-bold text-[#3e4946]/50 hover:text-[#004f45] py-2 transition-colors">
-      <span class="material-symbols-outlined text-[14px]">refresh</span>
-      Pedir nueva sugerencia
-    </button>
+  </div>
 
+  <!-- ══════════════════════════════════════════════════
+       PASO 3 — CLASIFICACIÓN MANUAL
+  ══════════════════════════════════════════════════ -->
+  <div *ngIf="paso === 'manual'" class="space-y-5">
+
+    <!-- Error al clasificar -->
+    <div *ngIf="errorClasificar"
+      class="flex items-start gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 text-red-700 dark:text-red-400 text-sm px-5 py-4 rounded-2xl">
+      <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
+      <span>{{ errorClasificar }}</span>
+    </div>
+
+    <div class="bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-lg rounded-2xl border border-white/50 dark:border-white/10 p-6 space-y-5">
+
+      <!-- Tipo de solicitud -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Tipo de solicitud
+        </label>
+        <select [(ngModel)]="form.tipoSolicitud"
+          class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] transition-all">
+          <option value="" disabled>Selecciona un tipo…</option>
+          <option *ngFor="let tipo of tiposSolicitud" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+
+      <!-- Nivel de prioridad -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Nivel de prioridad
+        </label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <label *ngFor="let nivel of nivelesPrioridad" class="relative cursor-pointer">
+            <input type="radio" [(ngModel)]="form.nivelPrioridad" [value]="nivel" class="sr-only peer" />
+            <div class="w-full text-center py-2.5 px-2 rounded-xl border-2 text-xs font-bold uppercase tracking-wide transition-all
+              peer-checked:border-[#004f45] peer-checked:bg-[#004f45] peer-checked:text-white
+              border-[#bec9c5]/40 text-[#3e4946]/60 hover:border-[#004f45]/40"
+              [class.peer-checked:bg-red-700]="nivel === 'CRITICA'"
+              [class.peer-checked:border-red-700]="nivel === 'CRITICA'">
+              {{ nivel }}
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Fecha límite -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Fecha límite
+        </label>
+        <input type="date" [(ngModel)]="form.fechaLimite" [min]="today"
+          class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] transition-all" />
+      </div>
+
+      <!-- Justificación -->
+      <div>
+        <label class="text-[10px] font-black text-[#3e4946]/50 uppercase tracking-widest mb-1.5 block">
+          Justificación <span class="font-normal normal-case tracking-normal">(opcional)</span>
+        </label>
+        <textarea [(ngModel)]="form.justificacion" rows="4"
+          placeholder="Describe el motivo de la clasificación…"
+          class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] transition-all resize-none">
+        </textarea>
+      </div>
+
+    </div>
+
+    <!-- Botones Manual -->
+    <div class="flex gap-3">
+      <button (click)="volver()"
+        class="flex-1 py-3 rounded-2xl border border-[#bec9c5]/40 text-[#3e4946] text-sm font-semibold hover:bg-[#ebefee] transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        Cambiar método
+      </button>
+      <button (click)="confirmar()"
+        [disabled]="!formularioValido"
+        class="flex-[2] py-3 rounded-2xl bg-[#dded49] hover:bg-[#c1d02c] text-[#1a1d00] text-sm font-black transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm">
+        <span class="material-symbols-outlined text-[17px]">check_circle</span>
+        Confirmar clasificación
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       PASO FINAL — CONFIRMANDO (spinner)
+  ══════════════════════════════════════════════════ -->
+  <div *ngIf="paso === 'confirmando'"
+    class="bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-lg rounded-2xl border border-white/50 dark:border-white/10 p-10 text-center">
+    <div class="w-14 h-14 rounded-2xl bg-[#dded49] flex items-center justify-center mx-auto mb-4 shadow-md">
+      <span class="material-symbols-outlined text-[24px] text-[#1a1d00] animate-spin">progress_activity</span>
+    </div>
+    <p class="text-base font-black text-[#004f45] dark:text-[#84d5c5] mb-1">Guardando clasificación…</p>
+    <p class="text-sm text-[#3e4946]/50 dark:text-white/30">La solicitud pasará a estado Clasificada</p>
   </div>
 
 </div>

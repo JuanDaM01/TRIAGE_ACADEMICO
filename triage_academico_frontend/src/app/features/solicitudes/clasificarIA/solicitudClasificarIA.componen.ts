@@ -1,29 +1,55 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SolicitudService } from '@core/services/solicitud.service';
 import { IAService } from '@core/services/ia.service';
-import { SolicitudAcademica } from '@models';
-import { SugerenciaClasificacionResponse } from '@models/ia.model';
+import {
+    SolicitudAcademica,
+    ClasificarSolicitudRequest,
+    TipoSolicitud,
+    NivelPrioridad,
+    SugerenciaIA
+} from '@models';
+import { EstadoPipe } from '@shared/pipes/estado.pipe';
+import { PrioridadPipe } from '@shared/pipes/prioridad.pipe';
+
+type Paso = 'elegir' | 'ia-cargando' | 'ia-revision' | 'manual' | 'confirmando';
 
 @Component({
     selector: 'app-solicitud-clasificar-ia',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule, EstadoPipe, PrioridadPipe],
     templateUrl: './solicitudClasificarIA.component.html',
     styleUrls: ['./solicitudClasificarIA.component.scss']
 })
 export class SolicitudClasificarIAComponent implements OnInit {
 
     solicitud: SolicitudAcademica | null = null;
+    loading = true;
     id: number = 0;
 
-    loadingDetalle = true;
-    loadingIA = false;
-    loadingAplicar = false;
-    errorMessage = '';
+    /** Controla en qué paso del flujo estamos */
+    paso: Paso = 'elegir';
 
-    sugerencia: SugerenciaClasificacionResponse | null = null;
+    /** Sugerencia retornada por la IA */
+    sugerenciaIA: SugerenciaIA | null = null;
+    errorIA = '';
+
+    /** Error al confirmar la clasificación */
+    errorClasificar = '';
+
+    readonly today = new Date().toISOString().split('T')[0];
+    readonly tiposSolicitud = Object.values(TipoSolicitud);
+    readonly nivelesPrioridad = Object.values(NivelPrioridad);
+
+    /** Formulario unificado — se usa tanto para manual como para editar la sugerencia IA */
+    form = {
+        tipoSolicitud: '' as TipoSolicitud,
+        nivelPrioridad: '' as NivelPrioridad,
+        justificacion: '',
+        fechaLimite: ''
+    };
 
     constructor(
         private route: ActivatedRoute,
@@ -35,89 +61,175 @@ export class SolicitudClasificarIAComponent implements OnInit {
 
     ngOnInit(): void {
         this.id = Number(this.route.snapshot.paramMap.get('id'));
-        this.cargarDetalle();
+        this.cargarSolicitud();
     }
 
-    cargarDetalle(): void {
+    // ─── Carga inicial ───────────────────────────────────────────────────────
+
+    cargarSolicitud(): void {
         this.solicitudService.getSolicitudById(this.id).subscribe({
             next: (data) => {
                 this.solicitud = data;
-                this.loadingDetalle = false;
+                // Pre-cargar valores existentes si ya había clasificación parcial
+                this.form.tipoSolicitud = data.tipoSolicitud;
+                this.form.nivelPrioridad = data.nivelPrioridad ?? '' as NivelPrioridad;
+                this.form.fechaLimite = data.fechaLimite
+                    ? new Date(data.fechaLimite).toISOString().split('T')[0]
+                    : '';
+                this.loading = false;
                 this.cdr.detectChanges();
-                // Solicitar sugerencia de IA automáticamente al cargar
-                this.pedirSugerencia();
             },
             error: () => {
-                this.loadingDetalle = false;
+                this.loading = false;
                 this.router.navigate(['/app/solicitudes']);
             }
         });
     }
 
-    pedirSugerencia(): void {
-        if (!this.solicitud) return;
-        this.loadingIA = true;
-        this.sugerencia = null;
-        this.errorMessage = '';
+    // ─── Paso 1: elegir método ────────────────────────────────────────────────
 
-        this.iaService.sugerirClasificacion(this.solicitud.id, this.solicitud.descripcion).subscribe({
-            next: (s) => {
-                this.sugerencia = s;
-                this.loadingIA = false;
-                this.cdr.detectChanges();
-            },
-            error: () => {
-                this.loadingIA = false;
-                this.errorMessage = 'No se pudo obtener la sugerencia de la IA.';
-                this.cdr.detectChanges();
-            }
-        });
+    elegirIA(): void {
+        if (!this.solicitud?.descripcion) {
+            this.errorIA = 'La solicitud no tiene descripción para analizar.';
+            return;
+        }
+        this.paso = 'ia-cargando';
+        this.errorIA = '';
+        this.sugerenciaIA = null;
+        this.llamarIA();
     }
 
-    aceptar(): void {
-        this.loadingAplicar = true;
-        this.errorMessage = '';
+    elegirManual(): void {
+        this.paso = 'manual';
+    }
 
-        this.solicitudService.aplicarSugerencia(this.id).subscribe({
-            next: () => {
-                this.loadingAplicar = false;
-                this.router.navigate(['/app/solicitudes', this.id]);
+    // ─── Paso 2-IA: llamar a la IA ───────────────────────────────────────────
+
+    private llamarIA(): void {
+        this.iaService.obtenerSugerencia({
+            solicitudId: this.solicitud!.id!,
+            descripcion: this.solicitud!.descripcion
+        }).subscribe({
+            next: (sugerencia) => {
+                this.sugerenciaIA = sugerencia;
+
+                // Aplicar sugerencia al formulario si los valores son válidos
+                if (sugerencia.tipoSugerido && this.tiposSolicitud.includes(sugerencia.tipoSugerido)) {
+                    this.form.tipoSolicitud = sugerencia.tipoSugerido;
+                }
+                if (sugerencia.prioridadSugerida && this.nivelesPrioridad.includes(sugerencia.prioridadSugerida)) {
+                    this.form.nivelPrioridad = sugerencia.prioridadSugerida;
+                }
+                if (sugerencia.explicacion) {
+                    this.form.justificacion = sugerencia.explicacion;
+                }
+
+                this.paso = 'ia-revision';
+                this.cdr.detectChanges();
             },
             error: (err) => {
-                this.loadingAplicar = false;
-                this.errorMessage = err.error?.message ?? 'No se pudo aplicar la sugerencia.';
+                console.error('Error al obtener sugerencia IA:', err);
+                if (err.status === 403) {
+                    this.errorIA = 'No tienes permisos para usar la clasificación con IA.';
+                } else if (err.status === 404) {
+                    this.errorIA = 'No se encontró la solicitud para analizar.';
+                } else {
+                    this.errorIA = 'El servicio de IA no está disponible en este momento. Puedes clasificar manualmente.';
+                }
+                // Volvemos al paso de elección mostrando el error
+                this.paso = 'elegir';
                 this.cdr.detectChanges();
             }
         });
     }
 
-    rechazar(): void {
-        this.router.navigate(['/app/solicitudes', this.id, 'clasificar']);
+    /** Reintentar llamada a IA desde la pantalla de revisión (botón "Regenerar") */
+    regenerarSugerencia(): void {
+        this.paso = 'ia-cargando';
+        this.sugerenciaIA = null;
+        this.llamarIA();
     }
+
+    /** El humano acepta la sugerencia tal cual — avanza a confirmar */
+    aceptarSugerencia(): void {
+        // El formulario ya tiene los valores de la sugerencia aplicados
+        this.confirmar();
+    }
+
+    /** El humano rechaza la IA y prefiere hacerlo manualmente */
+    rechazarSugerenciaIrManual(): void {
+        this.paso = 'manual';
+    }
+
+    // ─── Confirmación final ───────────────────────────────────────────────────
+
+    get formularioValido(): boolean {
+        return !!this.form.tipoSolicitud && !!this.form.nivelPrioridad && !!this.form.fechaLimite;
+    }
+
+    confirmar(): void {
+        if (!this.formularioValido || !this.solicitud?.id) return;
+
+        this.errorClasificar = '';
+        this.paso = 'confirmando';
+
+        const request: ClasificarSolicitudRequest = {
+            tipoSolicitud: this.form.tipoSolicitud,
+            nivelPrioridad: this.form.nivelPrioridad,
+            justificacion: this.form.justificacion || undefined,
+            fechaLimite: this.form.fechaLimite ? new Date(this.form.fechaLimite) : undefined,
+            version: this.solicitud.version ?? 0
+        };
+
+        this.solicitudService.clasificarSolicitud(this.solicitud.id, request).subscribe({
+            next: () => this.router.navigate(['/app/solicitudes', this.id]),
+            error: (err) => {
+                console.error('Error al clasificar solicitud:', err);
+                this.errorClasificar = err.error?.mensaje
+                    ?? 'Error al clasificar la solicitud. Inténtalo de nuevo.';
+                // Volver al paso correcto según el método usado
+                this.paso = this.sugerenciaIA ? 'ia-revision' : 'manual';
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // ─── Utilidades de confianza IA ───────────────────────────────────────────
+
+    get confianzaPorcentaje(): number {
+        if (!this.sugerenciaIA) return 0;
+        const val = Number(this.sugerenciaIA.confianza);
+        return isNaN(val) ? 0 : Math.round(val * 100);
+    }
+
+    get confianzaLabel(): string {
+        const pct = this.confianzaPorcentaje;
+        if (pct >= 80) return 'Alta confianza';
+        if (pct >= 60) return 'Confianza media';
+        return 'Confianza baja';
+    }
+
+    get confianzaColor(): 'green' | 'amber' | 'red' {
+        const pct = this.confianzaPorcentaje;
+        if (pct >= 80) return 'green';
+        if (pct >= 60) return 'amber';
+        return 'red';
+    }
+
+    // ─── Navegación ───────────────────────────────────────────────────────────
 
     volver(): void {
+        if (this.paso === 'manual' || this.paso === 'ia-revision') {
+            this.paso = 'elegir';
+            this.sugerenciaIA = null;
+            this.errorIA = '';
+            this.errorClasificar = '';
+        } else {
+            this.router.navigate(['/app/solicitudes', this.id]);
+        }
+    }
+
+    volverADetalle(): void {
         this.router.navigate(['/app/solicitudes', this.id]);
-    }
-
-    getNivelColor(nivel: string): string {
-        const map: Record<string, string> = {
-            CRITICA: 'text-[#93000a] bg-[#fee2e2]',
-            ALTA:    'text-[#9a3412] bg-[#ffedd5]',
-            MEDIA:   'text-[#0369a1] bg-[#e0f2fe]',
-            BAJA:    'text-[#166534] bg-[#dcfce7]'
-        };
-        return map[nivel] ?? '';
-    }
-
-    getConfianzaLabel(c: number): string {
-        if (c >= 0.8) return 'Alta';
-        if (c >= 0.5) return 'Media';
-        return 'Baja';
-    }
-
-    getConfianzaBarColor(c: number): string {
-        if (c >= 0.8) return 'bg-[#004f45]';
-        if (c >= 0.5) return 'bg-[#dded49]';
-        return 'bg-[#fca5a5]';
     }
 }
