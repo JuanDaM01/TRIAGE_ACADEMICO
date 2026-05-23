@@ -1,5 +1,8 @@
 package co.edu.uniquindio.triage_academico.dto.request;
 
+import java.time.LocalDateTime;
+
+import co.edu.uniquindio.triage_academico.domain.enums.CanalOrigen;
 import co.edu.uniquindio.triage_academico.domain.enums.TipoSolicitud;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import co.edu.uniquindio.triage_academico.domain.enums.CanalOrigen;
 
 @Data
 @Builder
@@ -25,6 +27,8 @@ public class CrearSolicitudRequest {
 
     @NotNull(message = "El canal de origen es obligatorio")
     private CanalOrigen canalOrigen;
+
+    private LocalDateTime fechaLimite;
 
     private Integer version;
 }

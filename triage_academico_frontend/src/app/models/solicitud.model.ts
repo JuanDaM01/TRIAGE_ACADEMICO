@@ -27,9 +27,9 @@ export interface SolicitudAcademica {
 
 export interface CrearSolicitudRequest {
     descripcion: string;
-    tipoSolicitud?: TipoSolicitud;
+    tipoSolicitud: TipoSolicitud;
     canalOrigen: CanalOrigen;
-    solicitanteId?: number;
+    solicitanteId: number;
     fechaLimite?: Date;
 }
 

@@ -1,6 +1,6 @@
 ﻿import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SolicitudService } from '@core/services/solicitud.service';
 import { AuthService } from '@core/auth/auth.service';
@@ -9,7 +9,7 @@ import { CrearSolicitudRequest, CanalOrigen, TipoSolicitud } from '@models';
 @Component({
     selector: 'app-solicitud-crear',
     standalone: true,
-    imports: [ReactiveFormsModule, CommonModule],
+    imports: [ReactiveFormsModule, CommonModule, RouterModule],
     templateUrl: './solicitudCrear.component.html',
     styleUrls: ['./solicitudCrear.component.scss']
 })
@@ -42,25 +42,34 @@ export class SolicitudCrearComponent {
 
         this.loading = true;
         this.errorMessage = '';
+        this.success = false;
 
         const user = this.authService.getCurrentUser();
+        const formValue = this.solicitudForm.value;
+
         const request: CrearSolicitudRequest = {
-            ...this.solicitudForm.value,
-            solicitanteId: user?.id ?? 0
+            descripcion: formValue.descripcion,
+            tipoSolicitud: formValue.tipoSolicitud,
+            canalOrigen: formValue.canalOrigen,
+            solicitanteId: user?.id ?? 0,
+            // Solo incluir fechaLimite si el usuario ingresó un valor
+            ...(formValue.fechaLimite ? { fechaLimite: new Date(formValue.fechaLimite) } : {})
         };
 
         this.solicitudService.crearSolicitud(request).subscribe({
             next: () => {
+                this.loading = false;
                 this.success = true;
                 setTimeout(() => {
                     this.router.navigate(['/app/solicitudes']);
                 }, 1500);
             },
             error: (err) => {
+                this.loading = false;
                 this.errorMessage =
                     err.error?.message
-                    ?? 'No se pudo crear la solicitud.';
-                this.loading = false;
+                    ?? err.error?.error
+                    ?? 'No se pudo crear la solicitud. Verifica tu conexión con el servidor.';
             }
         });
     }

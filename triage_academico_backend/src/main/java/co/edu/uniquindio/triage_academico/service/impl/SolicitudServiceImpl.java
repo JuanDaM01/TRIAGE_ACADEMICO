@@ -67,13 +67,14 @@ public class SolicitudServiceImpl implements SolicitudService {
                                 .estado(EstadoSolicitud.REGISTRADA)
                                 .nivelPrioridad(NivelPrioridad.MEDIA)
                                 .fechaCreacion(LocalDateTime.now())
+                                .fechaActualizacion(LocalDateTime.now())
+                                .fechaLimite(request.getFechaLimite())
                                 .historial(new ArrayList<>())
                                 .version(0)
                                 .build();
 
                 solicitud = solicitudRepository.save(solicitud);
 
-                Usuario ejecutor = authService.getUsuarioAutenticado();
                 registrarHistorial(solicitud, AccionHistorial.REGISTRO, usuarioId, "Solicitud academica registrada.");
 
                 solicitudRepository.save(solicitud);
