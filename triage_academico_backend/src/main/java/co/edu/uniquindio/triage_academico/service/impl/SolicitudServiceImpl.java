@@ -75,6 +75,8 @@ public class SolicitudServiceImpl implements SolicitudService {
 
                 solicitud = solicitudRepository.save(solicitud);
 
+                // FIX: ya no llamamos getUsuarioAutenticado() aquí; usamos directamente
+                // el usuarioId que ya fue resuelto en el controller
                 registrarHistorial(solicitud, AccionHistorial.REGISTRO, usuarioId, "Solicitud academica registrada.");
 
                 solicitudRepository.save(solicitud);
@@ -181,7 +183,6 @@ public class SolicitudServiceImpl implements SolicitudService {
                                                         + solicitud.getEstado());
                 }
 
-                // RF-03
                 NivelPrioridad prioridadCalculada = prioridadReglasService.calcularPrioridad(
                                 request.getTipoSolicitud(), request.getFechaLimite());
                 String justificacionGenerada = prioridadReglasService.generarJustificacion(
@@ -204,7 +205,6 @@ public class SolicitudServiceImpl implements SolicitudService {
                 registrarHistorial(solicitud, AccionHistorial.CLASIFICACION, ejecutor.getId(), observacionHistorial);
 
                 solicitudRepository.save(solicitud);
-
                 return mapToResponse(solicitud);
         }
 
@@ -246,12 +246,10 @@ public class SolicitudServiceImpl implements SolicitudService {
                 solicitud.setFechaActualizacion(LocalDateTime.now());
 
                 Usuario ejecutor = authService.getUsuarioAutenticado();
-
                 registrarHistorial(solicitud, AccionHistorial.ASIGNACION_RESPONSABLE, ejecutor.getId(),
                                 "Responsable asignado: id " + request.getResponsableId());
 
                 solicitudRepository.save(solicitud);
-
                 return mapToResponse(solicitud);
         }
 
@@ -259,7 +257,6 @@ public class SolicitudServiceImpl implements SolicitudService {
         @Override
         @Transactional
         public SolicitudResponse atenderSolicitud(AtenderSolicitudRequest request, Long id) {
-
                 obtenerSolicitudConVersion(id, request.getVersion());
 
                 SolicitudAcademica solicitud = solicitudRepository.findById(id)
@@ -277,11 +274,9 @@ public class SolicitudServiceImpl implements SolicitudService {
                 solicitud.setFechaResolucion(LocalDateTime.now());
 
                 Usuario ejecutor = authService.getUsuarioAutenticado();
-
                 registrarHistorial(solicitud, AccionHistorial.ATENCION, ejecutor.getId(), request.getObservacion());
 
                 solicitudRepository.save(solicitud);
-
                 return mapToResponse(solicitud);
         }
 
@@ -289,7 +284,6 @@ public class SolicitudServiceImpl implements SolicitudService {
         @Override
         @Transactional
         public SolicitudResponse cerrarSolicitud(CerrarSolicitudRequest request, Long id) {
-
                 obtenerSolicitudConVersion(id, request.getVersion());
 
                 SolicitudAcademica solicitud = solicitudRepository.findById(id)
@@ -308,15 +302,13 @@ public class SolicitudServiceImpl implements SolicitudService {
                 solicitud.setFechaActualizacion(LocalDateTime.now());
 
                 Usuario ejecutor = authService.getUsuarioAutenticado();
-
                 registrarHistorial(solicitud, AccionHistorial.CIERRE, ejecutor.getId(), request.getObservacionCierre());
 
                 solicitudRepository.save(solicitud);
-
                 return mapToResponse(solicitud);
         }
 
-        // Metodos privados auxiliares
+        // Métodos privados auxiliares
         private void registrarHistorial(SolicitudAcademica solicitud, AccionHistorial accion, Long usuarioId,
                         String observacion) {
                 if (solicitud.getHistorial() == null) {
@@ -386,6 +378,7 @@ public class SolicitudServiceImpl implements SolicitudService {
                                 .estado(solicitud.getEstado())
                                 .nivelPrioridad(solicitud.getNivelPrioridad())
                                 .tipoSolicitud(solicitud.getTipoSolicitud())
+                                .canalOrigen(solicitud.getCanalOrigen())
                                 .solicitanteId(solicitud.getSolicitanteId())
                                 .responsableId(asignacionActiva != null ? asignacionActiva.getResponsable().getId()
                                                 : null)

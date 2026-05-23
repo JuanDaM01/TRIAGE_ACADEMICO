@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SolicitudService } from '@core/services/solicitud.service';
-import { SolicitudAcademica } from '@models';
+import { SolicitudAcademica, EstadoSolicitud } from '@models';
 import { AuthService } from '@core/auth/auth.service';
 import { EstadoPipe } from '@shared/pipes/estado.pipe';
 import { PrioridadPipe } from '@shared/pipes/prioridad.pipe';
@@ -19,6 +19,14 @@ export class SolicitudDetalleComponent implements OnInit {
     solicitud: SolicitudAcademica | null = null;
     loading = true;
     id: number = 0;
+
+    private readonly ORDEN_ESTADOS = [
+        EstadoSolicitud.REGISTRADA,
+        EstadoSolicitud.CLASIFICADA,
+        EstadoSolicitud.EN_ATENCION,
+        EstadoSolicitud.ATENDIDA,
+        EstadoSolicitud.CERRADA
+    ];
 
     constructor(
         private route: ActivatedRoute,
@@ -46,6 +54,14 @@ export class SolicitudDetalleComponent implements OnInit {
                 this.router.navigate(['/app/solicitudes']);
             }
         });
+    }
+
+    // Devuelve true si el estado del paso ya fue alcanzado por la solicitud
+    esEstadoAlcanzado(estadoKey: string): boolean {
+        if (!this.solicitud) return false;
+        const idxActual = this.ORDEN_ESTADOS.indexOf(this.solicitud.estado as EstadoSolicitud);
+        const idxPaso = this.ORDEN_ESTADOS.indexOf(estadoKey as EstadoSolicitud);
+        return idxPaso <= idxActual;
     }
 
     volverALaLista(): void {

@@ -1,15 +1,16 @@
 package co.edu.uniquindio.triage_academico.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import co.edu.uniquindio.triage_academico.domain.enums.CanalOrigen;
 import co.edu.uniquindio.triage_academico.domain.enums.EstadoSolicitud;
 import co.edu.uniquindio.triage_academico.domain.enums.NivelPrioridad;
+import co.edu.uniquindio.triage_academico.domain.enums.TipoSolicitud;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import co.edu.uniquindio.triage_academico.domain.enums.TipoSolicitud;
-import java.util.List;
 
 @Data
 @Builder
@@ -21,6 +22,7 @@ public class SolicitudResponse {
     private EstadoSolicitud estado;
     private NivelPrioridad nivelPrioridad;
     private TipoSolicitud tipoSolicitud;
+    private CanalOrigen canalOrigen;  // FIX: campo faltante
     private Long solicitanteId;
     private Long responsableId;
     private String responsableNombre;
