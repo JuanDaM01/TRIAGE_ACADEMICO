@@ -1,7 +1,6 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router, NavigationEnd } from '@angular/router';
-import { Subscription, filter } from 'rxjs';
+import { RouterLink } from '@angular/router';
 import { SolicitudService } from '@core/services/solicitud.service';
 import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '@models';
 
@@ -12,33 +11,19 @@ import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '@models';
     templateUrl: './solicitudesLista.component.html',
     styleUrls: ['./solicitudesLista.component.scss']
 })
-export class SolicitudesListaComponent implements OnInit, OnDestroy {
+export class SolicitudesListaComponent implements OnInit {
 
     solicitudes: SolicitudAcademica[] = [];
     loading = true;
     errorMessage = '';
 
-    private routerSub?: Subscription;
-
     constructor(
         private solicitudService: SolicitudService,
-        private router: Router
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
-        // Carga inicial
         this.cargarSolicitudes();
-
-        // Recarga cada vez que el usuario navega a esta misma ruta
-        // (ej: vuelve desde crear/detalle a la lista)
-        this.routerSub = this.router.events.pipe(
-            filter(e => e instanceof NavigationEnd),
-            filter((e: any) => e.urlAfterRedirects === '/app/solicitudes' || e.url === '/app/solicitudes')
-        ).subscribe(() => this.cargarSolicitudes());
-    }
-
-    ngOnDestroy(): void {
-        this.routerSub?.unsubscribe();
     }
 
     cargarSolicitudes(): void {
@@ -49,10 +34,13 @@ export class SolicitudesListaComponent implements OnInit, OnDestroy {
             next: (data) => {
                 this.solicitudes = data;
                 this.loading = false;
+                this.cdr.detectChanges();
             },
-            error: () => {
+            error: (err) => {
+                console.error('Error cargando solicitudes:', err);
                 this.errorMessage = 'No se pudieron cargar las solicitudes.';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }

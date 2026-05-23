@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SolicitudService } from '@core/services/solicitud.service';
@@ -22,9 +22,10 @@ export class SolicitudDetalleComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private router: Router,           // ← sigue siendo private (mejor práctica)
+        private router: Router,
         private solicitudService: SolicitudService,
-        public authService: AuthService   // ← public porque se usa en el template
+        public authService: AuthService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -37,15 +38,16 @@ export class SolicitudDetalleComponent implements OnInit {
             next: (data) => {
                 this.solicitud = data;
                 this.loading = false;
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.loading = false;
+                this.cdr.detectChanges();
                 this.router.navigate(['/app/solicitudes']);
             }
         });
     }
 
-    // Método público para el template
     volverALaLista(): void {
         this.router.navigate(['/app/solicitudes']);
     }
