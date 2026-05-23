@@ -146,7 +146,7 @@
     <div class="flex flex-wrap gap-3">
       <button
         *ngIf="(authService.hasRole('ADMINISTRATIVO') || authService.hasRole('COORDINADOR') || authService.hasRole('DIRECTOR')) && solicitud.estado === 'REGISTRADA'"
-        (click)="clasificar()"
+        (click)="irAClasificar()"
         class="flex items-center gap-2 bg-[#dded49] hover:bg-[#c1d02c] text-[#1a1d00] font-bold text-sm py-2.5 px-5 rounded-2xl transition-all shadow-sm hover:shadow">
         <span class="material-symbols-outlined text-[17px]">category</span>
         Clasificar solicitud

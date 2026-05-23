@@ -56,11 +56,10 @@ export class SolicitudDetalleComponent implements OnInit {
         });
     }
 
-    // Devuelve true si el estado del paso ya fue alcanzado por la solicitud
     esEstadoAlcanzado(estadoKey: string): boolean {
         if (!this.solicitud) return false;
         const idxActual = this.ORDEN_ESTADOS.indexOf(this.solicitud.estado as EstadoSolicitud);
-        const idxPaso = this.ORDEN_ESTADOS.indexOf(estadoKey as EstadoSolicitud);
+        const idxPaso   = this.ORDEN_ESTADOS.indexOf(estadoKey as EstadoSolicitud);
         return idxPaso <= idxActual;
     }
 
@@ -68,8 +67,8 @@ export class SolicitudDetalleComponent implements OnInit {
         this.router.navigate(['/app/solicitudes']);
     }
 
-    clasificar(): void {
-        alert('Funcionalidad de Clasificar en desarrollo');
+    irAClasificar(): void {
+        this.router.navigate(['/app/solicitudes', this.id, 'clasificar']);
     }
 
     atender(): void {

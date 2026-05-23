@@ -17,6 +17,11 @@ export const SOLICITUDES_ROUTES: Routes = [
         title: 'Detalle de Solicitud'
     },
     {
+        path: ':id/clasificar',
+        loadComponent: () => import('./clasificar/solicitudClasificar.component').then(m => m.SolicitudClasificarComponent),
+        title: 'Clasificar Solicitud'
+    },
+    {
         path: ':id/historial',
         loadComponent: () => import('./historial/historialSolicitud.component').then(m => m.HistorialSolicitudComponent),
         title: 'Historial de Solicitud'
