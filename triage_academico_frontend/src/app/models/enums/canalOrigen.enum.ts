@@ -3,6 +3,5 @@ export enum CanalOrigen {
     CORREO = 'CORREO',
     CSU = 'CSU',
     SAC = 'SAC',
-    TELEFONICO = 'TELEFONICO',
-    SISTEMA = 'SISTEMA'
+    TELEFONICO = 'TELEFONICO'
 }

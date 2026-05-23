@@ -32,7 +32,7 @@ export class SolicitudCrearComponent {
         this.solicitudForm = this.fb.group({
             descripcion: ['', [Validators.required, Validators.minLength(10)]],
             tipoSolicitud: [TipoSolicitud.CONSULTA, Validators.required],
-            canalOrigen: [CanalOrigen.SISTEMA, Validators.required],
+            canalOrigen: [CanalOrigen.PRESENCIAL, Validators.required],
             fechaLimite: ['']
         });
     }
