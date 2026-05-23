@@ -26,6 +26,7 @@
         <p class="text-sm text-[#3e4946]/70 dark:text-white/60">{{ solicitud.tipoSolicitud }} · {{ solicitud.canalOrigen }} · {{ solicitud.fechaCreacion | date:'d MMM yyyy':'':'es' }}</p>
       </div>
       <div class="flex items-center gap-3 flex-wrap">
+        <!-- Badge estado -->
         <span class="text-xs font-bold px-3 py-1.5 rounded-full"
           [class.bg-[#e0f4f1]]="solicitud.estado === 'REGISTRADA'" [class.text-[#004f45]]="solicitud.estado === 'REGISTRADA'"
           [class.bg-[#fff8e1]]="solicitud.estado === 'CLASIFICADA'" [class.text-[#594400]]="solicitud.estado === 'CLASIFICADA'"
@@ -34,6 +35,7 @@
           [class.bg-[#f3f4f6]]="solicitud.estado === 'CERRADA'"    [class.text-[#374151]]="solicitud.estado === 'CERRADA'">
           {{ solicitud.estado | estado }}
         </span>
+        <!-- Badge prioridad -->
         <span *ngIf="solicitud.nivelPrioridad" class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
           [class.bg-[#fee2e2]]="solicitud.nivelPrioridad === 'CRITICA'" [class.text-[#93000a]]="solicitud.nivelPrioridad === 'CRITICA'"
           [class.bg-[#ffedd5]]="solicitud.nivelPrioridad === 'ALTA'"    [class.text-[#9a3412]]="solicitud.nivelPrioridad === 'ALTA'"
@@ -51,7 +53,7 @@
   </div>
 
   <!-- ── PROGRESO DEL TRIAGE ── -->
-  <div class="bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-lg rounded-2xl border border-white/50 dark:border-white/10 px-8 py-6 mb-6 mt-4">
+  <div class="bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-lg rounded-b-2xl border-x border-b border-white/50 dark:border-white/10 px-8 py-5 mb-6 -mt-1">
     <div class="flex items-center">
       <ng-container *ngFor="let paso of [
         {key:'REGISTRADA',  label:'Registrada',  icon:'edit_note'},
@@ -99,7 +101,7 @@
         <p class="text-[10px] font-black text-[#594400] uppercase tracking-widest mb-2 flex items-center gap-1.5">
           <span class="material-symbols-outlined text-[14px]">auto_awesome</span> Justificación de prioridad (IA)
         </p>
-        <p class="text-sm text-[#3e4946] dark:text-[#3e4946] leading-relaxed">{{ solicitud.justificacionPrioridad }}</p>
+        <p class="text-sm text-[#3e4946] leading-relaxed">{{ solicitud.justificacionPrioridad }}</p>
       </div>
 
     </div>
@@ -144,13 +146,26 @@
       <span class="material-symbols-outlined text-[14px]">build</span> Acciones disponibles
     </p>
     <div class="flex flex-wrap gap-3">
+
+      <!-- Clasificar con IA -->
       <button
         *ngIf="(authService.hasRole('ADMINISTRATIVO') || authService.hasRole('COORDINADOR') || authService.hasRole('DIRECTOR')) && solicitud.estado === 'REGISTRADA'"
-        (click)="irAClasificar()"
+        (click)="irAClasificarIA()"
         class="flex items-center gap-2 bg-[#dded49] hover:bg-[#c1d02c] text-[#1a1d00] font-bold text-sm py-2.5 px-5 rounded-2xl transition-all shadow-sm hover:shadow">
-        <span class="material-symbols-outlined text-[17px]">category</span>
-        Clasificar solicitud
+        <span class="material-symbols-outlined text-[17px]">auto_awesome</span>
+        Clasificar con IA
       </button>
+
+      <!-- Clasificar manualmente -->
+      <button
+        *ngIf="(authService.hasRole('ADMINISTRATIVO') || authService.hasRole('COORDINADOR') || authService.hasRole('DIRECTOR')) && solicitud.estado === 'REGISTRADA'"
+        (click)="irAClasificarManual()"
+        class="flex items-center gap-2 bg-white/60 hover:bg-white/90 text-[#004f45] font-bold text-sm py-2.5 px-5 rounded-2xl border border-white/50 transition-all shadow-sm hover:shadow">
+        <span class="material-symbols-outlined text-[17px]">edit_note</span>
+        Clasificar manualmente
+      </button>
+
+      <!-- Atender -->
       <button
         *ngIf="(authService.hasRole('DOCENTE') || authService.hasRole('ADMINISTRATIVO')) && solicitud.estado === 'EN_ATENCION'"
         (click)="atender()"
@@ -158,9 +173,11 @@
         <span class="material-symbols-outlined text-[17px]">task_alt</span>
         Atender solicitud
       </button>
+
       <p *ngIf="solicitud.estado === 'CERRADA'" class="text-sm text-[#3e4946]/50 dark:text-white/30 italic self-center">
         Esta solicitud está cerrada y no admite más acciones.
       </p>
+
     </div>
   </div>
 

@@ -67,8 +67,12 @@ export class SolicitudDetalleComponent implements OnInit {
         this.router.navigate(['/app/solicitudes']);
     }
 
-    irAClasificar(): void {
+    irAClasificarManual(): void {
         this.router.navigate(['/app/solicitudes', this.id, 'clasificar']);
+    }
+
+    irAClasificarIA(): void {
+        this.router.navigate(['/app/solicitudes', this.id, 'clasificacion-ia']);
     }
 
     atender(): void {

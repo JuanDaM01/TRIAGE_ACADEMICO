@@ -1,94 +1,100 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SolicitudService } from '@core/services/solicitud.service';
-import { SolicitudAcademica, ClasificarSolicitudRequest, TipoSolicitud, NivelPrioridad } from '@models';
-import { EstadoPipe } from '@shared/pipes/estado.pipe';
-import { PrioridadPipe } from '@shared/pipes/prioridad.pipe';
+import { SolicitudAcademica, TipoSolicitud, NivelPrioridad } from '@models';
 
 @Component({
     selector: 'app-solicitud-clasificar',
     standalone: true,
-    imports: [CommonModule, FormsModule, EstadoPipe, PrioridadPipe],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './solicitudClasificar.component.html',
     styleUrls: ['./solicitudClasificar.component.scss']
 })
 export class SolicitudClasificarComponent implements OnInit {
 
     solicitud: SolicitudAcademica | null = null;
-    loading = true;
-    clasificando = false;
     id: number = 0;
+    loadingDetalle = true;
+    loadingClasificar = false;
+    errorMessage = '';
 
-    readonly today = new Date().toISOString().split('T')[0];
+    clasificarForm: FormGroup;
+
     readonly tiposSolicitud = Object.values(TipoSolicitud);
     readonly nivelesPrioridad = Object.values(NivelPrioridad);
-
-    form = {
-        tipoSolicitud: '' as TipoSolicitud,
-        nivelPrioridad: '' as NivelPrioridad,
-        justificacion: '',
-        fechaLimite: ''
-    };
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private solicitudService: SolicitudService,
+        private fb: FormBuilder,
         private cdr: ChangeDetectorRef
-    ) { }
+    ) {
+        this.clasificarForm = this.fb.group({
+            tipoSolicitud: ['', Validators.required],
+            nivelPrioridad: ['', Validators.required],
+            fechaLimite: ['']
+        });
+    }
 
     ngOnInit(): void {
         this.id = Number(this.route.snapshot.paramMap.get('id'));
-        this.cargarSolicitud();
+        this.cargarDetalle();
     }
 
-    cargarSolicitud(): void {
+    cargarDetalle(): void {
         this.solicitudService.getSolicitudById(this.id).subscribe({
             next: (data) => {
                 this.solicitud = data;
-                this.form.tipoSolicitud = data.tipoSolicitud;
-                this.form.nivelPrioridad = data.nivelPrioridad ?? '' as NivelPrioridad;
-                this.form.fechaLimite = data.fechaLimite
-                    ? new Date(data.fechaLimite).toISOString().split('T')[0]
-                    : '';
-                this.loading = false;
+                this.clasificarForm.patchValue({ tipoSolicitud: data.tipoSolicitud });
+                this.loadingDetalle = false;
                 this.cdr.detectChanges();
             },
             error: () => {
-                this.loading = false;
+                this.loadingDetalle = false;
                 this.router.navigate(['/app/solicitudes']);
             }
         });
     }
 
-    get formularioValido(): boolean {
-        return !!this.form.tipoSolicitud && !!this.form.nivelPrioridad && !!this.form.fechaLimite;
+    clasificarManual(): void {
+        if (this.clasificarForm.invalid || !this.solicitud) return;
+        this.loadingClasificar = true;
+        this.errorMessage = '';
+
+        const { tipoSolicitud, nivelPrioridad, fechaLimite } = this.clasificarForm.value;
+
+        this.solicitudService.clasificarSolicitud(this.id, {
+            tipoSolicitud,
+            nivelPrioridad,
+            fechaLimite: fechaLimite ? new Date(fechaLimite) : undefined,
+            version: this.solicitud.version ?? 0
+        }).subscribe({
+            next: () => {
+                this.loadingClasificar = false;
+                this.router.navigate(['/app/solicitudes', this.id]);
+            },
+            error: (err) => {
+                this.loadingClasificar = false;
+                this.errorMessage = err.error?.message ?? 'No se pudo clasificar la solicitud.';
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    getNivelColor(nivel: string): string {
+        const map: Record<string, string> = {
+            CRITICA: 'text-[#93000a] bg-[#fee2e2]',
+            ALTA:    'text-[#9a3412] bg-[#ffedd5]',
+            MEDIA:   'text-[#0369a1] bg-[#e0f2fe]',
+            BAJA:    'text-[#166534] bg-[#dcfce7]'
+        };
+        return map[nivel] ?? '';
     }
 
     volver(): void {
         this.router.navigate(['/app/solicitudes', this.id]);
-    }
-
-    confirmar(): void {
-        if (!this.formularioValido || !this.solicitud?.id) return;
-
-        this.clasificando = true;
-        const request: ClasificarSolicitudRequest = {
-            tipoSolicitud: this.form.tipoSolicitud,
-            nivelPrioridad: this.form.nivelPrioridad,
-            justificacion: this.form.justificacion || undefined,
-            fechaLimite: new Date(this.form.fechaLimite),
-            version: this.solicitud.version ?? 0
-        };
-
-        this.solicitudService.clasificarSolicitud(this.solicitud.id, request).subscribe({
-            next: () => this.router.navigate(['/app/solicitudes', this.id]),
-            error: (err) => {
-                console.error(err);
-                this.clasificando = false;
-            }
-        });
     }
 }

@@ -12,24 +12,23 @@ export interface ResumenRequest {
     solicitudId: number;
 }
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class IAService {
 
     private readonly API_URL = `${environment.apiUrl}/api/ia`;
 
     constructor(private http: HttpClient) { }
 
-    obtenerSugerencia(request: SugerenciaRequest): Observable<SugerenciaIA> {
-        return this.http.post<SugerenciaIA>(`${this.API_URL}/sugerir`, request);
+    // POST /api/ia/sugerir-clasificacion
+    sugerirClasificacion(solicitudId: number, descripcion: string): Observable<SugerenciaClasificacionResponse> {
+        return this.http.post<SugerenciaClasificacionResponse>(`${this.API_URL}/sugerir-clasificacion`, {
+            solicitudId,
+            descripcion
+        });
     }
 
-    generarResumen(request: ResumenRequest): Observable<ResumenIA> {
-        return this.http.post<ResumenIA>(`${this.API_URL}/resumen`, request);
-    }
-
-    obtenerResumenSolicitud(solicitudId: number): Observable<ResumenIA> {
-        return this.generarResumen({ solicitudId });
+    // GET /api/ia/resumen/:solicitudId
+    generarResumen(solicitudId: number): Observable<ResumenIA> {
+        return this.http.get<ResumenIA>(`${this.API_URL}/resumen/${solicitudId}`);
     }
 }

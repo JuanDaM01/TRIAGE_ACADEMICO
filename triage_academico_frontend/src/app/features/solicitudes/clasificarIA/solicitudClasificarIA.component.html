@@ -1,0 +1,142 @@
+<!-- LOADING DETALLE -->
+<div *ngIf="loadingDetalle" class="space-y-4 animate-pulse w-full max-w-2xl mx-auto font-['Inter']">
+  <div class="h-32 bg-white/40 rounded-3xl"></div>
+  <div class="h-56 bg-white/30 rounded-2xl"></div>
+</div>
+
+<!-- CONTENIDO -->
+<div *ngIf="!loadingDetalle && solicitud" class="w-full max-w-2xl mx-auto pb-12 font-['Inter'] space-y-5">
+
+  <!-- HEADER -->
+  <div class="relative overflow-hidden rounded-3xl bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_0_rgba(0,79,69,0.05)] p-8">
+    <div class="absolute top-0 right-0 w-56 h-56 bg-gradient-to-br from-[#dded49]/30 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div class="relative z-10 flex justify-between items-start gap-4">
+      <div>
+        <h2 class="text-2xl font-black text-[#004f45] flex items-center gap-2 mb-1">
+          <span class="material-symbols-outlined text-[28px]">auto_awesome</span>
+          Clasificación con IA
+        </h2>
+        <p class="text-xs text-[#3e4946]/50 font-medium">Solicitud #{{ solicitud.id }} · {{ solicitud.tipoSolicitud }}</p>
+        <p class="text-sm text-[#3e4946]/70 mt-2 leading-relaxed line-clamp-2">{{ solicitud.descripcion }}</p>
+      </div>
+      <button (click)="volver()"
+        class="shrink-0 flex items-center gap-1.5 text-xs font-bold text-[#004f45] bg-white/60 px-3 py-2 rounded-xl border border-white shadow-sm hover:bg-white/90 transition-all">
+        <span class="material-symbols-outlined text-[15px]">arrow_back</span> Volver
+      </button>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="errorMessage" class="bg-[#fee2e2] border border-[#fca5a5] rounded-2xl px-5 py-4 text-sm text-[#93000a] font-medium flex items-center gap-2">
+    <span class="material-symbols-outlined text-[18px]">error</span>
+    {{ errorMessage }}
+    <button (click)="pedirSugerencia()" class="ml-auto text-xs font-bold underline underline-offset-2">Reintentar</button>
+  </div>
+
+  <!-- ANALIZANDO CON IA -->
+  <div *ngIf="loadingIA" class="bg-white/50 backdrop-blur-lg rounded-2xl border border-white/50 p-10 flex flex-col items-center gap-4 text-center">
+    <div class="w-14 h-14 rounded-2xl bg-[#dded49]/30 flex items-center justify-center">
+      <span class="animate-spin material-symbols-outlined text-[28px] text-[#594400]">progress_activity</span>
+    </div>
+    <div>
+      <p class="font-black text-[#004f45] text-base mb-1">Analizando solicitud...</p>
+      <p class="text-xs text-[#3e4946]/50">La IA está procesando la descripción para sugerir tipo y prioridad.</p>
+    </div>
+  </div>
+
+  <!-- SUGERENCIA DE IA -->
+  <div *ngIf="sugerencia && !loadingIA" class="space-y-4">
+
+    <!-- Tarjeta principal -->
+    <div class="bg-white/50 backdrop-blur-lg rounded-2xl border border-white/50 overflow-hidden">
+
+      <!-- Cabecera -->
+      <div class="bg-[#dded49]/15 border-b border-[#dded49]/30 px-6 py-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px] text-[#594400]">auto_awesome</span>
+        <p class="text-xs font-black text-[#594400] uppercase tracking-widest">Sugerencia generada por IA</p>
+        <span class="ml-auto text-[10px] font-bold px-2.5 py-1 rounded-full"
+          [ngClass]="{
+            'bg-[#dcfce7] text-[#166534]': sugerencia.confianza >= 0.8,
+            'bg-[#fff8e1] text-[#594400]': sugerencia.confianza >= 0.5 && sugerencia.confianza < 0.8,
+            'bg-[#fee2e2] text-[#93000a]': sugerencia.confianza < 0.5
+          }">
+          Confianza {{ getConfianzaLabel(sugerencia.confianza) }} · {{ (sugerencia.confianza * 100).toFixed(0) }}%
+        </span>
+      </div>
+
+      <div class="p-6 space-y-4">
+
+        <!-- Tipo y prioridad -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-[#f0f7f6] rounded-xl p-4">
+            <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest mb-1">Tipo sugerido</p>
+            <p class="text-sm font-bold text-[#004f45]">{{ sugerencia.tipoSugerido }}</p>
+          </div>
+          <div class="bg-[#f0f7f6] rounded-xl p-4">
+            <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest mb-1">Prioridad sugerida</p>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full" [ngClass]="getNivelColor(sugerencia.prioridadSugerida)">
+              {{ sugerencia.prioridadSugerida }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Barra de confianza -->
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest">Nivel de confianza</p>
+            <p class="text-xs font-bold text-[#004f45]">{{ (sugerencia.confianza * 100).toFixed(0) }}%</p>
+          </div>
+          <div class="w-full h-2 bg-[#ebefee] rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700"
+              [ngClass]="getConfianzaBarColor(sugerencia.confianza)"
+              [style.width]="(sugerencia.confianza * 100) + '%'">
+            </div>
+          </div>
+        </div>
+
+        <!-- Justificación -->
+        <div class="bg-[#f0f7f6] rounded-xl p-4">
+          <p class="text-[9px] font-black text-[#3e4946]/40 uppercase tracking-widest mb-2 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[13px]">psychology</span>
+            Justificación de la IA
+          </p>
+          <p class="text-sm text-[#3e4946] leading-relaxed">{{ sugerencia.explicacion }}</p>
+        </div>
+
+        <!-- Aviso confirmación humana -->
+        <div class="bg-[#dbeafe] border border-[#bfdbfe] rounded-xl px-4 py-3 flex items-start gap-2">
+          <span class="material-symbols-outlined text-[16px] text-[#1e40af] shrink-0 mt-0.5">info</span>
+          <p class="text-xs text-[#1e40af] leading-relaxed">
+            Esta sugerencia requiere <strong>confirmación humana</strong>. Revisa los valores antes de aceptar.
+            Si no estás de acuerdo, puedes clasificar manualmente.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BOTONES DE DECISIÓN -->
+    <div class="grid grid-cols-2 gap-3">
+      <button (click)="aceptar()" [disabled]="loadingAplicar"
+        class="flex items-center justify-center gap-2 bg-[#004f45] hover:bg-[#003d35] text-white font-bold text-sm py-3.5 rounded-2xl transition-all shadow-sm hover:shadow disabled:opacity-60 disabled:cursor-not-allowed">
+        <span *ngIf="!loadingAplicar" class="material-symbols-outlined text-[18px]">check_circle</span>
+        <span *ngIf="loadingAplicar" class="animate-spin material-symbols-outlined text-[18px]">progress_activity</span>
+        {{ loadingAplicar ? 'Aplicando...' : 'Aceptar sugerencia' }}
+      </button>
+      <button (click)="rechazar()" [disabled]="loadingAplicar"
+        class="flex items-center justify-center gap-2 bg-white/60 hover:bg-white/90 text-[#3e4946] font-bold text-sm py-3.5 rounded-2xl border border-white/50 transition-all disabled:opacity-60">
+        <span class="material-symbols-outlined text-[18px]">edit_note</span>
+        Clasificar manualmente
+      </button>
+    </div>
+
+    <!-- Nueva sugerencia -->
+    <button (click)="pedirSugerencia()" [disabled]="loadingIA"
+      class="w-full flex items-center justify-center gap-1.5 text-xs font-bold text-[#3e4946]/50 hover:text-[#004f45] py-2 transition-colors">
+      <span class="material-symbols-outlined text-[14px]">refresh</span>
+      Pedir nueva sugerencia
+    </button>
+
+  </div>
+
+</div>
