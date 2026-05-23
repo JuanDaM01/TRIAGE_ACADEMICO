@@ -21,20 +21,19 @@ public interface SolicitudRepository extends JpaRepository<SolicitudAcademica, L
 
         List<SolicitudAcademica> findByEstado(EstadoSolicitud estado);
 
-        List<SolicitudAcademica> findByNivelPrioridad(NivelPrioridad prioridad);
+        List<SolicitudAcademica> findByNivelPrioridad(NivelPrioridad nivelPrioridad);
 
-        // Metodo que carga el historial y las asignaciones con sus responsables
         @EntityGraph(attributePaths = { "historial", "asignaciones", "asignaciones.responsable" })
         @Query("SELECT s FROM SolicitudAcademica s WHERE s.id = :id")
         Optional<SolicitudAcademica> findWithHistorialById(@Param("id") Long id);
 
-        // Metodo para filtrar solicitudes por estado, tipo, prioridad y responsable
+        @EntityGraph(attributePaths = { "asignaciones", "asignaciones.responsable" })
         @Query("SELECT DISTINCT s FROM SolicitudAcademica s " +
-                        "LEFT JOIN s.asignaciones a ON a.activa = true " +
+                        "LEFT JOIN s.asignaciones a " +
                         "WHERE (:estado IS NULL OR s.estado = :estado) " +
                         "AND (:tipoSolicitud IS NULL OR s.tipoSolicitud = :tipoSolicitud) " +
                         "AND (:nivelPrioridad IS NULL OR s.nivelPrioridad = :nivelPrioridad) " +
-                        "AND (:responsableId IS NULL OR a.responsable.id = :responsableId)")
+                        "AND (:responsableId IS NULL OR (a.activa = true AND a.responsable.id = :responsableId))")
         Page<SolicitudAcademica> findByFiltros(@Param("estado") EstadoSolicitud estado,
                         @Param("tipoSolicitud") TipoSolicitud tipoSolicitud,
                         @Param("nivelPrioridad") NivelPrioridad nivelPrioridad,
