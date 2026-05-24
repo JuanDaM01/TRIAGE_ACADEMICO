@@ -81,7 +81,12 @@ export class SolicitudDetalleComponent implements OnInit {
 
     asignarResponsableActual(): void {
         const responsableId = this.authService.getCurrentUser()?.id;
-        if (!responsableId || !this.solicitud?.id || this.solicitud.version == null) {
+        if (!responsableId || !this.solicitud?.id) {
+            return;
+        }
+
+        if (this.solicitud.version == null) {
+            this.cargarDetalle();
             return;
         }
 
