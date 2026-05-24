@@ -10,6 +10,8 @@ import { EstadoPipe } from '@shared/pipes/estado.pipe';
 import { PrioridadPipe } from '@shared/pipes/prioridad.pipe';
 import { FormsModule } from '@angular/forms';
 
+import { finalize, take, timeout } from 'rxjs';
+
 @Component({
     selector: 'app-solicitud-detalle',
     standalone: true,
@@ -183,12 +185,15 @@ export class SolicitudDetalleComponent implements OnInit {
         if (!this.solicitud?.id || !usuarioActual?.id) {
             this.mensajeError = 'No fue posible preparar la asignación de la solicitud.';
             this.modalEnviarAtencionVisible = false;
+            this.accionEnProceso = false;
+            this.cdr.detectChanges();
             return;
         }
 
         if (this.solicitud.estado !== EstadoSolicitud.CLASIFICADA) {
             this.mensajeError = 'La solicitud ya no se encuentra en estado clasificada.';
             this.modalEnviarAtencionVisible = false;
+            this.accionEnProceso = false;
             this.cargarDetalle();
             return;
         }
@@ -196,6 +201,7 @@ export class SolicitudDetalleComponent implements OnInit {
         if (this.solicitud.version === null || this.solicitud.version === undefined) {
             this.mensajeError = 'La solicitud no tiene versión válida para controlar concurrencia.';
             this.modalEnviarAtencionVisible = false;
+            this.accionEnProceso = false;
             this.cargarDetalle();
             return;
         }
@@ -205,22 +211,39 @@ export class SolicitudDetalleComponent implements OnInit {
         const version = Number(this.solicitud.version);
 
         this.accionEnProceso = true;
+        this.cdr.detectChanges();
 
-        this.solicitudService.asignarResponsable(solicitudId, responsableId, version).subscribe({
-            next: (solicitudActualizada) => {
-                this.solicitud = solicitudActualizada;
-                this.accionEnProceso = false;
-                this.modalEnviarAtencionVisible = false;
-                this.mensajeExito = 'La solicitud fue enviada a atención correctamente.';
-                this.cdr.detectChanges();
-            },
-            error: (error) => {
-                this.accionEnProceso = false;
-                this.modalEnviarAtencionVisible = false;
-                this.mensajeError = this.obtenerMensajeErrorAsignacion(error);
-                this.cdr.detectChanges();
-            }
-        });
+        this.solicitudService
+            .asignarResponsable(solicitudId, responsableId, version)
+            .pipe(
+                take(1),
+                timeout(15000),
+                finalize(() => {
+                    this.accionEnProceso = false;
+                    this.cdr.detectChanges();
+                })
+            )
+            .subscribe({
+                next: (solicitudActualizada) => {
+                    this.solicitud = solicitudActualizada;
+                    this.modalEnviarAtencionVisible = false;
+                    this.mensajeExito = 'La solicitud fue enviada a atención correctamente.';
+                    this.cdr.detectChanges();
+                },
+                error: (error) => {
+                    console.error('Error enviando solicitud a atención:', error);
+
+                    this.modalEnviarAtencionVisible = false;
+
+                    if (error?.name === 'TimeoutError') {
+                        this.mensajeError = 'El servidor tardó demasiado en responder. Verifique el backend e intente nuevamente.';
+                    } else {
+                        this.mensajeError = this.obtenerMensajeErrorAsignacion(error);
+                    }
+
+                    this.cdr.detectChanges();
+                }
+            });
     }
 
     abrirModalAtender(): void {
