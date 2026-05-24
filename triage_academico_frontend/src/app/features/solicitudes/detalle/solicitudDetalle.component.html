@@ -133,7 +133,7 @@
             Atender solicitud
           </button>
 
-          <button *ngIf="puedeCerrar()" type="button" class="action-btn action-close" [disabled]="accionEnProceso"
+          <button *ngIf="puedeCerrar()" type="button" class="action-btn action-primary" [disabled]="accionEnProceso"
             (click)="abrirModalCerrar()">
 
             <span class="material-symbols-outlined">lock</span>
@@ -162,7 +162,8 @@
 
         <div class="meta-item">
           <span class="meta-label">Actualizada</span>
-          <strong>{{ solicitud.fechaActualizacion ? (solicitud.fechaActualizacion | date:'d MMM yyyy':'':'es') : 'Sin registro' }} </strong>
+          <strong>{{ solicitud.fechaActualizacion ? (solicitud.fechaActualizacion | date:'d MMM yyyy':'':'es') : 'Sin
+            registro' }} </strong>
           <small>
             {{ solicitud.fechaActualizacion ? (solicitud.fechaActualizacion | date:'h:mm a':'':'es') : '' }}
           </small>
@@ -295,89 +296,72 @@
     </div>
   </div>
 
-  <div
-  *ngIf="modalCerrarVisible"
-  class="modal-backdrop"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="modalCerrarTitulo">
+  <div *ngIf="modalCerrarVisible" class="modal-backdrop" role="dialog" aria-modal="true"
+    aria-labelledby="modalCerrarTitulo">
 
-  <div class="confirm-modal modal-atencion modal-cierre">
+    <div class="confirm-modal modal-atencion modal-cierre">
 
-    <div class="modal-icon modal-icon-close">
-      <span class="material-symbols-outlined">lock</span>
-    </div>
-
-    <div class="modal-content">
-
-      <p class="eyebrow">Cerrar solicitud</p>
-
-      <h2 id="modalCerrarTitulo">
-        Cerrar solicitud #{{ solicitud.id }}
-      </h2>
-
-      <p>
-        La solicitud pasará de <strong>Atendida</strong> a
-        <strong>Cerrada</strong>. Registre una observación final del cierre.
-      </p>
-
-      <label class="textarea-label" for="observacionCierre">
-        Observación de cierre
-      </label>
-
-      <textarea
-        id="observacionCierre"
-        class="modal-textarea"
-        rows="5"
-        maxlength="1000"
-        [(ngModel)]="observacionCierre"
-        placeholder="Ejemplo: Se verificó que la solicitud fue atendida correctamente y se cierra el caso.">
-      </textarea>
-
-      <div class="textarea-footer">
-        <span
-          class="field-error"
-          *ngIf="!observacionCierre.trim()">
-
-          La observación de cierre es obligatoria.
-
-        </span>
-
-        <span class="counter">
-          {{ observacionCierre.length }}/1000
-        </span>
+      <div class="modal-icon modal-icon-close">
+        <span class="material-symbols-outlined">lock</span>
       </div>
 
-      <div class="modal-actions">
+      <div class="modal-content">
 
-        <button
-          type="button"
-          class="btn-modal-secondary"
-          [disabled]="accionEnProceso"
-          (click)="cancelarCierre()">
+        <p class="eyebrow">Cerrar solicitud</p>
 
-          Cancelar
+        <h2 id="modalCerrarTitulo">
+          Cerrar solicitud #{{ solicitud.id }}
+        </h2>
 
-        </button>
+        <p>
+          La solicitud pasará de <strong>Atendida</strong> a
+          <strong>Cerrada</strong>. Registre una observación final del cierre.
+        </p>
 
-        <button
-          type="button"
-          class="btn-modal-primary btn-modal-success"
-          [disabled]="accionEnProceso || !observacionCierre.trim()"
-          (click)="confirmarCierre()">
+        <label class="textarea-label" for="observacionCierre">
+          Observación de cierre
+        </label>
 
-          <span *ngIf="accionEnProceso" class="button-spinner"></span>
+        <textarea id="observacionCierre" class="modal-textarea" rows="5" maxlength="1000"
+          [(ngModel)]="observacionCierre"
+          placeholder="Ejemplo: Se verificó que la solicitud fue atendida correctamente y se cierra el caso.">
+      </textarea>
 
-          {{ accionEnProceso ? 'Cerrando...' : 'Confirmar cierre' }}
+        <div class="textarea-footer">
+          <span class="field-error" *ngIf="!observacionCierre.trim()">
 
-        </button>
+            La observación de cierre es obligatoria.
+
+          </span>
+
+          <span class="counter">
+            {{ observacionCierre.length }}/1000
+          </span>
+        </div>
+
+        <div class="modal-actions">
+
+          <button type="button" class="btn-modal-secondary" [disabled]="accionEnProceso" (click)="cancelarCierre()">
+
+            Cancelar
+
+          </button>
+
+          <button type="button" class="btn-modal-primary btn-modal-success"
+            [disabled]="accionEnProceso || !observacionCierre.trim()" (click)="confirmarCierre()">
+
+            <span *ngIf="accionEnProceso" class="button-spinner"></span>
+
+            {{ accionEnProceso ? 'Cerrando...' : 'Confirmar cierre' }}
+
+          </button>
+
+        </div>
 
       </div>
 
     </div>
 
   </div>
-
-</div>
 
 </section>

@@ -783,6 +783,21 @@ h1 {
         0 14px 30px rgba(0, 0, 0, 0.28);
 }
 
+.actions-list .action-btn.action-close {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+    box-shadow: 0 14px 28px rgba(0, 79, 69, 0.22) !important;
+}
+
+.actions-list .action-btn.action-close:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-dark), #0cd86f) !important;
+    transform: translateY(-2px);
+}
+
+.actions-list .action-btn.action-close .material-symbols-outlined {
+    color: #ffffff;
+}
+
 @media (max-width: 900px) {
     .content-grid {
         grid-template-columns: 1fr;
@@ -909,17 +924,6 @@ h1 {
     :host-context(.dark) .modal-textarea:focus {
         border-color: var(--mint);
         box-shadow: 0 0 0 4px rgba(132, 213, 197, 0.12);
-    }
-
-    .action-close {
-        color: #ffffff;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        box-shadow: 0 14px 28px rgba(0, 79, 69, 0.18);
-    }
-
-    .action-close:hover:not(:disabled) {
-        background: linear-gradient(135deg, var(--primary-dark), #002f29);
-        transform: translateY(-2px);
     }
 
     .modal-icon-close {
