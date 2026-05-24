@@ -32,6 +32,9 @@ export class SolicitudDetalleComponent implements OnInit {
 
     modalEnviarAtencionVisible = false;
 
+    modalCerrarVisible = false;
+    observacionCierre = '';
+
     id = 0;
 
     readonly EstadoSolicitud = EstadoSolicitud;
@@ -133,8 +136,7 @@ export class SolicitudDetalleComponent implements OnInit {
             (
                 this.authService.hasRole('ADMINISTRATIVO') ||
                 this.authService.hasRole('COORDINADOR') ||
-                this.authService.hasRole('DIRECTOR') ||
-                this.authService.hasRole('DOCENTE')
+                this.authService.hasRole('DIRECTOR')
             );
     }
 
@@ -304,6 +306,105 @@ export class SolicitudDetalleComponent implements OnInit {
                     this.mensajeError = this.obtenerMensajeErrorProceso(
                         error,
                         'No fue posible atender la solicitud.'
+                    );
+                    this.cdr.detectChanges();
+                }
+            });
+    }
+
+    puedeCerrar(): boolean {
+        return !!this.solicitud &&
+            this.solicitud.estado === EstadoSolicitud.ATENDIDA &&
+            (
+                this.authService.hasRole('ADMINISTRATIVO') ||
+                this.authService.hasRole('COORDINADOR') ||
+                this.authService.hasRole('DIRECTOR')
+            );
+    }
+
+    abrirModalCerrar(): void {
+        this.limpiarMensajes();
+
+        if (!this.solicitud?.id) {
+            this.mensajeError = 'No fue posible identificar la solicitud.';
+            return;
+        }
+
+        if (this.solicitud.estado !== EstadoSolicitud.ATENDIDA) {
+            this.mensajeError = 'La solicitud solo puede cerrarse cuando está en estado Atendida.';
+            return;
+        }
+
+        if (this.solicitud.version === null || this.solicitud.version === undefined) {
+            this.mensajeError = 'No fue posible validar la versión de la solicitud. Se actualizará la información.';
+            this.cargarDetalle();
+            return;
+        }
+
+        this.observacionCierre = '';
+        this.modalCerrarVisible = true;
+    }
+
+    cancelarCierre(): void {
+        if (this.accionEnProceso) {
+            return;
+        }
+
+        this.modalCerrarVisible = false;
+        this.observacionCierre = '';
+    }
+
+    confirmarCierre(): void {
+        this.limpiarMensajes();
+
+        const observacion = this.observacionCierre.trim();
+
+        if (!observacion) {
+            this.mensajeError = 'La observación de cierre es obligatoria.';
+            return;
+        }
+
+        if (!this.solicitud?.id) {
+            this.mensajeError = 'No fue posible identificar la solicitud.';
+            return;
+        }
+
+        if (this.solicitud.estado !== EstadoSolicitud.ATENDIDA) {
+            this.mensajeError = 'La solicitud ya no se encuentra en estado Atendida.';
+            this.modalCerrarVisible = false;
+            this.cargarDetalle();
+            return;
+        }
+
+        if (this.solicitud.version === null || this.solicitud.version === undefined) {
+            this.mensajeError = 'No fue posible validar la versión de la solicitud. Se actualizará la información.';
+            this.modalCerrarVisible = false;
+            this.cargarDetalle();
+            return;
+        }
+
+        this.accionEnProceso = true;
+
+        this.solicitudService
+            .cerrarSolicitud(
+                Number(this.solicitud.id),
+                observacion,
+                Number(this.solicitud.version)
+            )
+            .subscribe({
+                next: (solicitudActualizada) => {
+                    this.solicitud = solicitudActualizada;
+                    this.accionEnProceso = false;
+                    this.modalCerrarVisible = false;
+                    this.observacionCierre = '';
+                    this.mensajeExito = 'La solicitud fue cerrada correctamente.';
+                    this.cdr.detectChanges();
+                },
+                error: (error) => {
+                    this.accionEnProceso = false;
+                    this.mensajeError = this.obtenerMensajeErrorProceso(
+                        error,
+                        'No fue posible cerrar la solicitud.'
                     );
                     this.cdr.detectChanges();
                 }

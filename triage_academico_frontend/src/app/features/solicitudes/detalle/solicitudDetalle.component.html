@@ -133,6 +133,15 @@
             Atender solicitud
           </button>
 
+          <button *ngIf="puedeCerrar()" type="button" class="action-btn action-close" [disabled]="accionEnProceso"
+            (click)="abrirModalCerrar()">
+
+            <span class="material-symbols-outlined">lock</span>
+
+            Cerrar solicitud
+
+          </button>
+
           <p *ngIf="solicitud.estado === EstadoSolicitud.CERRADA" class="closed-message">
             Esta solicitud está cerrada y no admite más acciones.
           </p>
@@ -231,76 +240,144 @@
     </div>
   </div>
 
+  <div *ngIf="modalAtenderVisible" class="modal-backdrop" role="dialog" aria-modal="true"
+    aria-labelledby="modalAtenderTitulo">
+
+    <div class="confirm-modal modal-atencion">
+      <div class="modal-icon modal-icon-success">
+        <span class="material-symbols-outlined">task_alt</span>
+      </div>
+
+      <div class="modal-content">
+        <p class="eyebrow">Registrar atención</p>
+
+        <h2 id="modalAtenderTitulo">
+          Atender solicitud #{{ solicitud.id }}
+        </h2>
+
+        <p>
+          La solicitud pasará de <strong>En Atención</strong> a
+          <strong>Atendida</strong>. Registre una observación clara de resolución.
+        </p>
+
+        <label class="textarea-label" for="observacionAtencion">
+          Observación de atención
+        </label>
+
+        <textarea id="observacionAtencion" class="modal-textarea" rows="5" maxlength="1000"
+          [(ngModel)]="observacionAtencion"
+          placeholder="Ejemplo: Se revisó la solicitud, se validaron los documentos y se dio respuesta al estudiante.">
+      </textarea>
+
+        <div class="textarea-footer">
+          <span class="field-error" *ngIf="!observacionAtencion.trim()">
+            La observación es obligatoria.
+          </span>
+
+          <span class="counter">
+            {{ observacionAtencion.length }}/1000
+          </span>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-secondary" [disabled]="accionEnProceso" (click)="cancelarAtencion()">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-modal-primary btn-modal-success"
+            [disabled]="accionEnProceso || !observacionAtencion.trim()" (click)="confirmarAtencion()">
+
+            <span *ngIf="accionEnProceso" class="button-spinner"></span>
+            {{ accionEnProceso ? 'Atendiendo...' : 'Confirmar atención' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div
-  *ngIf="modalAtenderVisible"
+  *ngIf="modalCerrarVisible"
   class="modal-backdrop"
   role="dialog"
   aria-modal="true"
-  aria-labelledby="modalAtenderTitulo">
+  aria-labelledby="modalCerrarTitulo">
 
-  <div class="confirm-modal modal-atencion">
-    <div class="modal-icon modal-icon-success">
-      <span class="material-symbols-outlined">task_alt</span>
+  <div class="confirm-modal modal-atencion modal-cierre">
+
+    <div class="modal-icon modal-icon-close">
+      <span class="material-symbols-outlined">lock</span>
     </div>
 
     <div class="modal-content">
-      <p class="eyebrow">Registrar atención</p>
 
-      <h2 id="modalAtenderTitulo">
-        Atender solicitud #{{ solicitud.id }}
+      <p class="eyebrow">Cerrar solicitud</p>
+
+      <h2 id="modalCerrarTitulo">
+        Cerrar solicitud #{{ solicitud.id }}
       </h2>
 
       <p>
-        La solicitud pasará de <strong>En Atención</strong> a
-        <strong>Atendida</strong>. Registre una observación clara de resolución.
+        La solicitud pasará de <strong>Atendida</strong> a
+        <strong>Cerrada</strong>. Registre una observación final del cierre.
       </p>
 
-      <label class="textarea-label" for="observacionAtencion">
-        Observación de atención
+      <label class="textarea-label" for="observacionCierre">
+        Observación de cierre
       </label>
 
       <textarea
-        id="observacionAtencion"
+        id="observacionCierre"
         class="modal-textarea"
         rows="5"
         maxlength="1000"
-        [(ngModel)]="observacionAtencion"
-        placeholder="Ejemplo: Se revisó la solicitud, se validaron los documentos y se dio respuesta al estudiante.">
+        [(ngModel)]="observacionCierre"
+        placeholder="Ejemplo: Se verificó que la solicitud fue atendida correctamente y se cierra el caso.">
       </textarea>
 
       <div class="textarea-footer">
         <span
           class="field-error"
-          *ngIf="!observacionAtencion.trim()">
-          La observación es obligatoria.
+          *ngIf="!observacionCierre.trim()">
+
+          La observación de cierre es obligatoria.
+
         </span>
 
         <span class="counter">
-          {{ observacionAtencion.length }}/1000
+          {{ observacionCierre.length }}/1000
         </span>
       </div>
 
       <div class="modal-actions">
+
         <button
           type="button"
           class="btn-modal-secondary"
           [disabled]="accionEnProceso"
-          (click)="cancelarAtencion()">
+          (click)="cancelarCierre()">
+
           Cancelar
+
         </button>
 
         <button
           type="button"
           class="btn-modal-primary btn-modal-success"
-          [disabled]="accionEnProceso || !observacionAtencion.trim()"
-          (click)="confirmarAtencion()">
+          [disabled]="accionEnProceso || !observacionCierre.trim()"
+          (click)="confirmarCierre()">
 
           <span *ngIf="accionEnProceso" class="button-spinner"></span>
-          {{ accionEnProceso ? 'Atendiendo...' : 'Confirmar atención' }}
+
+          {{ accionEnProceso ? 'Cerrando...' : 'Confirmar cierre' }}
+
         </button>
+
       </div>
+
     </div>
+
   </div>
+
 </div>
 
 </section>
