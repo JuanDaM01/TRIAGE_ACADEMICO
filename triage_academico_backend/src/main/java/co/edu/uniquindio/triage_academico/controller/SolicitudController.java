@@ -1,7 +1,5 @@
 package co.edu.uniquindio.triage_academico.controller;
 
-import java.util.Map;
-
 import jakarta.validation.Valid;
 
 import org.springframework.data.web.PageableDefault;

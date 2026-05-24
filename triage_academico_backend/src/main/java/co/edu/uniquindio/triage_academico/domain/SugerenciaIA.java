@@ -53,5 +53,6 @@ public class SugerenciaIA {
     private LocalDateTime fechaSugerencia;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean aplicada = false;
 }

@@ -17,6 +17,7 @@ public class SugerenciaClasificacionResponse {
     private NivelPrioridad prioridadSugerida;
     private String explicacion;
     private Float confianza;
+    @Builder.Default
     private boolean requiereConfirmacion = true;
     private LocalDateTime fechaSugerencia;
 }
