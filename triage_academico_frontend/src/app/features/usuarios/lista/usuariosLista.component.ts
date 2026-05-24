@@ -28,17 +28,12 @@ interface FiltrosUsuariosVista {
 export class UsuariosListaComponent implements OnInit, OnDestroy {
 
     usuarios: Usuario[] = [];
-
     loading = false;
     errorMessage = '';
-
     totalElements = 0;
     totalPages = 0;
-
     accionEnProcesoId: number | null = null;
-
     filtros: FiltrosUsuariosVista = this.crearFiltrosIniciales();
-
     readonly roles: Rol[] = Object.values(Rol) as Rol[];
 
     private readonly destroy$ = new Subject<void>();
@@ -78,18 +73,19 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
                     this.totalElements = page.totalElements ?? this.usuarios.length;
                     this.totalPages = page.totalPages ?? 0;
                     this.filtros.page = page.number ?? this.filtros.page;
+                    // FIX: detectChanges aquí para que la vista se actualice
+                    // inmediatamente al recibir los datos, sin esperar al finalize
+                    this.cdr.detectChanges();
                 },
                 error: (error) => {
-                    console.error('Error cargando usuarios:', error);
-
                     this.usuarios = [];
                     this.totalElements = 0;
                     this.totalPages = 0;
-
                     this.errorMessage =
                         error?.error?.message ??
                         error?.message ??
                         'No se pudieron cargar los usuarios.';
+                    this.cdr.detectChanges();
                 }
             });
     }
@@ -106,11 +102,7 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
 
     cambiarPagina(delta: number): void {
         const nuevaPagina = this.filtros.page + delta;
-
-        if (nuevaPagina < 0 || nuevaPagina >= this.totalPages) {
-            return;
-        }
-
+        if (nuevaPagina < 0 || nuevaPagina >= this.totalPages) return;
         this.filtros.page = nuevaPagina;
         this.cargarUsuarios();
     }
@@ -124,59 +116,41 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
             ? this.usuarioService.desactivarUsuario(usuario.id)
             : this.usuarioService.activarUsuario(usuario.id);
 
-        accion
-            .pipe(
-                takeUntil(this.destroy$),
-                finalize(() => {
-                    this.accionEnProcesoId = null;
-                    this.cdr.detectChanges();
-                })
-            )
-            .subscribe({
-                next: () => {
-                    this.cargarUsuarios();
-                },
-                error: (error) => {
-                    console.error('Error actualizando estado del usuario:', error);
-
-                    this.errorMessage =
-                        error?.error?.message ??
-                        'No se pudo actualizar el estado del usuario.';
-                }
-            });
+        accion.pipe(
+            takeUntil(this.destroy$),
+            finalize(() => {
+                this.accionEnProcesoId = null;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: () => this.cargarUsuarios(),
+            error: (error) => {
+                this.errorMessage = error?.error?.message ?? 'No se pudo actualizar el estado del usuario.';
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     eliminarUsuario(id: number): void {
-        const confirmado = confirm('¿Está seguro de que desea eliminar este usuario?');
-
-        if (!confirmado) {
-            return;
-        }
+        if (!confirm('¿Está seguro de que desea eliminar este usuario?')) return;
 
         this.errorMessage = '';
         this.accionEnProcesoId = id;
         this.cdr.detectChanges();
 
-        this.usuarioService.eliminarUsuario(id)
-            .pipe(
-                takeUntil(this.destroy$),
-                finalize(() => {
-                    this.accionEnProcesoId = null;
-                    this.cdr.detectChanges();
-                })
-            )
-            .subscribe({
-                next: () => {
-                    this.cargarUsuarios();
-                },
-                error: (error) => {
-                    console.error('Error eliminando usuario:', error);
-
-                    this.errorMessage =
-                        error?.error?.message ??
-                        'No se pudo eliminar el usuario.';
-                }
-            });
+        this.usuarioService.eliminarUsuario(id).pipe(
+            takeUntil(this.destroy$),
+            finalize(() => {
+                this.accionEnProcesoId = null;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: () => this.cargarUsuarios(),
+            error: (error) => {
+                this.errorMessage = error?.error?.message ?? 'No se pudo eliminar el usuario.';
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     getRolNombre(rol: Rol | string): string {
@@ -187,11 +161,10 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
             [Rol.COORDINADOR]: 'Coordinador',
             [Rol.DIRECTOR]: 'Director'
         };
-
         return rolMap[rol] || rol;
     }
 
-    trackByUsuarioId(index: number, usuario: Usuario): number {
+    trackByUsuarioId(_: number, usuario: Usuario): number {
         return usuario.id;
     }
 
@@ -204,34 +177,16 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
         );
     }
 
-    get paginaActual(): number {
-        return this.filtros.page + 1;
-    }
-
+    get paginaActual(): number { return this.filtros.page + 1; }
     get desde(): number {
-        if (this.totalElements === 0) {
-            return 0;
-        }
-
-        return this.filtros.page * this.filtros.size + 1;
+        return this.totalElements === 0 ? 0 : this.filtros.page * this.filtros.size + 1;
     }
-
     get hasta(): number {
-        return Math.min(
-            (this.filtros.page + 1) * this.filtros.size,
-            this.totalElements
-        );
+        return Math.min((this.filtros.page + 1) * this.filtros.size, this.totalElements);
     }
 
     private crearFiltrosIniciales(): FiltrosUsuariosVista {
-        return {
-            nombre: '',
-            email: '',
-            rol: '',
-            estado: 'TODOS',
-            page: 0,
-            size: 20
-        };
+        return { nombre: '', email: '', rol: '', estado: 'TODOS', page: 0, size: 20 };
     }
 
     private construirFiltrosApi(): UsuarioFiltros {
@@ -243,25 +198,11 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
         const nombre = this.filtros.nombre.trim();
         const email = this.filtros.email.trim();
 
-        if (nombre) {
-            filtrosApi.nombre = nombre;
-        }
-
-        if (email) {
-            filtrosApi.email = email;
-        }
-
-        if (this.filtros.rol) {
-            filtrosApi.rol = this.filtros.rol;
-        }
-
-        if (this.filtros.estado === 'ACTIVOS') {
-            filtrosApi.activo = true;
-        }
-
-        if (this.filtros.estado === 'INACTIVOS') {
-            filtrosApi.activo = false;
-        }
+        if (nombre) filtrosApi.nombre = nombre;
+        if (email) filtrosApi.email = email;
+        if (this.filtros.rol) filtrosApi.rol = this.filtros.rol;
+        if (this.filtros.estado === 'ACTIVOS') filtrosApi.activo = true;
+        if (this.filtros.estado === 'INACTIVOS') filtrosApi.activo = false;
 
         return filtrosApi;
     }
