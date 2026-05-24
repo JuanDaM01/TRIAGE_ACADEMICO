@@ -38,7 +38,7 @@ export class IAResumenComponent {
             solicitudId: Number(this.resumenForm.value.solicitudId)
         };
 
-        this.iaService.generarResumen(request).subscribe({
+        this.iaService.generarResumen(request.solicitudId).subscribe({
             next: (data) => {
                 this.resumen = data;
                 this.loading = false;

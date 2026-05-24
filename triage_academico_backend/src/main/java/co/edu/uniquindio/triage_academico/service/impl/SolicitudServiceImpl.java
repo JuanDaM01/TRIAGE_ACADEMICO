@@ -396,6 +396,7 @@ public class SolicitudServiceImpl implements SolicitudService {
                                 .fechaResolucion(solicitud.getFechaResolucion())
                                 .observacionCierre(solicitud.getObservacionCierre())
                                 .historial(mapHistorial(solicitud))
+                                .version(solicitud.getVersion())
                                 .build();
         }
 }

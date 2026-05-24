@@ -11,15 +11,13 @@ import {
     NivelPrioridad,
     SugerenciaIA
 } from '@models';
-import { EstadoPipe } from '@shared/pipes/estado.pipe';
-import { PrioridadPipe } from '@shared/pipes/prioridad.pipe';
 
 type Paso = 'elegir' | 'ia-cargando' | 'ia-revision' | 'manual' | 'confirmando';
 
 @Component({
     selector: 'app-solicitud-clasificar-ia',
     standalone: true,
-    imports: [CommonModule, FormsModule, EstadoPipe, PrioridadPipe],
+    imports: [CommonModule, FormsModule],
     templateUrl: './solicitudClasificarIA.component.html',
     styleUrls: ['./solicitudClasificarIA.component.scss']
 })
@@ -164,7 +162,7 @@ export class SolicitudClasificarIAComponent implements OnInit {
     // ─── Confirmación final ───────────────────────────────────────────────────
 
     get formularioValido(): boolean {
-        return !!this.form.tipoSolicitud && !!this.form.nivelPrioridad && !!this.form.fechaLimite;
+        return !!this.form.tipoSolicitud && !!this.form.nivelPrioridad;
     }
 
     confirmar(): void {
@@ -173,21 +171,31 @@ export class SolicitudClasificarIAComponent implements OnInit {
         this.errorClasificar = '';
         this.paso = 'confirmando';
 
-        const request: ClasificarSolicitudRequest = {
-            tipoSolicitud: this.form.tipoSolicitud,
-            nivelPrioridad: this.form.nivelPrioridad,
-            justificacion: this.form.justificacion || undefined,
-            fechaLimite: this.form.fechaLimite ? new Date(this.form.fechaLimite) : undefined,
-            version: this.solicitud.version ?? 0
-        };
+        // Re-obtener la última versión antes de intentar clasificar
+        this.solicitudService.getSolicitudById(this.id).subscribe({
+            next: (latest) => {
+                const request: ClasificarSolicitudRequest = {
+                    tipoSolicitud: this.form.tipoSolicitud,
+                    nivelPrioridad: this.form.nivelPrioridad,
+                    justificacion: this.form.justificacion || undefined,
+                    fechaLimite: this.form.fechaLimite ? new Date(this.form.fechaLimite) : undefined,
+                    version: latest.version ?? 0
+                };
 
-        this.solicitudService.clasificarSolicitud(this.solicitud.id, request).subscribe({
-            next: () => this.router.navigate(['/app/solicitudes', this.id]),
-            error: (err) => {
-                console.error('Error al clasificar solicitud:', err);
-                this.errorClasificar = err.error?.mensaje
-                    ?? 'Error al clasificar la solicitud. Inténtalo de nuevo.';
-                // Volver al paso correcto según el método usado
+                this.solicitudService.clasificarSolicitud(this.solicitud!.id!, request).subscribe({
+                    next: () => this.router.navigate(['/app/solicitudes', this.id]),
+                    error: (err) => {
+                        console.error('Error al clasificar solicitud:', err);
+                        this.errorClasificar = err.error?.mensaje
+                            ?? 'Error al clasificar la solicitud. Inténtalo de nuevo.';
+                        // Volver al paso correcto según el método usado
+                        this.paso = this.sugerenciaIA ? 'ia-revision' : 'manual';
+                        this.cdr.detectChanges();
+                    }
+                });
+            },
+            error: () => {
+                this.errorClasificar = 'No se pudo obtener la versión actual de la solicitud. Recarga e intenta de nuevo.';
                 this.paso = this.sugerenciaIA ? 'ia-revision' : 'manual';
                 this.cdr.detectChanges();
             }

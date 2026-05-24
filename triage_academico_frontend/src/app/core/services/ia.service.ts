@@ -1,10 +1,11 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SugerenciaIA, ResumenIA } from '@models';
+import { SugerenciaIA, SugerenciaClasificacionResponse, ResumenIA } from '@models';
 import { environment } from '@env';
 
 export interface SugerenciaRequest {
+    solicitudId?: number;
     descripcion: string;
 }
 
@@ -24,6 +25,13 @@ export class IAService {
         return this.http.post<SugerenciaClasificacionResponse>(`${this.API_URL}/sugerir-clasificacion`, {
             solicitudId,
             descripcion
+        });
+    }
+
+    obtenerSugerencia(request: SugerenciaRequest): Observable<SugerenciaClasificacionResponse> {
+        return this.http.post<SugerenciaClasificacionResponse>(`${this.API_URL}/sugerir-clasificacion`, {
+            solicitudId: request.solicitudId,
+            descripcion: request.descripcion
         });
     }
 

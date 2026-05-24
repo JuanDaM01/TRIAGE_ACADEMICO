@@ -35,4 +35,5 @@ public class SolicitudResponse {
     private LocalDateTime fechaResolucion;
     private String observacionCierre;
     private List<HistorialSolicitudResponse> historial;
+    private Integer version;
 }

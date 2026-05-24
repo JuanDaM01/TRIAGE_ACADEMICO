@@ -66,19 +66,30 @@ export class SolicitudClasificarComponent implements OnInit {
 
         const { tipoSolicitud, nivelPrioridad, fechaLimite } = this.clasificarForm.value;
 
-        this.solicitudService.clasificarSolicitud(this.id, {
-            tipoSolicitud,
-            nivelPrioridad,
-            fechaLimite: fechaLimite ? new Date(fechaLimite) : undefined,
-            version: this.solicitud.version ?? 0
-        }).subscribe({
-            next: () => {
-                this.loadingClasificar = false;
-                this.router.navigate(['/app/solicitudes', this.id]);
+        // Obtener la última versión desde el backend antes de enviar la clasificación
+        this.solicitudService.getSolicitudById(this.id).subscribe({
+            next: (latest) => {
+                const version = latest.version ?? 0;
+                this.solicitudService.clasificarSolicitud(this.id, {
+                    tipoSolicitud,
+                    nivelPrioridad,
+                    fechaLimite: fechaLimite ? new Date(fechaLimite) : undefined,
+                    version
+                }).subscribe({
+                    next: () => {
+                        this.loadingClasificar = false;
+                        this.router.navigate(['/app/solicitudes', this.id]);
+                    },
+                    error: (err) => {
+                        this.loadingClasificar = false;
+                        this.errorMessage = err.error?.message ?? 'No se pudo clasificar la solicitud.';
+                        this.cdr.detectChanges();
+                    }
+                });
             },
-            error: (err) => {
+            error: () => {
                 this.loadingClasificar = false;
-                this.errorMessage = err.error?.message ?? 'No se pudo clasificar la solicitud.';
+                this.errorMessage = 'No se pudo obtener el estado actual de la solicitud. Recarga e intenta de nuevo.';
                 this.cdr.detectChanges();
             }
         });

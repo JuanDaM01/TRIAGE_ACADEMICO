@@ -71,6 +71,14 @@ export class SolicitudDetalleComponent implements OnInit {
         this.router.navigate(['/app/solicitudes', this.id, 'clasificar-ia']);
     }
 
+    irAClasificarIA(): void {
+        this.router.navigate(['/app/solicitudes', this.id, 'clasificar-ia']);
+    }
+
+    irAClasificarManual(): void {
+        this.router.navigate(['/app/solicitudes', this.id, 'clasificar']);
+    }
+
     atender(): void {
         const obs = prompt('Ingrese observaciones de atención:');
         if (obs && this.solicitud?.id) {
