@@ -1,98 +1,192 @@
-<div class="usuarios-container">
-    <div class="header-card">
-        <div>
-            <p class="eyebrow">Administración</p>
-            <h1>Gestión de usuarios</h1>
-            <p class="subtitle">Ver, filtrar y administrar cuentas del sistema.</p>
-        </div>
-        <button routerLink="/app/usuarios/gestion" class="btn-primary">
-            + Nuevo usuario
+<div class="space-y-8 pb-12 font-['Inter'] w-full">
+
+  <!-- ═══════════ HEADER BANNER ═══════════ -->
+  <div class="relative overflow-hidden rounded-3xl bg-white/80 border border-[#004f45]/10 shadow-[0_8px_32px_0_rgba(0,79,69,0.05)] p-8">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#84d5c5]/30 to-[#dded49]/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      <div class="max-w-2xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-[#004f45]/80 mb-2">Administración</p>
+        <h2 class="text-3xl font-black text-[#004f45] mb-3 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[36px] icon-filled text-[#004f45]">group</span>
+          Gestión de Usuarios
+        </h2>
+        <p class="text-sm text-[#3e4946] leading-relaxed">
+          Administra cuentas, revisa estado y controla accesos de coordinadores y directores.
+        </p>
+      </div>
+      <a routerLink="/app/usuarios/gestion"
+         class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#dded49] px-6 py-3.5 text-sm font-bold text-[#1a1d00] shadow-md transition hover:bg-[#c1d02c] hover:shadow-lg shrink-0">
+        <span class="material-symbols-outlined text-[20px]">add_circle</span>
+        Nuevo Usuario
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════ ERROR MESSAGE ═══════════ -->
+  <div *ngIf="errorMessage"
+       class="flex items-center gap-3 rounded-3xl border border-[#93000a]/15 bg-[#ffdad6] px-6 py-4 text-[#93000a] shadow-sm">
+    <span class="material-symbols-outlined">error</span>
+    <span class="text-sm font-semibold">{{ errorMessage }}</span>
+  </div>
+
+  <!-- ═══════════ FILTERS + LIST CARD ═══════════ -->
+  <div class="rounded-3xl border border-white/50 bg-white/60 shadow-[0_4px_24px_0_rgba(0,0,0,0.04)] p-6 md:p-8">
+
+    <!-- Filters Header -->
+    <div class="mb-6 grid gap-4 md:grid-cols-[1.5fr_1fr] items-end">
+      <div class="space-y-1">
+        <p class="text-sm font-bold text-[#004f45]">Filtros activos</p>
+        <p class="text-sm text-[#3e4946]">Filtra por rol y estado para encontrar cuentas rápidamente.</p>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2">
+
+        <!-- Filtro Rol -->
+        <label class="flex flex-col gap-1.5 text-xs font-black text-[#004f45] uppercase tracking-widest">
+          <span class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">badge</span>
+            Rol
+          </span>
+          <select [(ngModel)]="filtros.rol"
+                  class="rounded-2xl border border-[#cdd6ce] bg-white px-4 py-3 text-sm text-[#1a3e34] font-normal shadow-sm focus:border-[#004f45] focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 transition cursor-pointer">
+            <option value="">Todos</option>
+            <option *ngFor="let rol of roles" [value]="rol">{{ getRolNombre(rol) }}</option>
+          </select>
+        </label>
+
+        <!-- Filtro Estado -->
+        <label class="flex flex-col gap-1.5 text-xs font-black text-[#004f45] uppercase tracking-widest">
+          <span class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">toggle_on</span>
+            Estado
+          </span>
+          <select [(ngModel)]="filtros.activo"
+                  class="rounded-2xl border border-[#cdd6ce] bg-white px-4 py-3 text-sm text-[#1a3e34] font-normal shadow-sm focus:border-[#004f45] focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 transition cursor-pointer">
+            <option [ngValue]="undefined">Todos</option>
+            <option [ngValue]="true">Activos</option>
+            <option [ngValue]="false">Inactivos</option>
+          </select>
+        </label>
+
+      </div>
+    </div>
+
+    <!-- Filter Actions -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-8 pt-2 border-t border-[#e0e5e0]">
+      <div class="text-sm text-[#3e4946]">
+        Se muestran <span class="font-bold text-[#004f45]">{{ usuarios.length }}</span> usuario{{ usuarios.length !== 1 ? 's' : '' }}
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button type="button" (click)="aplicarFiltros()"
+                class="rounded-2xl bg-[#004f45] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#003d35] flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">filter_list</span>
+          Aplicar filtros
         </button>
+        <button type="button" (click)="limpiarFiltros()"
+                class="rounded-2xl border border-[#004f45] bg-white px-5 py-3 text-sm font-bold text-[#004f45] transition hover:bg-[#004f45]/5 flex items-center gap-2 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">filter_list_off</span>
+          Limpiar
+        </button>
+      </div>
     </div>
 
-    <div class="filtros-card">
-        <div class="filtros-header">
-            <h2>Filtros</h2>
+    <!-- ═══ LOADING SKELETON ═══ -->
+    <div *ngIf="loading" class="space-y-4">
+      <div *ngFor="let item of [1,2,3]"
+           class="animate-pulse rounded-3xl border border-[#cdd6ce]/80 bg-[#f9faf9] p-6 h-32"></div>
+    </div>
+
+    <!-- ═══ EMPTY STATE ═══ -->
+    <div *ngIf="!loading && usuarios.length === 0"
+         class="flex flex-col items-center justify-center rounded-3xl border border-[#cdd6ce]/80 bg-[#f7f9f7] p-12 text-center text-[#3e4946]">
+      <span class="material-symbols-outlined text-[48px] text-[#004f45]/50">person_off</span>
+      <p class="mt-4 text-lg font-bold text-[#1a3e34]">No se encontraron usuarios</p>
+      <p class="mt-2 text-sm text-[#5a6d66] max-w-sm">
+        Revisa los filtros aplicados o crea un nuevo usuario para comenzar.
+      </p>
+      <a routerLink="/app/usuarios/gestion"
+         class="mt-6 inline-flex items-center gap-2 rounded-2xl bg-[#dded49] px-5 py-3 text-sm font-bold text-[#1a1d00] shadow-md hover:bg-[#c1d02c] transition">
+        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        Crear primer usuario
+      </a>
+    </div>
+
+    <!-- ═══ USERS LIST ═══ -->
+    <div *ngIf="!loading && usuarios.length > 0" class="space-y-4">
+      <div *ngFor="let usuario of usuarios"
+           class="group rounded-3xl border border-[#e0e5e0] bg-white/90 p-6 shadow-sm transition hover:border-[#004f45]/20 hover:shadow-md">
+
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+          <!-- Info -->
+          <div class="space-y-3">
+
+            <!-- Badges -->
+            <div class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em]">
+              <span class="rounded-full bg-[#dded49]/70 px-3 py-1 text-[#004f45]">
+                {{ getRolNombre(usuario.rol) }}
+              </span>
+              <span class="rounded-full bg-[#f0f4f3] px-3 py-1 text-[#3e4946]">
+                ID #{{ usuario.id }}
+              </span>
+              <span class="rounded-full px-3 py-1"
+                    [ngClass]="usuario.activo
+                      ? 'bg-[#dcfce7] text-[#166534]'
+                      : 'bg-[#f3f4f6] text-[#6b7280]'">
+                <span class="material-symbols-outlined text-[13px] align-middle mr-0.5">
+                  {{ usuario.activo ? 'check_circle' : 'cancel' }}
+                </span>
+                {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+            <!-- Name & Email -->
+            <div>
+              <h3 class="text-xl font-bold text-[#1a3e34]">
+                {{ usuario.nombre }} {{ usuario.apellido }}
+              </h3>
+              <p class="text-sm text-[#4b5a52] flex items-center gap-1.5 mt-0.5">
+                <span class="material-symbols-outlined text-[16px]">mail</span>
+                {{ usuario.email }}
+              </p>
+            </div>
+
+            <!-- Meta -->
+            <div class="flex flex-wrap gap-4 text-sm text-[#4b5a52]">
+              <span class="inline-flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                Creado el {{ usuario.fechaCreacion | date:'d MMM yyyy' }}
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center shrink-0">
+
+            <a [routerLink]="['/app/usuarios/gestion', usuario.id]"
+               class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#004f45] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#003d35] decoration-transparent">
+              <span class="material-symbols-outlined text-[18px]">edit</span>
+              Editar
+            </a>
+
+            <button (click)="toggleActivo(usuario)"
+                    class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#dded49] px-5 py-3 text-sm font-bold text-[#1a1d00] transition hover:bg-[#c1d02c] cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">
+                {{ usuario.activo ? 'toggle_off' : 'toggle_on' }}
+              </span>
+              {{ usuario.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+
+            <button (click)="eliminarUsuario(usuario.id)"
+                    class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#ffe3e3] px-5 py-3 text-sm font-bold text-[#93000a] transition hover:bg-[#f7c4c4] cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+              Eliminar
+            </button>
+
+          </div>
         </div>
-        <div class="filtros-grid">
-            <div class="filtro-item">
-                <label for="rol">Rol</label>
-                <select id="rol" [(ngModel)]="filtros.rol">
-                    <option value="">Todos</option>
-                    <option *ngFor="let rol of roles" [value]="rol">{{ getRolNombre(rol) }}</option>
-                </select>
-            </div>
-            <div class="filtro-item">
-                <label for="activo">Estado</label>
-                <select id="activo" [(ngModel)]="filtros.activo">
-                    <option [ngValue]="undefined">Todos</option>
-                    <option [ngValue]="true">Activos</option>
-                    <option [ngValue]="false">Inactivos</option>
-                </select>
-            </div>
-            <div class="filtro-actions">
-                <button (click)="aplicarFiltros()" class="btn-secondary">Aplicar</button>
-                <button (click)="limpiarFiltros()" class="btn-tertiary">Limpiar</button>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <div *ngIf="loading" class="status-card loading">
-        <p>Cargando usuarios...</p>
-    </div>
-
-    <div *ngIf="errorMessage" class="status-card error">
-        <p>{{ errorMessage }}</p>
-    </div>
-
-    <div *ngIf="!loading && !errorMessage && usuarios.length === 0" class="status-card empty">
-        <p>No se encontraron usuarios con esos filtros.</p>
-    </div>
-
-    <div *ngIf="!loading && !errorMessage && usuarios.length > 0" class="usuarios-table-card">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>Creado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let usuario of usuarios">
-                    <td>{{ usuario.id }}</td>
-                    <td>
-                        <div class="user-name">
-                            <span class="user-label">{{ usuario.nombre }} {{ usuario.apellido }}</span>
-                        </div>
-                    </td>
-                    <td>{{ usuario.email }}</td>
-                    <td>{{ getRolNombre(usuario.rol) }}</td>
-                    <td>
-                        <span [class]="usuario.activo ? 'status-active' : 'status-inactive'">
-                            {{ usuario.activo ? 'Activo' : 'Inactivo' }}
-                        </span>
-                    </td>
-                    <td>{{ usuario.fechaCreacion | date:'short' }}</td>
-                    <td class="actions">
-                        <button [routerLink]="['/app/usuarios/gestion', usuario.id]" class="btn-icon btn-edit" title="Editar">
-                            ✏️
-                        </button>
-                        <button (click)="toggleActivo(usuario)"
-                                [ngClass]="usuario.activo ? 'btn-icon btn-deactivate' : 'btn-icon btn-activate'"
-                                [title]="usuario.activo ? 'Desactivar' : 'Activar'">
-                            {{ usuario.activo ? '🔒' : '🔓' }}
-                        </button>
-                        <button (click)="eliminarUsuario(usuario.id)" class="btn-icon btn-delete" title="Eliminar">
-                            🗑️
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+  </div>
 </div>
