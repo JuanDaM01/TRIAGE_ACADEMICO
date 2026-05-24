@@ -160,9 +160,8 @@
       <button
         *ngIf="(authService.hasRole('COORDINADOR') || authService.hasRole('DIRECTOR')) && solicitud.estado === 'CLASIFICADA'"
         (click)="asignarResponsableActual()"
-        class="flex items-center gap-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold text-sm py-2.5 px-5 rounded-2xl transition-all shadow-sm hover:shadow">
-        <span class="material-symbols-outlined text-[17px]">assignment_ind</span>
-        Enviar a atención
+        class="flex items-center gap-2 bg-[#dded49] hover:bg-[#c1d02c] text-[#1a1d00] font-bold text-sm py-2.5 px-5 rounded-2xl transition-all shadow-sm hover:shadow">
+        Enviar a Atención
       </button>
 
       <button

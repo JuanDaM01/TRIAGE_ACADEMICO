@@ -1,16 +1,15 @@
 <div class="space-y-8 pb-12 font-['Inter'] w-full">
 
-  <!-- ═══════════ HEADER BANNER ═══════════ -->
-  <div class="relative overflow-hidden rounded-3xl bg-white/80 border border-[#004f45]/10 shadow-[0_8px_32px_0_rgba(0,79,69,0.05)] p-8">
+  <!-- ═══════════ HEADER BANNER (GLASSMORPHISM) ═══════════ -->
+  <div class="relative overflow-hidden rounded-3xl bg-white/40 dark:bg-black/20 backdrop-blur-xl border border-white/60 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,79,69,0.05)] p-8">
     <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#84d5c5]/30 to-[#dded49]/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
     <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
       <div class="max-w-2xl">
-        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-[#004f45]/80 mb-2">Administración</p>
-        <h2 class="text-3xl font-black text-[#004f45] mb-3 flex items-center gap-3">
-          <span class="material-symbols-outlined text-[36px] icon-filled text-[#004f45]">group</span>
+        <h2 class="text-3xl font-black text-[#004f45] dark:text-[#84d5c5] mb-3 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[36px] icon-filled text-[#004f45] dark:text-[#84d5c5]">list_alt</span>
           Gestión de Usuarios
         </h2>
-        <p class="text-sm text-[#3e4946] leading-relaxed">
+        <p class="text-sm md:text-base text-[#3e4946] dark:text-white/80 max-w-xl leading-relaxed">
           Administra cuentas, revisa estado y controla accesos de coordinadores y directores.
         </p>
       </div>
@@ -29,38 +28,38 @@
     <span class="text-sm font-semibold">{{ errorMessage }}</span>
   </div>
 
-  <!-- ═══════════ FILTERS + LIST CARD ═══════════ -->
-  <div class="rounded-3xl border border-white/50 bg-white/60 shadow-[0_4px_24px_0_rgba(0,0,0,0.04)] p-6 md:p-8">
+  <!-- ═══════════ FILTERS + LIST CARD (GLASSMORPHISM) ═══════════ -->
+  <div class="bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-lg rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_4px_24px_0_rgba(0,0,0,0.02)] p-6 md:p-8 hover:shadow-[0_8px_32px_0_rgba(0,105,92,0.08)] transition-all duration-300">
 
     <!-- Filters Header -->
     <div class="mb-6 grid gap-4 md:grid-cols-[1.5fr_1fr] items-end">
       <div class="space-y-1">
-        <p class="text-sm font-bold text-[#004f45]">Filtros activos</p>
-        <p class="text-sm text-[#3e4946]">Filtra por rol y estado para encontrar cuentas rápidamente.</p>
+        <p class="text-sm font-bold text-[#004f45] dark:text-[#84d5c5]">Filtros activos</p>
+        <p class="text-sm md:text-base text-[#3e4946] dark:text-white/80 max-w-xl leading-relaxed">Filtra por rol y estado para encontrar cuentas rápidamente.</p>
       </div>
       <div class="grid gap-3 sm:grid-cols-2">
 
         <!-- Filtro Rol -->
-        <label class="flex flex-col gap-1.5 text-xs font-black text-[#004f45] uppercase tracking-widest">
+        <label class="flex flex-col gap-1.5 text-xs font-black text-[#004f45] dark:text-[#84d5c5] uppercase tracking-widest">
           <span class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[16px]">badge</span>
             Rol
           </span>
           <select [(ngModel)]="filtros.rol"
-                  class="rounded-2xl border border-[#cdd6ce] bg-white px-4 py-3 text-sm text-[#1a3e34] font-normal shadow-sm focus:border-[#004f45] focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 transition cursor-pointer">
+                  class="w-full bg-[#ebefee]/50 dark:bg-[#ebefee]/5 border border-[#bec9c5]/30 dark:border-white/10 text-[#181c1c] dark:text-white text-sm rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] focus:bg-white dark:focus:bg-[#181c1c] transition-all duration-300 placeholder:text-[#3e4946]/40 dark:placeholder:text-white/30 backdrop-blur-sm cursor-pointer">
             <option value="">Todos</option>
             <option *ngFor="let rol of roles" [value]="rol">{{ getRolNombre(rol) }}</option>
           </select>
         </label>
 
         <!-- Filtro Estado -->
-        <label class="flex flex-col gap-1.5 text-xs font-black text-[#004f45] uppercase tracking-widest">
+        <label class="flex flex-col gap-1.5 text-xs font-black text-[#004f45] dark:text-[#84d5c5] uppercase tracking-widest">
           <span class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[16px]">toggle_on</span>
             Estado
           </span>
           <select [(ngModel)]="filtros.activo"
-                  class="rounded-2xl border border-[#cdd6ce] bg-white px-4 py-3 text-sm text-[#1a3e34] font-normal shadow-sm focus:border-[#004f45] focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 transition cursor-pointer">
+                  class="w-full bg-[#ebefee]/50 dark:bg-[#ebefee]/5 border border-[#bec9c5]/30 dark:border-white/10 text-[#181c1c] dark:text-white text-sm rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] focus:bg-white dark:focus:bg-[#181c1c] transition-all duration-300 placeholder:text-[#3e4946]/40 dark:placeholder:text-white/30 backdrop-blur-sm cursor-pointer">
             <option [ngValue]="undefined">Todos</option>
             <option [ngValue]="true">Activos</option>
             <option [ngValue]="false">Inactivos</option>
@@ -71,9 +70,9 @@
     </div>
 
     <!-- Filter Actions -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-8 pt-2 border-t border-[#e0e5e0]">
-      <div class="text-sm text-[#3e4946]">
-        Se muestran <span class="font-bold text-[#004f45]">{{ usuarios.length }}</span> usuario{{ usuarios.length !== 1 ? 's' : '' }}
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-8 pt-2 border-t border-[#bec9c5]/20 dark:border-white/10">
+      <div class="text-sm text-[#3e4946] dark:text-white/60">
+        Se muestran <span class="font-bold text-[#004f45] dark:text-[#84d5c5]">{{ usuarios.length }}</span> usuario{{ usuarios.length !== 1 ? 's' : '' }}
       </div>
       <div class="flex flex-col sm:flex-row gap-3">
         <button type="button" (click)="aplicarFiltros()"
@@ -82,7 +81,7 @@
           Aplicar filtros
         </button>
         <button type="button" (click)="limpiarFiltros()"
-                class="rounded-2xl border border-[#004f45] bg-white px-5 py-3 text-sm font-bold text-[#004f45] transition hover:bg-[#004f45]/5 flex items-center gap-2 cursor-pointer">
+                class="rounded-2xl border border-[#004f45] bg-white/60 dark:bg-white/5 px-5 py-3 text-sm font-bold text-[#004f45] dark:text-[#84d5c5] transition hover:bg-[#004f45]/5 flex items-center gap-2 cursor-pointer">
           <span class="material-symbols-outlined text-[18px]">filter_list_off</span>
           Limpiar
         </button>
@@ -92,19 +91,19 @@
     <!-- ═══ LOADING SKELETON ═══ -->
     <div *ngIf="loading" class="space-y-4">
       <div *ngFor="let item of [1,2,3]"
-           class="animate-pulse rounded-3xl border border-[#cdd6ce]/80 bg-[#f9faf9] p-6 h-32"></div>
+           class="animate-pulse rounded-3xl border border-[#bec9c5]/20 dark:border-white/5 bg-white/60 dark:bg-white/5 p-6 h-32"></div>
     </div>
 
     <!-- ═══ EMPTY STATE ═══ -->
     <div *ngIf="!loading && usuarios.length === 0"
-         class="flex flex-col items-center justify-center rounded-3xl border border-[#cdd6ce]/80 bg-[#f7f9f7] p-12 text-center text-[#3e4946]">
-      <span class="material-symbols-outlined text-[48px] text-[#004f45]/50">person_off</span>
-      <p class="mt-4 text-lg font-bold text-[#1a3e34]">No se encontraron usuarios</p>
-      <p class="mt-2 text-sm text-[#5a6d66] max-w-sm">
+         class="flex flex-col items-center justify-center rounded-3xl border border-[#bec9c5]/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-sm p-12 text-center">
+      <span class="material-symbols-outlined text-[48px] text-[#004f45]/50 dark:text-[#84d5c5]/50">person_off</span>
+      <p class="mt-4 text-lg font-bold text-[#1a3e34] dark:text-white">No se encontraron usuarios</p>
+      <p class="mt-2 text-sm text-[#5a6d66] dark:text-white/60 max-w-sm">
         Revisa los filtros aplicados o crea un nuevo usuario para comenzar.
       </p>
       <a routerLink="/app/usuarios/gestion"
-         class="mt-6 inline-flex items-center gap-2 rounded-2xl bg-[#dded49] px-5 py-3 text-sm font-bold text-[#1a1d00] shadow-md hover:bg-[#c1d02c] transition">
+         class="mt-6 inline-flex items-center gap-2 rounded-2xl bg-[#dded49] px-5 py-3 text-sm font-bold text-[#1a1d00] shadow-md hover:bg-[#c1d02c] transition decoration-transparent">
         <span class="material-symbols-outlined text-[18px]">add_circle</span>
         Crear primer usuario
       </a>
@@ -113,7 +112,7 @@
     <!-- ═══ USERS LIST ═══ -->
     <div *ngIf="!loading && usuarios.length > 0" class="space-y-4">
       <div *ngFor="let usuario of usuarios"
-           class="group rounded-3xl border border-[#e0e5e0] bg-white/90 p-6 shadow-sm transition hover:border-[#004f45]/20 hover:shadow-md">
+           class="group bg-white/70 dark:bg-[#181c1c]/50 rounded-3xl border border-[#bec9c5]/20 dark:border-white/10 hover:border-[#004f45]/30 dark:hover:border-[#84d5c5]/20 p-6 shadow-sm hover:shadow-md transition-all duration-300">
 
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
@@ -125,13 +124,13 @@
               <span class="rounded-full bg-[#dded49]/70 px-3 py-1 text-[#004f45]">
                 {{ getRolNombre(usuario.rol) }}
               </span>
-              <span class="rounded-full bg-[#f0f4f3] px-3 py-1 text-[#3e4946]">
+              <span class="rounded-full bg-[#ebefee] dark:bg-[#3e4946]/30 px-3 py-1 text-[#3e4946] dark:text-white/60">
                 ID #{{ usuario.id }}
               </span>
               <span class="rounded-full px-3 py-1"
                     [ngClass]="usuario.activo
                       ? 'bg-[#dcfce7] text-[#166534]'
-                      : 'bg-[#f3f4f6] text-[#6b7280]'">
+                      : 'bg-[#f3f4f6] text-[#6b7280] dark:bg-white/10 dark:text-white/40'">
                 <span class="material-symbols-outlined text-[13px] align-middle mr-0.5">
                   {{ usuario.activo ? 'check_circle' : 'cancel' }}
                 </span>
@@ -141,17 +140,17 @@
 
             <!-- Name & Email -->
             <div>
-              <h3 class="text-xl font-bold text-[#1a3e34]">
+              <h3 class="text-xl font-bold text-[#1a3e34] dark:text-white">
                 {{ usuario.nombre }} {{ usuario.apellido }}
               </h3>
-              <p class="text-sm text-[#4b5a52] flex items-center gap-1.5 mt-0.5">
+              <p class="text-sm text-[#4b5a52] dark:text-white/60 flex items-center gap-1.5 mt-0.5">
                 <span class="material-symbols-outlined text-[16px]">mail</span>
                 {{ usuario.email }}
               </p>
             </div>
 
             <!-- Meta -->
-            <div class="flex flex-wrap gap-4 text-sm text-[#4b5a52]">
+            <div class="flex flex-wrap gap-4 text-sm text-[#4b5a52] dark:text-white/50">
               <span class="inline-flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[16px]">calendar_today</span>
                 Creado el {{ usuario.fechaCreacion | date:'d MMM yyyy' }}
@@ -178,7 +177,7 @@
             </button>
 
             <button (click)="eliminarUsuario(usuario.id)"
-                    class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#ffe3e3] px-5 py-3 text-sm font-bold text-[#93000a] transition hover:bg-[#f7c4c4] cursor-pointer">
+                    class="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#ffdad6] dark:bg-[#93000a]/20 px-5 py-3 text-sm font-bold text-[#93000a] dark:text-[#ffb4ab] transition hover:bg-[#f7c4c4] cursor-pointer">
               <span class="material-symbols-outlined text-[18px]">delete</span>
               Eliminar
             </button>
