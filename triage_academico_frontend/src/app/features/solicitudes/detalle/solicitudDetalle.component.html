@@ -127,7 +127,7 @@
             Enviar a Atención
           </button>
 
-          <button *ngIf="puedeAtender()" type="button" class="action-btn action-success" [disabled]="accionEnProceso"
+          <button *ngIf="puedeAtender()" type="button" class="action-btn action-primary" [disabled]="accionEnProceso"
             (click)="abrirModalAtender()">
             <span class="material-symbols-outlined">task_alt</span>
             Atender solicitud

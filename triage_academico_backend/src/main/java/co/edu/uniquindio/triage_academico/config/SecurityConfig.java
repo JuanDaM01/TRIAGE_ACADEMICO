@@ -90,6 +90,11 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/ia/**")
                                                 .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
 
+                                                // ========== Usuarios ==========
+                                                // Gestión de usuarios - Solo coordinadores y directores
+                                                .requestMatchers("/api/usuarios/**")
+                                                .hasAnyRole("COORDINADOR", "DIRECTOR")
+
                                                 // Cualquier otra cosa requiere autenticación
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
