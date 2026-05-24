@@ -214,10 +214,7 @@ public class SolicitudServiceImpl implements SolicitudService {
         public SolicitudResponse asignarResponsable(AsignarResponsableRequest request, Long id) {
                 log.info("Asignando responsable a solicitud: {}", id);
 
-                obtenerSolicitudConVersion(id, request.getVersion());
-
-                SolicitudAcademica solicitud = solicitudRepository.findById(id)
-                                .orElseThrow(() -> new RecursoNoEncontradoException("Solicitud no encontrada: " + id));
+                SolicitudAcademica solicitud = obtenerSolicitudConVersion(id, request.getVersion());
 
                 if (solicitud.getEstado() != EstadoSolicitud.CLASIFICADA) {
                         throw new InvalidTransitionException(
@@ -235,22 +232,23 @@ public class SolicitudServiceImpl implements SolicitudService {
                                 .activa(true)
                                 .build();
 
-                asignacion = asignacionRepository.save(asignacion);
+                asignacionRepository.save(asignacion);
 
-                if (solicitud.getAsignaciones() == null) {
-                        solicitud.setAsignaciones(new HashSet<>());
-                }
-                solicitud.getAsignaciones().add(asignacion);
-
+                solicitud.setResponsableId(responsable.getId());
                 solicitud.setEstado(EstadoSolicitud.EN_ATENCION);
                 solicitud.setFechaActualizacion(LocalDateTime.now());
 
                 Usuario ejecutor = authService.getUsuarioAutenticado();
-                registrarHistorial(solicitud, AccionHistorial.ASIGNACION_RESPONSABLE, ejecutor.getId(),
+
+                registrarHistorial(
+                                solicitud,
+                                AccionHistorial.ASIGNACION_RESPONSABLE,
+                                ejecutor.getId(),
                                 "Responsable asignado: id " + request.getResponsableId());
 
-                solicitudRepository.save(solicitud);
-                return mapToResponse(solicitud);
+                SolicitudAcademica solicitudGuardada = solicitudRepository.save(solicitud);
+
+                return mapToResponse(solicitudGuardada);
         }
 
         // RF-04: EN_ATENCION a ATENDIDA
@@ -365,12 +363,9 @@ public class SolicitudServiceImpl implements SolicitudService {
         }
 
         private SolicitudResponse mapToResponse(SolicitudAcademica solicitud) {
-                Asignacion asignacionActiva = (solicitud.getAsignaciones() != null
-                                ? solicitud.getAsignaciones().stream()
-                                                .filter(Asignacion::isActiva)
-                                                .findFirst()
-                                                .orElse(null)
-                                : null);
+                Asignacion asignacionActiva = asignacionRepository
+                                .findBySolicitudIdAndActivaTrue(solicitud.getId())
+                                .orElse(null);
 
                 return SolicitudResponse.builder()
                                 .id(solicitud.getId())

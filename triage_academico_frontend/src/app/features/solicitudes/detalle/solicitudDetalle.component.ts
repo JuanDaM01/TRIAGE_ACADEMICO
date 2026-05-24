@@ -218,19 +218,50 @@ export class SolicitudDetalleComponent implements OnInit {
     }
 
     atender(): void {
+        this.limpiarMensajes();
+
         const observacion = window.prompt('Ingrese observaciones de atención:');
 
-        if (!observacion?.trim() || !this.solicitud?.id) {
+        if (!observacion?.trim()) {
+            this.mensajeError = 'La observación de atención es obligatoria.';
             return;
         }
 
-        this.solicitudService.atenderSolicitud(this.solicitud.id, observacion.trim()).subscribe({
-            next: () => this.cargarDetalle(),
-            error: (err) => {
-                console.error(err);
-                this.mensajeError = 'No fue posible atender la solicitud.';
-            }
-        });
+        if (!this.solicitud?.id) {
+            this.mensajeError = 'No fue posible identificar la solicitud.';
+            return;
+        }
+
+        if (this.solicitud.version === null || this.solicitud.version === undefined) {
+            this.mensajeError = 'No fue posible validar la versión de la solicitud. Se actualizará la información.';
+            this.cargarDetalle();
+            return;
+        }
+
+        this.accionEnProceso = true;
+
+        this.solicitudService
+            .atenderSolicitud(
+                this.solicitud.id,
+                observacion.trim(),
+                this.solicitud.version
+            )
+            .subscribe({
+                next: (solicitudActualizada) => {
+                    this.solicitud = solicitudActualizada;
+                    this.accionEnProceso = false;
+                    this.mensajeExito = 'La solicitud fue atendida correctamente.';
+                    this.cdr.detectChanges();
+                },
+                error: (error) => {
+                    this.accionEnProceso = false;
+                    this.mensajeError =
+                        error?.error?.mensaje ||
+                        error?.error?.error ||
+                        'No fue posible atender la solicitud.';
+                    this.cdr.detectChanges();
+                }
+            });
     }
 
     esEstadoAlcanzado(estadoKey: EstadoSolicitud | string): boolean {

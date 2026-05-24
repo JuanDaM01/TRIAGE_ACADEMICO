@@ -60,15 +60,15 @@ export class SolicitudService {
     }
 
     asignarResponsable(id: number, responsableId: number, version: number): Observable<SolicitudAcademica> {
-        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/asignar`, { responsableId, version });
+        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/asignar`, { responsableId: Number(responsableId), version: Number(version) });
     }
 
-    atenderSolicitud(id: number, observaciones: string): Observable<SolicitudAcademica> {
-        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/atender`, { observaciones });
+    atenderSolicitud(id: number, observacion: string, version: number): Observable<SolicitudAcademica> {
+        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/atender`, { observacion: observacion.trim(), version: Number(version) });
     }
 
-    cerrarSolicitud(id: number, observaciones: string): Observable<SolicitudAcademica> {
-        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/cerrar`, { observaciones });
+    cerrarSolicitud(id: number, observacionCierre: string, version: number): Observable<SolicitudAcademica> {
+        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/cerrar`, { observacionCierre: observacionCierre.trim(), version: Number(version) });
     }
 
     getHistorialSolicitud(id: number): Observable<HistorialSolicitud[]> {
