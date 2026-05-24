@@ -63,13 +63,23 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/usuarios/gestion/usuarioGestion.component').then(m => m.UsuarioGestionComponent),
                 canActivate: [roleGuard(['COORDINADOR', 'DIRECTOR'])]
             },
+
+            {
+                path: 'ia',
+                loadComponent: () => import('./features/ia/sugerencia/iaSugerencia.component')
+                    .then(m => m.IASugerenciaComponent),
+                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
+            },
+
             {
                 path: 'ia/sugerencia',
-                loadComponent: () => import('./features/ia/sugerencia/iaSugerencia.component').then(m => m.IASugerenciaComponent)
+                redirectTo: 'ia',
+                pathMatch: 'full'
             },
             {
                 path: 'ia/resumen',
-                loadComponent: () => import('./features/ia/resumen/iaResumen.component').then(m => m.IAResumenComponent)
+                redirectTo: 'ia',
+                pathMatch: 'full'
             },
 
             { path: '', canActivate: [homeRedirectGuard], component: MainLayoutComponent }

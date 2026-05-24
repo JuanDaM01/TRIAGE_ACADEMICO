@@ -52,8 +52,11 @@ public class IAServiceImpl implements IAService {
     @Override
     @Transactional
     public SugerenciaClasificacionResponse sugerirClasificacion(Long solicitudId, String descripcion) {
-        SolicitudAcademica solicitud = solicitudRepository.findById(solicitudId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Solicitud", solicitudId));
+        SolicitudAcademica solicitud = null;
+        if (solicitudId != null) {
+            solicitud = solicitudRepository.findById(solicitudId)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Solicitud", solicitudId));
+        }
 
         SugerenciaClasificacionResponse response;
 
@@ -81,13 +84,15 @@ public class IAServiceImpl implements IAService {
             }
         }
 
-        guardarSugerencia(solicitud, response);
+        if (solicitud != null) {
+            guardarSugerencia(solicitud, response);
+        }
 
         return response;
     }
 
     // RF-09: Generar resumen
-    
+
     @Override
     @Transactional
     public ResumenSolicitudResponse generarResumen(Long solicitudId) {

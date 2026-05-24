@@ -1,7 +1,13 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SugerenciaIA, SugerenciaClasificacionResponse, ResumenIA } from '@models';
+
+import {
+    ResumenIA,
+    SugerenciaClasificacionResponse,
+    SugerenciaIA
+} from '@models';
+
 import { environment } from '@env';
 
 export interface SugerenciaRequest {
@@ -9,34 +15,45 @@ export interface SugerenciaRequest {
     descripcion: string;
 }
 
-export interface ResumenRequest {
-    solicitudId: number;
+export interface ResumenResponse extends ResumenIA {
+    solicitudId?: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+    providedIn: 'root'
+})
 export class IAService {
 
     private readonly API_URL = `${environment.apiUrl}/api/ia`;
 
-    constructor(private http: HttpClient) { }
+    constructor(private readonly http: HttpClient) { }
 
-    // POST /api/ia/sugerir-clasificacion
-    sugerirClasificacion(solicitudId: number, descripcion: string): Observable<SugerenciaClasificacionResponse> {
-        return this.http.post<SugerenciaClasificacionResponse>(`${this.API_URL}/sugerir-clasificacion`, {
-            solicitudId,
-            descripcion
-        });
+    sugerirClasificacion(
+        solicitudId: number,
+        descripcion: string
+    ): Observable<SugerenciaClasificacionResponse> {
+        return this.http.post<SugerenciaClasificacionResponse>(
+            `${this.API_URL}/sugerir-clasificacion`,
+            {
+                solicitudId,
+                descripcion
+            }
+        );
     }
 
-    obtenerSugerencia(request: SugerenciaRequest): Observable<SugerenciaClasificacionResponse> {
-        return this.http.post<SugerenciaClasificacionResponse>(`${this.API_URL}/sugerir-clasificacion`, {
-            solicitudId: request.solicitudId,
-            descripcion: request.descripcion
-        });
+    obtenerSugerencia(request: SugerenciaRequest): Observable<SugerenciaIA> {
+        return this.http.post<SugerenciaIA>(
+            `${this.API_URL}/sugerir-clasificacion`,
+            {
+                solicitudId: request.solicitudId,
+                descripcion: request.descripcion
+            }
+        );
     }
 
-    // GET /api/ia/resumen/:solicitudId
-    generarResumen(solicitudId: number): Observable<ResumenIA> {
-        return this.http.get<ResumenIA>(`${this.API_URL}/resumen/${solicitudId}`);
+    generarResumen(solicitudId: number): Observable<ResumenResponse> {
+        return this.http.get<ResumenResponse>(
+            `${this.API_URL}/resumen/${solicitudId}`
+        );
     }
 }
