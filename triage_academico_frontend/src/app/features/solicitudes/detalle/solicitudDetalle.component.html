@@ -37,9 +37,7 @@
           {{ solicitud.estado | estado }}
         </span>
 
-        <span
-          *ngIf="solicitud.nivelPrioridad"
-          class="chip prioridad"
+        <span *ngIf="solicitud.nivelPrioridad" class="chip prioridad"
           [ngClass]="prioridadClass(solicitud.nivelPrioridad)">
           {{ solicitud.nivelPrioridad | prioridad }}
         </span>
@@ -57,23 +55,16 @@
       <ng-container *ngFor="let paso of pasosTriage; let last = last; trackBy: trackByPaso">
 
         <div class="progress-step">
-          <div
-            class="step-circle"
-            [class.active]="esEstadoAlcanzado(paso.key)">
+          <div class="step-circle" [class.active]="esEstadoAlcanzado(paso.key)">
             <span class="material-symbols-outlined">{{ paso.icon }}</span>
           </div>
 
-          <span
-            class="step-label"
-            [class.active]="esEstadoAlcanzado(paso.key)">
+          <span class="step-label" [class.active]="esEstadoAlcanzado(paso.key)">
             {{ paso.label }}
           </span>
         </div>
 
-        <div
-          *ngIf="!last"
-          class="step-connector"
-          [class.active]="esEstadoAlcanzado(paso.key)">
+        <div *ngIf="!last" class="step-connector" [class.active]="esEstadoAlcanzado(paso.key)">
         </div>
 
       </ng-container>
@@ -124,31 +115,20 @@
 
         <div class="actions-list">
 
-          <button
-            *ngIf="puedeClasificar()"
-            type="button"
-            class="action-btn action-primary"
-            (click)="irAClasificarIA()">
+          <button *ngIf="puedeClasificar()" type="button" class="action-btn action-primary" (click)="irAClasificarIA()">
             <span class="material-symbols-outlined">auto_awesome</span>
             Clasificar solicitud
           </button>
 
-          <button
-            *ngIf="puedeEnviarAAtencion()"
-            type="button"
-            class="action-btn action-attention"
-            [disabled]="accionEnProceso"
-            (click)="abrirConfirmacionEnviarAAtencion()">
+          <button *ngIf="puedeEnviarAAtencion()" type="button" class="action-btn action-attention"
+            [disabled]="accionEnProceso" (click)="abrirConfirmacionEnviarAAtencion()">
 
             <span class="material-symbols-outlined">support_agent</span>
             Enviar a Atención
           </button>
 
-          <button
-            *ngIf="puedeAtender()"
-            type="button"
-            class="action-btn action-success"
-            (click)="atender()">
+          <button *ngIf="puedeAtender()" type="button" class="action-btn action-success" [disabled]="accionEnProceso"
+            (click)="abrirModalAtender()">
             <span class="material-symbols-outlined">task_alt</span>
             Atender solicitud
           </button>
@@ -173,9 +153,7 @@
 
         <div class="meta-item">
           <span class="meta-label">Actualizada</span>
-          <strong>
-            {{ solicitud.fechaActualizacion ? (solicitud.fechaActualizacion | date:'d MMM yyyy':'':'es') : 'Sin registro' }}
-          </strong>
+          <strong>{{ solicitud.fechaActualizacion ? (solicitud.fechaActualizacion | date:'d MMM yyyy':'':'es') : 'Sin registro' }} </strong>
           <small>
             {{ solicitud.fechaActualizacion ? (solicitud.fechaActualizacion | date:'h:mm a':'':'es') : '' }}
           </small>
@@ -215,11 +193,7 @@
 
   </div>
 
-  <div
-    *ngIf="modalEnviarAtencionVisible"
-    class="modal-backdrop"
-    role="dialog"
-    aria-modal="true"
+  <div *ngIf="modalEnviarAtencionVisible" class="modal-backdrop" role="dialog" aria-modal="true"
     aria-labelledby="modalEnviarAtencionTitulo">
 
     <div class="confirm-modal">
@@ -241,18 +215,12 @@
         </p>
 
         <div class="modal-actions">
-          <button
-            type="button"
-            class="btn-modal-secondary"
-            [disabled]="accionEnProceso"
+          <button type="button" class="btn-modal-secondary" [disabled]="accionEnProceso"
             (click)="cancelarEnvioAAtencion()">
             Cancelar
           </button>
 
-          <button
-            type="button"
-            class="btn-modal-primary"
-            [disabled]="accionEnProceso"
+          <button type="button" class="btn-modal-primary" [disabled]="accionEnProceso"
             (click)="confirmarEnviarAAtencion()">
 
             <span *ngIf="accionEnProceso" class="button-spinner"></span>
@@ -262,5 +230,77 @@
       </div>
     </div>
   </div>
+
+  <div
+  *ngIf="modalAtenderVisible"
+  class="modal-backdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalAtenderTitulo">
+
+  <div class="confirm-modal modal-atencion">
+    <div class="modal-icon modal-icon-success">
+      <span class="material-symbols-outlined">task_alt</span>
+    </div>
+
+    <div class="modal-content">
+      <p class="eyebrow">Registrar atención</p>
+
+      <h2 id="modalAtenderTitulo">
+        Atender solicitud #{{ solicitud.id }}
+      </h2>
+
+      <p>
+        La solicitud pasará de <strong>En Atención</strong> a
+        <strong>Atendida</strong>. Registre una observación clara de resolución.
+      </p>
+
+      <label class="textarea-label" for="observacionAtencion">
+        Observación de atención
+      </label>
+
+      <textarea
+        id="observacionAtencion"
+        class="modal-textarea"
+        rows="5"
+        maxlength="1000"
+        [(ngModel)]="observacionAtencion"
+        placeholder="Ejemplo: Se revisó la solicitud, se validaron los documentos y se dio respuesta al estudiante.">
+      </textarea>
+
+      <div class="textarea-footer">
+        <span
+          class="field-error"
+          *ngIf="!observacionAtencion.trim()">
+          La observación es obligatoria.
+        </span>
+
+        <span class="counter">
+          {{ observacionAtencion.length }}/1000
+        </span>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn-modal-secondary"
+          [disabled]="accionEnProceso"
+          (click)="cancelarAtencion()">
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn-modal-primary btn-modal-success"
+          [disabled]="accionEnProceso || !observacionAtencion.trim()"
+          (click)="confirmarAtencion()">
+
+          <span *ngIf="accionEnProceso" class="button-spinner"></span>
+          {{ accionEnProceso ? 'Atendiendo...' : 'Confirmar atención' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </section>

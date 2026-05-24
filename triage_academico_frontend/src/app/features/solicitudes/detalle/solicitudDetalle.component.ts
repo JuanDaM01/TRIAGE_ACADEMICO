@@ -8,11 +8,12 @@ import { SolicitudAcademica, EstadoSolicitud } from '@models';
 
 import { EstadoPipe } from '@shared/pipes/estado.pipe';
 import { PrioridadPipe } from '@shared/pipes/prioridad.pipe';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-solicitud-detalle',
     standalone: true,
-    imports: [CommonModule, EstadoPipe, PrioridadPipe],
+    imports: [CommonModule, FormsModule, EstadoPipe, PrioridadPipe],
     templateUrl: './solicitudDetalle.component.html',
     styleUrls: ['./solicitudDetalle.component.scss']
 })
@@ -25,6 +26,9 @@ export class SolicitudDetalleComponent implements OnInit {
 
     mensajeExito = '';
     mensajeError = '';
+
+    modalAtenderVisible = false;
+    observacionAtencion = '';
 
     modalEnviarAtencionVisible = false;
 
@@ -217,18 +221,16 @@ export class SolicitudDetalleComponent implements OnInit {
         });
     }
 
-    atender(): void {
+    abrirModalAtender(): void {
         this.limpiarMensajes();
-
-        const observacion = window.prompt('Ingrese observaciones de atención:');
-
-        if (!observacion?.trim()) {
-            this.mensajeError = 'La observación de atención es obligatoria.';
-            return;
-        }
 
         if (!this.solicitud?.id) {
             this.mensajeError = 'No fue posible identificar la solicitud.';
+            return;
+        }
+
+        if (this.solicitud.estado !== EstadoSolicitud.EN_ATENCION) {
+            this.mensajeError = 'La solicitud solo puede atenderse cuando está en estado En Atención.';
             return;
         }
 
@@ -238,30 +240,101 @@ export class SolicitudDetalleComponent implements OnInit {
             return;
         }
 
+        this.observacionAtencion = '';
+        this.modalAtenderVisible = true;
+    }
+
+    cancelarAtencion(): void {
+        if (this.accionEnProceso) {
+            return;
+        }
+
+        this.modalAtenderVisible = false;
+        this.observacionAtencion = '';
+    }
+
+    confirmarAtencion(): void {
+        this.limpiarMensajes();
+
+        const observacion = this.observacionAtencion.trim();
+
+        if (!observacion) {
+            this.mensajeError = 'La observación de atención es obligatoria.';
+            return;
+        }
+
+        if (!this.solicitud?.id) {
+            this.mensajeError = 'No fue posible identificar la solicitud.';
+            return;
+        }
+
+        if (this.solicitud.estado !== EstadoSolicitud.EN_ATENCION) {
+            this.mensajeError = 'La solicitud ya no se encuentra en estado En Atención.';
+            this.modalAtenderVisible = false;
+            this.cargarDetalle();
+            return;
+        }
+
+        if (this.solicitud.version === null || this.solicitud.version === undefined) {
+            this.mensajeError = 'No fue posible validar la versión de la solicitud. Se actualizará la información.';
+            this.modalAtenderVisible = false;
+            this.cargarDetalle();
+            return;
+        }
+
         this.accionEnProceso = true;
 
         this.solicitudService
             .atenderSolicitud(
-                this.solicitud.id,
-                observacion.trim(),
-                this.solicitud.version
+                Number(this.solicitud.id),
+                observacion,
+                Number(this.solicitud.version)
             )
             .subscribe({
                 next: (solicitudActualizada) => {
                     this.solicitud = solicitudActualizada;
                     this.accionEnProceso = false;
+                    this.modalAtenderVisible = false;
+                    this.observacionAtencion = '';
                     this.mensajeExito = 'La solicitud fue atendida correctamente.';
                     this.cdr.detectChanges();
                 },
                 error: (error) => {
                     this.accionEnProceso = false;
-                    this.mensajeError =
-                        error?.error?.mensaje ||
-                        error?.error?.error ||
-                        'No fue posible atender la solicitud.';
+                    this.mensajeError = this.obtenerMensajeErrorProceso(
+                        error,
+                        'No fue posible atender la solicitud.'
+                    );
                     this.cdr.detectChanges();
                 }
             });
+    }
+
+    private obtenerMensajeErrorProceso(error: any, mensajePorDefecto: string): string {
+        const mensajeBackend =
+            error?.error?.mensaje ||
+            error?.error?.message ||
+            error?.error?.error ||
+            (typeof error?.error === 'string' ? error.error : '');
+
+        if (error?.status === 400 && error?.error?.errores) {
+            const errores = Object.values(error.error.errores);
+            return errores.length > 0 ? String(errores[0]) : mensajePorDefecto;
+        }
+
+        if (error?.status === 403) {
+            return 'No tiene permisos para realizar esta acción.';
+        }
+
+        if (error?.status === 409) {
+            return 'La solicitud fue modificada por otro usuario. Actualice la página e intente nuevamente.';
+        }
+
+        if (error?.status === 500) {
+            return 'El servidor no pudo completar la operación. Revise la consola del backend.';
+        }
+
+        return mensajeBackend || mensajePorDefecto;
     }
 
     esEstadoAlcanzado(estadoKey: EstadoSolicitud | string): boolean {

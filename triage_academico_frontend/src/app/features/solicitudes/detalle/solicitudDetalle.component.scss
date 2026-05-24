@@ -673,4 +673,90 @@ h1 {
     .btn-modal-primary {
         width: 100%;
     }
+
+    .modal-atencion {
+        width: min(620px, 100%);
+    }
+
+    .modal-icon-success {
+        color: white;
+        background: var(--primary);
+    }
+
+    .textarea-label {
+        display: block;
+        margin: 1rem 0 0.45rem;
+        color: rgba(62, 73, 70, 0.72);
+        font-size: 0.72rem;
+        font-weight: 950;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .modal-textarea {
+        width: 100%;
+        min-height: 8rem;
+        resize: vertical;
+        padding: 0.9rem 1rem;
+        border: 1px solid rgba(0, 79, 69, 0.16);
+        border-radius: 1rem;
+        outline: none;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.78);
+        font-family: inherit;
+        font-size: 0.92rem;
+        line-height: 1.55;
+        transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .modal-textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(0, 79, 69, 0.1);
+        background: white;
+    }
+
+    .textarea-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 0.45rem;
+    }
+
+    .field-error {
+        color: var(--danger);
+        font-size: 0.74rem;
+        font-weight: 800;
+    }
+
+    .counter {
+        margin-left: auto;
+        color: rgba(62, 73, 70, 0.52);
+        font-size: 0.72rem;
+        font-weight: 800;
+    }
+
+    .btn-modal-success {
+        color: white;
+        background: var(--primary);
+    }
+
+    .btn-modal-success:hover:not(:disabled) {
+        background: var(--primary-dark);
+    }
+
+    :host-context(.dark) .textarea-label,
+    :host-context(.dark) .counter {
+        color: rgba(255, 255, 255, 0.58);
+    }
+
+    :host-context(.dark) .modal-textarea {
+        color: white;
+        background: rgba(24, 28, 28, 0.82);
+        border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    :host-context(.dark) .modal-textarea:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(132, 213, 197, 0.12);
+    }
 }
