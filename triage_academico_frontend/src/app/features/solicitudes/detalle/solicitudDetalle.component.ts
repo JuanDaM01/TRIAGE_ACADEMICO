@@ -79,6 +79,18 @@ export class SolicitudDetalleComponent implements OnInit {
         this.router.navigate(['/app/solicitudes', this.id, 'clasificar']);
     }
 
+    asignarResponsableActual(): void {
+        const responsableId = this.authService.getCurrentUser()?.id;
+        if (!responsableId || !this.solicitud?.id || this.solicitud.version == null) {
+            return;
+        }
+
+        this.solicitudService.asignarResponsable(this.solicitud.id, responsableId, this.solicitud.version).subscribe({
+            next: () => this.cargarDetalle(),
+            error: (err) => console.error(err)
+        });
+    }
+
     atender(): void {
         const obs = prompt('Ingrese observaciones de atención:');
         if (obs && this.solicitud?.id) {

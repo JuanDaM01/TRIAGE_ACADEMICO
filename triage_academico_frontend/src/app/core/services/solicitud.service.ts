@@ -59,8 +59,8 @@ export class SolicitudService {
         return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/clasificar`, request);
     }
 
-    asignarResponsable(id: number, responsableId: number): Observable<SolicitudAcademica> {
-        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/asignar`, { responsableId });
+    asignarResponsable(id: number, responsableId: number, version: number): Observable<SolicitudAcademica> {
+        return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/asignar`, { responsableId, version });
     }
 
     atenderSolicitud(id: number, observaciones: string): Observable<SolicitudAcademica> {
