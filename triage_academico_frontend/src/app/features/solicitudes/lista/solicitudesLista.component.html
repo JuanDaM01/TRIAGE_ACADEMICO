@@ -258,7 +258,7 @@
               </a>
 
               <a
-                *ngIf="sol.estado === EstadoSolicitud.REGISTRADA"
+                *ngIf="sol.estado === EstadoSolicitud.REGISTRADA && puedeEditar()"
                 [routerLink]="['/app/solicitudes', sol.id, 'editar']"
                 class="w-full bg-[#dded49] hover:bg-[#c1d02c] text-[#1a1d00] font-bold text-xs py-2.5 px-4 rounded-xl border border-[#bec9c5]/30 hover:border-[#c1d02c]/50 transition-all flex items-center justify-center gap-1.5 decoration-transparent shadow-sm hover:shadow">
 

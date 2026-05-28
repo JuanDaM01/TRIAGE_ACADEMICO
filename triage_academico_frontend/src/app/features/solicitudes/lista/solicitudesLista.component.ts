@@ -2,6 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SolicitudService } from '@core/services/solicitud.service';
+import { AuthService } from '@core/auth/auth.service';
 import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '@models';
 
 @Component({
@@ -20,6 +21,7 @@ export class SolicitudesListaComponent implements OnInit {
 
     constructor(
         private solicitudService: SolicitudService,
+        private authService: AuthService,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -84,5 +86,11 @@ export class SolicitudesListaComponent implements OnInit {
             case EstadoSolicitud.CERRADA:     return 'bg-[#2c3131]';
             default: return 'bg-gray-400';
         }
+    }
+
+    puedeEditar(): boolean {
+        return this.authService.hasRole('ADMINISTRATIVO') ||
+            this.authService.hasRole('DOCENTE') ||
+            this.authService.hasRole('ESTUDIANTE');
     }
 }
