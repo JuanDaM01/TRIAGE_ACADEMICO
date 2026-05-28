@@ -5,6 +5,7 @@ import {
     SolicitudAcademica,
     CrearSolicitudRequest,
     ClasificarSolicitudRequest,
+    EditarSolicitudRequest,
     PageResponse,
     HistorialSolicitud
 } from '@models';
@@ -57,6 +58,10 @@ export class SolicitudService {
 
     clasificarSolicitud(id: number, request: ClasificarSolicitudRequest): Observable<SolicitudAcademica> {
         return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/clasificar`, request);
+    }
+
+    editarSolicitud(id: number, request: EditarSolicitudRequest): Observable<SolicitudAcademica> {
+        return this.http.put<SolicitudAcademica>(`${this.API_URL}/${id}/editar`, request);
     }
 
     asignarResponsable(id: number, responsableId: number, version: number): Observable<SolicitudAcademica> {

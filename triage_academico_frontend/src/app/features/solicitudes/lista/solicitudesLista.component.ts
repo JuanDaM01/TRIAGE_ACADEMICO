@@ -14,6 +14,7 @@ import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '@models';
 export class SolicitudesListaComponent implements OnInit {
 
     solicitudes: SolicitudAcademica[] = [];
+    readonly EstadoSolicitud = EstadoSolicitud;
     loading = true;
     errorMessage = '';
 

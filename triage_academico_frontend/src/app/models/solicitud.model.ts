@@ -40,3 +40,10 @@ export interface ClasificarSolicitudRequest {
     justificacion?: string;
     version: number;
 }
+
+export interface EditarSolicitudRequest {
+    descripcion: string;
+    tipoSolicitud: TipoSolicitud;
+    canalOrigen: CanalOrigen;
+    version?: number;
+}

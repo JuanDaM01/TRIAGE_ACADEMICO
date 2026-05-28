@@ -12,6 +12,11 @@ export const SOLICITUDES_ROUTES: Routes = [
         title: 'Nueva Solicitud'
     },
     {
+        path: ':id/editar',
+        loadComponent: () => import('./editar/solicitudEditar.component').then(m => m.SolicitudEditarComponent),
+        title: 'Editar Solicitud'
+    },
+    {
         path: ':id',
         loadComponent: () => import('./detalle/solicitudDetalle.component').then(m => m.SolicitudDetalleComponent),
         title: 'Detalle de Solicitud'

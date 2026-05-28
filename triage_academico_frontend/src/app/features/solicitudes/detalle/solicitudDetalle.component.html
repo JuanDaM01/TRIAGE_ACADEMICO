@@ -115,6 +115,11 @@
 
         <div class="actions-list">
 
+          <button *ngIf="puedeEditar()" type="button" class="action-btn action-secondary" (click)="irAEditarSolicitud()">
+            <span class="material-symbols-outlined">edit</span>
+            Editar solicitud
+          </button>
+
           <button *ngIf="puedeClasificar()" type="button" class="action-btn action-primary" (click)="irAClasificarIA()">
             <span class="material-symbols-outlined">auto_awesome</span>
             Clasificar solicitud

@@ -1,0 +1,93 @@
+<div class="space-y-8 pb-12 font-['Inter'] w-full">
+
+  <div class="relative overflow-hidden rounded-3xl bg-white/40 dark:bg-black/20 backdrop-blur-xl border border-white/60 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,79,69,0.05)] p-8">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#84d5c5]/30 to-[#dded49]/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div>
+        <h2 class="text-3xl font-black text-[#004f45] dark:text-[#84d5c5] mb-2 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[36px] icon-filled text-[#004f45] dark:text-[#84d5c5]">edit</span>
+          Editar Solicitud Académica
+        </h2>
+        <p class="text-sm md:text-base text-[#3e4946] dark:text-white/80 max-w-xl leading-relaxed">
+          Actualiza los datos de tu solicitud. Solo las solicitudes en estado <strong>Registrada</strong> pueden editarse.
+        </p>
+      </div>
+      <a [routerLink]="['/app/solicitudes', solicitudId]" class="flex items-center gap-2 text-xs font-bold text-[#004f45] dark:text-[#84d5c5] hover:underline bg-white/60 dark:bg-[#181c1c]/60 px-4 py-2.5 rounded-xl border border-white dark:border-[#3e4946]/20 shadow-sm shrink-0 decoration-transparent">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        Volver al detalle
+      </a>
+    </div>
+  </div>
+
+  <div class="bg-white/50 dark:bg-[#181c1c]/30 backdrop-blur-lg rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_4px_24px_0_rgba(0,0,0,0.02)] p-8 md:p-10 hover:shadow-[0_8px_32px_0_rgba(0,105,92,0.08)] transition-all duration-300">
+    <form [formGroup]="solicitudForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+      <div class="flex flex-col">
+        <label class="text-xs font-black text-[#004f45] dark:text-[#84d5c5] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">description</span>
+          Descripción de la Solicitud
+        </label>
+        <textarea formControlName="descripcion" rows="6"
+          class="w-full bg-[#ebefee]/50 dark:bg-[#ebefee]/5 border border-[#bec9c5]/30 dark:border-white/10 text-[#181c1c] dark:text-white text-sm rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] focus:bg-white dark:focus:bg-[#181c1c] transition-all duration-300 placeholder:text-[#3e4946]/40 dark:placeholder:text-white/30 backdrop-blur-sm"
+          placeholder="Actualiza la descripción de tu solicitud con mayor detalle o correcciones..."></textarea>
+        <span class="text-[10px] text-[#3e4946]/60 dark:text-white/40 mt-1 font-semibold">Mínimo 10 caracteres explicativos.</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="flex flex-col">
+          <label class="text-xs font-black text-[#004f45] dark:text-[#84d5c5] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">category</span>
+            Tipo de Solicitud
+          </label>
+          <select formControlName="tipoSolicitud"
+            class="w-full bg-[#ebefee]/50 dark:bg-[#ebefee]/5 border border-[#bec9c5]/30 dark:border-white/10 text-[#181c1c] dark:text-white text-sm rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] focus:bg-white dark:focus:bg-[#181c1c] transition-all duration-300 cursor-pointer">
+            <option *ngFor="let tipo of tiposSolicitud" [value]="tipo">
+              {{ tipo }}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-xs font-black text-[#004f45] dark:text-[#84d5c5] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">devices</span>
+            Canal de Origen
+          </label>
+          <select formControlName="canalOrigen"
+            class="w-full bg-[#ebefee]/50 dark:bg-[#ebefee]/5 border border-[#bec9c5]/30 dark:border-white/10 text-[#181c1c] dark:text-white text-sm rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] focus:bg-white dark:focus:bg-[#181c1c] transition-all duration-300 cursor-pointer">
+            <option *ngFor="let canal of canalesOrigen" [value]="canal">
+              {{ canal }}
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+      <div *ngIf="errorMessage" class="p-4 bg-[#ffdad6] text-[#93000a] text-sm rounded-2xl font-semibold flex items-center gap-2 border border-[#93000a]/20 animate-shake">
+        <span class="material-symbols-outlined">error</span>
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="success" class="p-4 bg-[#dcfce7] text-[#166534] text-sm rounded-2xl font-bold flex items-center gap-2 border border-[#166534]/20 animate-pulse">
+        <span class="material-symbols-outlined">check_circle</span>
+        Solicitud actualizada correctamente. Redireccionando...
+      </div>
+
+      <div class="pt-4 flex flex-col sm:flex-row gap-4">
+        <button type="submit" [disabled]="saving || solicitudForm.invalid || !editable"
+          class="flex-grow bg-[#dded49] hover:bg-[#c1d02c] disabled:opacity-50 disabled:cursor-not-allowed text-[#1a1d00] font-bold text-sm py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer border-none">
+          <span class="material-symbols-outlined text-[20px]" *ngIf="!saving">save</span>
+          <span class="w-5 h-5 border-2 border-[#1a1d00] border-t-transparent rounded-full animate-spin shrink-0" *ngIf="saving"></span>
+          {{ saving ? 'Guardando cambios...' : 'Guardar cambios' }}
+        </button>
+
+        <button type="button" (click)="cancelar()"
+          class="sm:w-48 bg-white/40 hover:bg-[#ebefee] dark:bg-[#181c1c]/40 text-[#3e4946] dark:text-white font-bold text-sm py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 border border-[#bec9c5]/30 cursor-pointer decoration-transparent">
+          Cancelar
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>

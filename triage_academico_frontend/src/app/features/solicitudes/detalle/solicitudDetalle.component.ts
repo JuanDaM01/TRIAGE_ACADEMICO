@@ -110,7 +110,25 @@ export class SolicitudDetalleComponent implements OnInit {
         return this.authService.hasRole('ADMINISTRATIVO') ||
             this.authService.hasRole('COORDINADOR') ||
             this.authService.hasRole('DIRECTOR') ||
-            this.authService.hasRole('DOCENTE');
+            this.authService.hasRole('DOCENTE') ||
+            this.authService.hasRole('ESTUDIANTE');
+    }
+
+    puedeEditar(): boolean {
+        return !!this.solicitud &&
+            this.solicitud.estado === EstadoSolicitud.REGISTRADA &&
+            (
+                this.authService.hasRole('ADMINISTRATIVO') ||
+                this.authService.hasRole('DOCENTE') ||
+                this.authService.hasRole('ESTUDIANTE')
+            );
+    }
+
+    irAEditarSolicitud(): void {
+        if (!this.id || Number.isNaN(this.id)) {
+            return;
+        }
+        this.router.navigate(['/app/solicitudes', this.id, 'editar']);
     }
 
     puedeClasificar(): boolean {
