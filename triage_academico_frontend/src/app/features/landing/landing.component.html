@@ -1,241 +1,207 @@
-<div class="w-full bg-[#f7fbfa] text-[#0f172a] font-['Inter'] overflow-x-hidden">
+<main class="landing-page">
+  <div class="bg-shape bg-shape--one"></div>
+  <div class="bg-shape bg-shape--two"></div>
+  <div class="bg-shape bg-shape--three"></div>
 
-  <!-- NAVBAR -->
-  <nav class="fixed top-0 w-full z-50 backdrop-blur-xl bg-white/75 border-b border-[#dbe5e2]">
-    <div class="w-full mx-auto px-6 py-4 flex justify-between items-center">
+  <nav class="landing-navbar" aria-label="Navegación principal">
+    <div class="navbar-container">
+      <a class="brand" routerLink="/" aria-label="Ir al inicio">
+        <span class="brand-logo">
+          <img [src]="logoSrc" alt="Logo Universidad del Quindío" />
+        </span>
 
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#84d5c5] to-[#004f45] flex items-center justify-center text-white text-xl font-black shadow-lg">
-          UQ
-        </div>
-        <div>
-          <h1 class="font-black text-lg text-[#004f45]">Triage Académico</h1>
-          <p class="text-xs text-slate-500">Universidad del Quindío</p>
-        </div>
+        <span class="brand-info">
+          <strong>Triage Académico</strong>
+          <small>Gestión inteligente</small>
+        </span>
+      </a>
+
+      <div class="nav-links">
+        <button type="button" (click)="scrollToSection('caracteristicas')">
+          Características
+        </button>
+
+        <button type="button" (click)="scrollToSection('proceso')">
+          Proceso
+        </button>
+
+        <button type="button" (click)="scrollToSection('roles')">
+          Roles
+        </button>
       </div>
 
-      <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-        <a href="#features" class="hover:text-[#004f45] transition">Características</a>
-        <a href="#roles" class="hover:text-[#004f45] transition">Roles</a>
-        <a href="#benefits" class="hover:text-[#004f45] transition">Beneficios</a>
-      </div>
-
-      <div class="flex gap-3">
-        <a routerLink="/login"
-          class="px-5 py-2 rounded-xl border border-[#d9e5e2] text-[#004f45] font-semibold hover:bg-[#eef8f5] transition">
-          Ingresar
+      <div class="nav-actions">
+        <a routerLink="/login" class="btn btn--ghost">
+          Iniciar sesión
         </a>
 
-        <a routerLink="/registro"
-          class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#84d5c5] to-[#004f45] text-white font-bold shadow-lg hover:scale-105 transition">
+        <a routerLink="/registro" class="btn btn--primary">
           Registrarse
         </a>
       </div>
+
+      <button
+        type="button"
+        class="menu-button"
+        [class.menu-button--active]="mobileMenuOpen"
+        [attr.aria-expanded]="mobileMenuOpen"
+        aria-label="Abrir menú"
+        (click)="toggleMobileMenu()"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <div class="mobile-menu" [class.mobile-menu--open]="mobileMenuOpen">
+      <button type="button" (click)="scrollToSection('caracteristicas')">
+        Características
+      </button>
+
+      <button type="button" (click)="scrollToSection('proceso')">
+        Proceso
+      </button>
+
+      <button type="button" (click)="scrollToSection('roles')">
+        Roles
+      </button>
+
+      <a routerLink="/login" class="btn btn--ghost">
+        Iniciar sesión
+      </a>
+
+      <a routerLink="/registro" class="btn btn--primary">
+        Registrarse
+      </a>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="relative pt-36 pb-24 overflow-hidden">
-
-    <!-- Background blobs -->
-    <div class="absolute -top-20 left-0 w-[500px] h-[500px] bg-[#84d5c5]/20 rounded-full blur-[140px]"></div>
-    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#004f45]/10 rounded-full blur-[160px]"></div>
-
-    <div class="w-full mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
-
-      <!-- Left -->
-      <div>
-        <span class="inline-block px-4 py-2 rounded-full bg-[#e8f7f2] text-[#004f45] font-bold text-sm mb-6">
-          Plataforma Inteligente de Gestión Académica
-        </span>
-
-        <h1 class="text-4xl md:text-5xl font-black leading-tight mb-6">
-          Automatiza y optimiza tus
-          <span class="text-[#004f45]">trámites académicos</span>
-        </h1>
-
-        <p class="text-xl text-slate-600 leading-relaxed mb-8 max-w-xl">
-          Sistema inteligente que clasifica, prioriza y asigna solicitudes académicas en tiempo real,
-          reduciendo tiempos de respuesta y mejorando la experiencia institucional.
-        </p>
-
-        <div class="flex flex-wrap gap-4">
-          <a routerLink="/registro"
-            class="px-8 py-4 rounded-2xl bg-[#004f45] text-white font-bold shadow-xl hover:shadow-2xl transition">
-            Comenzar Ahora →
-          </a>
-
-          <button
-            class="px-8 py-4 rounded-2xl bg-white border border-[#dbe5e2] font-semibold hover:bg-[#f4fbf9] transition">
-            Ver Demo
-          </button>
-        </div>
-
-        <!-- Stats -->
-        <div class="grid grid-cols-3 gap-6 mt-12">
-          <div>
-            <h3 class="text-2xl font-black text-[#004f45]">95%</h3>
-            <p class="text-sm text-slate-500">Menos tiempo de gestión</p>
-          </div>
-          <div>
-            <h3 class="text-2xl font-black text-[#004f45]">24/7</h3>
-            <p class="text-sm text-slate-500">Disponibilidad</p>
-          </div>
-          <div>
-            <h3 class="text-2xl font-black text-[#004f45]">100%</h3>
-            <p class="text-sm text-slate-500">Trazabilidad</p>
-          </div>
-        </div>
+  <section class="hero">
+    <div class="hero-container">
+      <div class="institutional-mark">
+        <img [src]="logoSrc" alt="Logo Universidad del Quindío" />
+        <span>Universidad del Quindío</span>
       </div>
 
-      <!-- Right Card -->
-      <div class="relative">
-        <div class="rounded-3xl bg-white/70 backdrop-blur-xl border border-white shadow-2xl p-8">
+      <span class="eyebrow">
+        Plataforma académica inteligente
+      </span>
 
-          <div class="space-y-5">
+      <h1>
+        Gestiona tus trámites académicos de forma simple y segura
+      </h1>
 
-            <div class="flex justify-between items-center">
-              <h3 class="font-black text-lg">Panel en Tiempo Real</h3>
-              <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
-                Activo
-              </span>
-            </div>
+      <p>
+        Un sistema diseñado para organizar, clasificar y hacer seguimiento a
+        solicitudes académicas dentro de un entorno institucional claro,
+        moderno y confiable.
+      </p>
 
-            <div class="space-y-4">
-              <div class="p-4 rounded-2xl bg-[#f8fcfb] border">
-                <p class="font-semibold">Solicitudes pendientes</p>
-                <h4 class="text-2xl font-black text-[#004f45]">128</h4>
-              </div>
-
-              <div class="p-4 rounded-2xl bg-[#f8fcfb] border">
-                <p class="font-semibold">Procesadas hoy</p>
-                <h4 class="text-2xl font-black text-[#004f45]">87</h4>
-              </div>
-
-              <div class="p-4 rounded-2xl bg-[#f8fcfb] border">
-                <p class="font-semibold">Tiempo promedio</p>
-                <h4 class="text-2xl font-black text-[#004f45]">12m</h4>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section id="features" class="py-24">
-    <div class="w-full mx-auto px-6">
-
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-black mb-4">
-          Funcionalidades <span class="text-[#004f45]">Potenciadas por IA</span>
-        </h2>
-        <p class="text-slate-600 text-lg max-w-2xl mx-auto">
-          Diseñado para optimizar cada etapa del proceso académico.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8">
-
-        <div class="p-8 rounded-3xl bg-white shadow-lg border hover:-translate-y-2 transition">
-          <div class="text-4xl mb-4">🎯</div>
-          <h3 class="font-black text-xl mb-3">Clasificación Automática</h3>
-          <p class="text-slate-600">
-            IA que detecta tipo, urgencia y categoría del trámite.
-          </p>
-        </div>
-
-        <div class="p-8 rounded-3xl bg-white shadow-lg border hover:-translate-y-2 transition">
-          <div class="text-4xl mb-4">⚡</div>
-          <h3 class="font-black text-xl mb-3">Asignación Inteligente</h3>
-          <p class="text-slate-600">
-            Distribución automática según perfil y carga operativa.
-          </p>
-        </div>
-
-        <div class="p-8 rounded-3xl bg-white shadow-lg border hover:-translate-y-2 transition">
-          <div class="text-4xl mb-4">📊</div>
-          <h3 class="font-black text-xl mb-3">Analytics en Vivo</h3>
-          <p class="text-slate-600">
-            Métricas y dashboards para decisiones estratégicas.
-          </p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ROLES -->
-  <section id="roles" class="py-24 bg-[#eef8f5]">
-    <div class="w-full mx-auto px-6">
-
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-black">
-          Acceso según <span class="text-[#004f45]">rol institucional</span>
-        </h2>
-      </div>
-
-      <div class="grid md:grid-cols-5 gap-6">
-
-        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
-          👨‍🎓
-          <h3 class="font-black mt-3">Estudiante</h3>
-        </div>
-
-        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
-          👨‍🏫
-          <h3 class="font-black mt-3">Docente</h3>
-        </div>
-
-        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
-          💼
-          <h3 class="font-black mt-3">Administrativo</h3>
-        </div>
-
-        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
-          📋
-          <h3 class="font-black mt-3">Coordinador</h3>
-        </div>
-
-        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
-          🏛️
-          <h3 class="font-black mt-3">Director</h3>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="py-24">
-    <div class="w-full mx-auto px-6">
-
-      <div class="rounded-3xl bg-gradient-to-r from-[#004f45] to-[#0a6b5d] text-white p-14 text-center shadow-2xl">
-
-        <h2 class="text-4xl font-black mb-4">
-          Transforma la gestión académica
-        </h2>
-
-        <p class="text-lg opacity-90 mb-8">
-          Lleva tu institución al siguiente nivel con automatización inteligente.
-        </p>
-
-        <a routerLink="/registro"
-          class="px-8 py-4 bg-white text-[#004f45] rounded-2xl font-black shadow-lg hover:scale-105 transition">
-          Crear Cuenta Gratis
+      <div class="hero-actions">
+        <a routerLink="/login" class="btn btn--primary btn--large">
+          Iniciar sesión
         </a>
 
+        <a routerLink="/registro" class="btn btn--outline btn--large">
+          Crear cuenta
+        </a>
       </div>
 
+      <div class="hero-summary">
+        <article>
+          <strong>Clasifica</strong>
+          <span>Solicitudes académicas</span>
+        </article>
+
+        <article>
+          <strong>Organiza</strong>
+          <span>Estados y responsables</span>
+        </article>
+
+        <article>
+          <strong>Acompaña</strong>
+          <span>El seguimiento del trámite</span>
+        </article>
+      </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="py-8 border-t border-[#dbe5e2] text-center text-slate-500">
-    © 2026 Triage Académico · Universidad del Quindío
-  </footer>
+  <section id="caracteristicas" class="section">
+    <div class="section-header">
+      <span class="eyebrow">Características</span>
 
-</div>
+      <h2>
+        Una gestión académica más clara
+      </h2>
+
+      <p>
+        La plataforma concentra las funciones necesarias para orientar los
+        trámites académicos sin sobrecargar la experiencia del usuario.
+      </p>
+    </div>
+
+    <div class="cards-grid cards-grid--three">
+      <article class="info-card" *ngFor="let feature of features">
+        <span class="card-indicator"></span>
+
+        <h3>{{ feature.title }}</h3>
+
+        <p>{{ feature.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="proceso" class="section section--soft">
+    <div class="section-header">
+      <span class="eyebrow">Proceso</span>
+
+      <h2>
+        Del registro a la atención
+      </h2>
+
+      <p>
+        El flujo se presenta de manera sencilla para que cada usuario entienda
+        el recorrido de su solicitud.
+      </p>
+    </div>
+
+    <div class="process-list">
+      <article class="process-item" *ngFor="let step of steps">
+        <span>{{ step.number }}</span>
+
+        <div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="roles" class="section">
+    <div class="section-header">
+      <span class="eyebrow">Roles</span>
+
+      <h2>
+        Acceso según el perfil institucional
+      </h2>
+
+      <p>
+        Cada perfil trabaja con información y acciones acordes con su función
+        dentro del proceso académico.
+      </p>
+    </div>
+
+    <div class="cards-grid cards-grid--three">
+      <article class="role-card" *ngFor="let role of roles">
+        <h3>{{ role.title }}</h3>
+        <p>{{ role.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <strong>Triage Académico</strong>
+    <span>Universidad del Quindío · 2026</span>
+  </footer>
+</main>
