@@ -34,8 +34,9 @@ export class IASugerenciaComponent {
 
     copiado = false;
 
+    // FIX: solicitudId ahora es obligatorio
     sugerenciaForm = this.fb.group({
-        solicitudId: [''],
+        solicitudId: ['', [Validators.required, Validators.min(1)]],
         descripcion: ['', [Validators.required, Validators.minLength(10)]]
     });
 
@@ -59,11 +60,7 @@ export class IASugerenciaComponent {
 
     usarEjemplo(texto: string): void {
         this.tabActiva = 'sugerencia';
-
-        this.sugerenciaForm.patchValue({
-            descripcion: texto
-        });
-
+        this.sugerenciaForm.patchValue({ descripcion: texto });
         this.errorSugerencia = '';
         this.sugerencia = null;
     }
@@ -79,35 +76,17 @@ export class IASugerenciaComponent {
         this.sugerencia = null;
         this.copiado = false;
 
-        const solicitudIdTexto = String(this.sugerenciaForm.value.solicitudId ?? '').trim();
-        const descripcion = String(this.sugerenciaForm.value.descripcion ?? '').trim();
-
         const request: SugerenciaRequest = {
-            descripcion
+            solicitudId: Number(this.sugerenciaForm.value.solicitudId),
+            descripcion: String(this.sugerenciaForm.value.descripcion ?? '').trim()
         };
 
-        if (solicitudIdTexto) {
-            request.solicitudId = Number(solicitudIdTexto);
-        }
-
         this.iaService.obtenerSugerencia(request)
-            .pipe(
-                finalize(() => {
-                    this.loadingSugerencia = false;
-                    this.cdr.detectChanges();
-                })
-            )
+            .pipe(finalize(() => { this.loadingSugerencia = false; this.cdr.detectChanges(); }))
             .subscribe({
-                next: (respuesta) => {
-                    this.sugerencia = respuesta;
-                },
+                next: (respuesta) => { this.sugerencia = respuesta; },
                 error: (error) => {
-                    console.error('Error obteniendo sugerencia IA:', error);
-
-                    this.errorSugerencia =
-                        error?.error?.message ??
-                        error?.message ??
-                        'No se pudo obtener la sugerencia de IA.';
+                    this.errorSugerencia = error?.error?.message ?? error?.message ?? 'No se pudo obtener la sugerencia de IA.';
                 }
             });
     }
@@ -123,46 +102,25 @@ export class IASugerenciaComponent {
         this.resumen = null;
         this.copiado = false;
 
-        const solicitudId = Number(this.resumenForm.value.solicitudId);
-
-        this.iaService.generarResumen(solicitudId)
-            .pipe(
-                finalize(() => {
-                    this.loadingResumen = false;
-                    this.cdr.detectChanges();
-                })
-            )
+        this.iaService.generarResumen(Number(this.resumenForm.value.solicitudId))
+            .pipe(finalize(() => { this.loadingResumen = false; this.cdr.detectChanges(); }))
             .subscribe({
-                next: (respuesta) => {
-                    this.resumen = respuesta;
-                },
+                next: (respuesta) => { this.resumen = respuesta; },
                 error: (error) => {
-                    console.error('Error generando resumen IA:', error);
-
-                    this.errorResumen =
-                        error?.error?.message ??
-                        error?.message ??
-                        'No se pudo generar el resumen de la solicitud.';
+                    this.errorResumen = error?.error?.message ?? error?.message ?? 'No se pudo generar el resumen.';
                 }
             });
     }
 
     limpiarSugerencia(): void {
-        this.sugerenciaForm.reset({
-            solicitudId: '',
-            descripcion: ''
-        });
-
+        this.sugerenciaForm.reset({ solicitudId: '', descripcion: '' });
         this.sugerencia = null;
         this.errorSugerencia = '';
         this.copiado = false;
     }
 
     limpiarResumen(): void {
-        this.resumenForm.reset({
-            solicitudId: ''
-        });
-
+        this.resumenForm.reset({ solicitudId: '' });
         this.resumen = null;
         this.errorResumen = '';
         this.copiado = false;
@@ -170,24 +128,12 @@ export class IASugerenciaComponent {
 
     copiarResultado(): void {
         const texto = this.textoResultadoActual();
-
-        if (!texto) {
-            return;
-        }
-
-        if (!navigator.clipboard) {
-            this.copiado = false;
-            return;
-        }
+        if (!texto || !navigator.clipboard) return;
 
         navigator.clipboard.writeText(texto).then(() => {
             this.copiado = true;
             this.cdr.detectChanges();
-
-            setTimeout(() => {
-                this.copiado = false;
-                this.cdr.detectChanges();
-            }, 1600);
+            setTimeout(() => { this.copiado = false; this.cdr.detectChanges(); }, 1600);
         });
     }
 
@@ -200,41 +146,32 @@ export class IASugerenciaComponent {
                 `Explicación: ${this.sugerencia.explicacion}`
             ].join('\n');
         }
-
-        if (this.tabActiva === 'resumen' && this.resumen) {
-            return this.resumen.resumen;
-        }
-
+        if (this.tabActiva === 'resumen' && this.resumen) return this.resumen.resumen;
         return '';
     }
 
     get descripcionInvalida(): boolean {
-        const control = this.sugerenciaForm.get('descripcion');
+        const c = this.sugerenciaForm.get('descripcion');
+        return !!c && c.invalid && (c.dirty || c.touched);
+    }
 
-        return !!control && control.invalid && (control.dirty || control.touched);
+    get solicitudSugerenciaInvalida(): boolean {
+        const c = this.sugerenciaForm.get('solicitudId');
+        return !!c && c.invalid && (c.dirty || c.touched);
     }
 
     get solicitudResumenInvalida(): boolean {
-        const control = this.resumenForm.get('solicitudId');
-
-        return !!control && control.invalid && (control.dirty || control.touched);
+        const c = this.resumenForm.get('solicitudId');
+        return !!c && c.invalid && (c.dirty || c.touched);
     }
 
     get confianzaPorcentaje(): number {
-        const confianza = this.sugerencia?.confianza ?? 0;
-
-        return Math.round(confianza * 100);
+        return Math.round((this.sugerencia?.confianza ?? 0) * 100);
     }
 
     get nivelConfianza(): string {
-        if (this.confianzaPorcentaje >= 80) {
-            return 'Alta';
-        }
-
-        if (this.confianzaPorcentaje >= 60) {
-            return 'Media';
-        }
-
+        if (this.confianzaPorcentaje >= 80) return 'Alta';
+        if (this.confianzaPorcentaje >= 60) return 'Media';
         return 'Baja';
     }
 
@@ -247,49 +184,27 @@ export class IASugerenciaComponent {
             CONSULTA: 'Consulta académica',
             OTRO: 'Otro'
         };
-
         return tipo ? labels[String(tipo)] ?? String(tipo) : 'Sin tipo';
     }
 
     getPrioridadLabel(prioridad?: NivelPrioridad | string): string {
-        const labels: Record<string, string> = {
-            BAJA: 'Baja',
-            MEDIA: 'Media',
-            ALTA: 'Alta',
-            CRITICA: 'Crítica'
-        };
-
+        const labels: Record<string, string> = { BAJA: 'Baja', MEDIA: 'Media', ALTA: 'Alta', CRITICA: 'Crítica' };
         return prioridad ? labels[String(prioridad)] ?? String(prioridad) : 'Sin prioridad';
     }
 
     getPrioridadClasses(prioridad?: NivelPrioridad | string): string {
         switch (String(prioridad ?? '')) {
-            case 'CRITICA':
-                return 'bg-[#fee2e2] text-[#93000a]';
-
-            case 'ALTA':
-                return 'bg-[#fff4c7] text-[#745900]';
-
-            case 'MEDIA':
-                return 'bg-[#e0f2fe] text-[#0369a1]';
-
-            case 'BAJA':
-                return 'bg-[#dcfce7] text-[#166534]';
-
-            default:
-                return 'bg-[#ebefee] text-[#3e4946]/70 dark:bg-[#3e4946]/30 dark:text-white/60';
+            case 'CRITICA': return 'bg-[#fee2e2] text-[#93000a]';
+            case 'ALTA':    return 'bg-[#fff4c7] text-[#745900]';
+            case 'MEDIA':   return 'bg-[#e0f2fe] text-[#0369a1]';
+            case 'BAJA':    return 'bg-[#dcfce7] text-[#166534]';
+            default:        return 'bg-[#ebefee] text-[#3e4946]/70';
         }
     }
 
     getConfianzaClasses(): string {
-        if (this.confianzaPorcentaje >= 80) {
-            return 'bg-[#dcfce7] text-[#166534]';
-        }
-
-        if (this.confianzaPorcentaje >= 60) {
-            return 'bg-[#fff4c7] text-[#745900]';
-        }
-
+        if (this.confianzaPorcentaje >= 80) return 'bg-[#dcfce7] text-[#166534]';
+        if (this.confianzaPorcentaje >= 60) return 'bg-[#fff4c7] text-[#745900]';
         return 'bg-[#fee2e2] text-[#93000a]';
     }
 }
