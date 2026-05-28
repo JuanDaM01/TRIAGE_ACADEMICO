@@ -5,15 +5,13 @@
 
     --navbar-height: 72px;
 
-    --uq-green: #0b6f2a;
     --uq-green-dark: #07551f;
+    --uq-green: #0b6f2a;
     --uq-green-soft: #1fb34c;
     --mint: #c9f7dc;
     --mint-light: #e9fff2;
-    --aqua: #c8f6f3;
     --sky: #d8ecff;
-    --surface: rgba(255, 255, 255, 0.82);
-    --surface-solid: #ffffff;
+    --surface: rgba(255, 255, 255, 0.84);
     --text: #161b28;
     --text-soft: #3f4756;
     --text-muted: #737b8c;
@@ -35,9 +33,9 @@
     color: var(--text);
     font-family: 'Inter', 'Roboto', 'Segoe UI', system-ui, sans-serif;
     background:
-        radial-gradient(circle at 8% 12%, rgba(201, 247, 220, 0.9), transparent 24rem),
-        radial-gradient(circle at 92% 8%, rgba(60, 215, 161, 0.42), transparent 28rem),
-        radial-gradient(circle at 5% 76%, rgba(216, 236, 255, 0.95), transparent 30rem),
+        radial-gradient(circle at 8% 12%, rgba(201, 247, 220, 0.7), transparent 24rem),
+        radial-gradient(circle at 92% 8%, rgba(60, 215, 161, 0.28), transparent 28rem),
+        radial-gradient(circle at 5% 80%, rgba(216, 236, 255, 0.72), transparent 30rem),
         linear-gradient(135deg, #f6fff9 0%, #effdf9 45%, #ffffff 100%);
 }
 
