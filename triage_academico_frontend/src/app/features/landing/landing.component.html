@@ -1,213 +1,241 @@
-<div class="space-y-8 pb-12 font-['Inter'] w-full bg-gradient-to-b from-[#f6faf9] via-[#f0f4f3] to-[#ffffff] text-[#181c1c]">
-  <!-- Navigation Bar -->
-  <nav class="fixed top-0 w-full z-50 bg-white/60 dark:bg-slate-950/90 backdrop-blur-xl border-b border-[#bec9c5]/20 dark:border-white/5">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-      <div class="text-lg font-black bg-gradient-to-r from-[#84d5c5] to-[#004f45] bg-clip-text text-transparent">
-        📚 Triage Académico
+<div class="w-full bg-[#f7fbfa] text-[#0f172a] font-['Inter'] overflow-x-hidden">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 w-full z-50 backdrop-blur-xl bg-white/75 border-b border-[#dbe5e2]">
+    <div class="w-full mx-auto px-6 py-4 flex justify-between items-center">
+
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#84d5c5] to-[#004f45] flex items-center justify-center text-white text-xl font-black shadow-lg">
+          UQ
+        </div>
+        <div>
+          <h1 class="font-black text-lg text-[#004f45]">Triage Académico</h1>
+          <p class="text-xs text-slate-500">Universidad del Quindío</p>
+        </div>
       </div>
+
+      <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+        <a href="#features" class="hover:text-[#004f45] transition">Características</a>
+        <a href="#roles" class="hover:text-[#004f45] transition">Roles</a>
+        <a href="#benefits" class="hover:text-[#004f45] transition">Beneficios</a>
+      </div>
+
       <div class="flex gap-3">
-        <a routerLink="/login" class="px-5 py-2 rounded-lg bg-[#004f45]/10 hover:bg-[#004f45]/15 dark:bg-white/10 dark:hover:bg-white/20 transition text-sm font-bold text-[#004f45] dark:text-white border border-[#bec9c5]/30 dark:border-white/10">
-          Iniciar Sesión
+        <a routerLink="/login"
+          class="px-5 py-2 rounded-xl border border-[#d9e5e2] text-[#004f45] font-semibold hover:bg-[#eef8f5] transition">
+          Ingresar
         </a>
-        <a routerLink="/registro" class="px-5 py-2 rounded-lg bg-gradient-to-r from-[#84d5c5] to-[#004f45] text-slate-950 font-bold text-sm hover:shadow-lg transition">
+
+        <a routerLink="/registro"
+          class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#84d5c5] to-[#004f45] text-white font-bold shadow-lg hover:scale-105 transition">
           Registrarse
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="pt-28 pb-16 px-4 flex flex-col justify-center items-center relative overflow-hidden">
-    <!-- Decorative elements with Gestalt principles -->
-    <div class="absolute top-32 -left-32 w-64 h-64 bg-[#004f45]/8 rounded-full blur-3xl opacity-60"></div>
-    <div class="absolute bottom-0 -right-32 w-64 h-64 bg-[#84d5c5]/8 rounded-full blur-3xl opacity-60"></div>
-    
-    <div class="relative z-10 max-w-3xl mx-auto text-center">
-      <h1 class="text-3xl md:text-4xl font-black mb-4 leading-tight text-[#181c1c]">
-        Gestiona tus <span class="text-[#004f45]">Trámites Académicos</span> de Forma Inteligente
-      </h1>
-      
-      <p class="text-base text-[#3e4946] mb-8 leading-relaxed">
-        Plataforma de triaging académico que clasifica, prioriza y asigna solicitudes de forma automática. 
-        Reduce tiempos de tramitación y mejora la experiencia de estudiantes y administrativos.
-      </p>
+  <!-- HERO -->
+  <section class="relative pt-36 pb-24 overflow-hidden">
 
-      <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a routerLink="/registro" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[#84d5c5] to-[#004f45] text-slate-950 font-bold text-sm hover:shadow-lg hover:shadow-[#004f45]/20 transition">
-          Comenzar Ahora →
-        </a>
-        <button (click)="scrollToSection('features')" class="px-6 py-3 rounded-xl bg-white/50 hover:bg-white/70 font-bold text-sm border border-[#bec9c5]/30 text-[#004f45] transition">
-          Conocer Más
-        </button>
-      </div>
-    </div>
-  </section>
+    <!-- Background blobs -->
+    <div class="absolute -top-20 left-0 w-[500px] h-[500px] bg-[#84d5c5]/20 rounded-full blur-[140px]"></div>
+    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#004f45]/10 rounded-full blur-[160px]"></div>
 
-  <!-- Features Section -->
-  <section id="features" class="py-16 px-4 bg-gradient-to-b from-transparent to-[#84d5c5]/5">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-black mb-3 text-[#181c1c]">
-          Características <span class="text-[#004f45]">Principales</span>
-        </h2>
-        <p class="text-base text-[#3e4946] max-w-2xl mx-auto">
-          Diseñado para estudiantes, docentes y administrativos
+    <div class="w-full mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+
+      <!-- Left -->
+      <div>
+        <span class="inline-block px-4 py-2 rounded-full bg-[#e8f7f2] text-[#004f45] font-bold text-sm mb-6">
+          Plataforma Inteligente de Gestión Académica
+        </span>
+
+        <h1 class="text-4xl md:text-5xl font-black leading-tight mb-6">
+          Automatiza y optimiza tus
+          <span class="text-[#004f45]">trámites académicos</span>
+        </h1>
+
+        <p class="text-xl text-slate-600 leading-relaxed mb-8 max-w-xl">
+          Sistema inteligente que clasifica, prioriza y asigna solicitudes académicas en tiempo real,
+          reduciendo tiempos de respuesta y mejorando la experiencia institucional.
         </p>
-      </div>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <!-- Feature 1 -->
-        <div class="p-6 rounded-2xl bg-white/60 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur-lg hover:border-[#84d5c5]/50 dark:hover:border-[#84d5c5]/30 transition hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-md">
-          <div class="text-2xl mb-3">🎯</div>
-          <h3 class="text-base font-black mb-2 text-[#181c1c]">Triaging Automático</h3>
-          <p class="text-sm text-[#3e4946]">
-            Clasificación inteligente de solicitudes usando IA. Reduce errores y acelera el proceso de triaging.
-          </p>
+        <div class="flex flex-wrap gap-4">
+          <a routerLink="/registro"
+            class="px-8 py-4 rounded-2xl bg-[#004f45] text-white font-bold shadow-xl hover:shadow-2xl transition">
+            Comenzar Ahora →
+          </a>
+
+          <button
+            class="px-8 py-4 rounded-2xl bg-white border border-[#dbe5e2] font-semibold hover:bg-[#f4fbf9] transition">
+            Ver Demo
+          </button>
         </div>
 
-        <!-- Feature 2 -->
-        <div class="p-6 rounded-2xl bg-white/60 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur-lg hover:border-[#84d5c5]/50 dark:hover:border-[#84d5c5]/30 transition hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-md">
-          <div class="text-2xl mb-3">⚡</div>
-          <h3 class="text-base font-black mb-2 text-[#181c1c]">Asignación Inteligente</h3>
-          <p class="text-sm text-[#3e4946]">
-            Distribuye automáticamente tareas según disponibilidad y especialidad. Optimiza recursos de forma eficiente.
-          </p>
-        </div>
-
-        <!-- Feature 3 -->
-        <div class="p-6 rounded-2xl bg-white/60 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur-lg hover:border-[#84d5c5]/50 dark:hover:border-[#84d5c5]/30 transition hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-md">
-          <div class="text-2xl mb-3">📊</div>
-          <h3 class="text-base font-black mb-2 text-[#181c1c]">Análisis en Tiempo Real</h3>
-          <p class="text-sm text-[#3e4946]">
-            Dashboards especializados para cada rol. Visualiza métricas, tendencias y estado de trámites al instante.
-          </p>
-        </div>
-
-        <!-- Feature 4 -->
-        <div class="p-6 rounded-2xl bg-white/60 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur-lg hover:border-[#84d5c5]/50 dark:hover:border-[#84d5c5]/30 transition hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-md">
-          <div class="text-2xl mb-3">🔒</div>
-          <h3 class="text-base font-black mb-2 text-[#181c1c]">Seguridad y Privacidad</h3>
-          <p class="text-sm text-[#3e4946]">
-            Control de acceso basado en roles (RBAC). Solo ve lo que necesitas según tu perfil.
-          </p>
-        </div>
-
-        <!-- Feature 5 -->
-        <div class="p-6 rounded-2xl bg-white/60 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur-lg hover:border-[#84d5c5]/50 dark:hover:border-[#84d5c5]/30 transition hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-md">
-          <div class="text-2xl mb-3">📱</div>
-          <h3 class="text-base font-black mb-2 text-[#181c1c]">Interfaz Responsiva</h3>
-          <p class="text-sm text-[#3e4946]">
-            Funciona perfecto en desktop, tablet y móvil. Accede desde cualquier dispositivo.
-          </p>
-        </div>
-
-        <!-- Feature 6 -->
-        <div class="p-6 rounded-2xl bg-white/60 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur-lg hover:border-[#84d5c5]/50 dark:hover:border-[#84d5c5]/30 transition hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-md">
-          <div class="text-2xl mb-3">🔄</div>
-          <h3 class="text-base font-black mb-2 text-[#181c1c]">Notificaciones en Vivo</h3>
-          <p class="text-sm text-[#3e4946]">
-            Recibe actualizaciones instantáneas. Nunca te perderás una solicitud importante.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Roles Section -->
-  <section class="py-16 px-4">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-black text-[#181c1c]">
-          Acceso <span class="text-[#004f45]">Personalizado</span> por Rol
-        </h2>
-        <p class="text-base text-[#3e4946] mt-2">Cada usuario accede a las herramientas que necesita</p>
-      </div>
-
-      <div class="grid md:grid-cols-5 gap-4">
-        <!-- Student -->
-        <div class="p-5 rounded-2xl bg-white/60 dark:bg-gradient-to-br dark:from-blue-500/10 dark:to-blue-500/5 border border-white/60 dark:border-blue-500/20 backdrop-blur-lg text-center hover:border-[#004f45]/30 transition">
-          <div class="text-2xl mb-2">👨‍🎓</div>
-          <h3 class="text-sm font-black mb-2 text-[#181c1c] dark:text-white">Estudiante</h3>
-          <p class="text-xs text-[#3e4946] dark:text-white/70 space-y-0.5">
-            <span class="block">✓ Crear solicitudes</span>
-            <span class="block">✓ Seguimiento</span>
-            <span class="block">✓ Historial</span>
-          </p>
-        </div>
-
-        <!-- Teacher -->
-        <div class="p-5 rounded-2xl bg-white/60 dark:bg-gradient-to-br dark:from-purple-500/10 dark:to-purple-500/5 border border-white/60 dark:border-purple-500/20 backdrop-blur-lg text-center hover:border-[#004f45]/30 transition">
-          <div class="text-2xl mb-2">👨‍🏫</div>
-          <h3 class="text-sm font-black mb-2 text-[#181c1c] dark:text-white">Docente</h3>
-          <p class="text-xs text-[#3e4946] dark:text-white/70 space-y-0.5">
-            <span class="block">✓ Atender solicitudes</span>
-            <span class="block">✓ Ver estadísticas</span>
-            <span class="block">✓ Generar reportes</span>
-          </p>
-        </div>
-
-        <!-- Admin -->
-        <div class="p-5 rounded-2xl bg-white/60 dark:bg-gradient-to-br dark:from-orange-500/10 dark:to-orange-500/5 border border-white/60 dark:border-orange-500/20 backdrop-blur-lg text-center hover:border-[#004f45]/30 transition">
-          <div class="text-2xl mb-2">💼</div>
-          <h3 class="text-sm font-black mb-2 text-[#181c1c] dark:text-white">Administrativo</h3>
-          <p class="text-xs text-[#3e4946] dark:text-white/70 space-y-0.5">
-            <span class="block">✓ Triaging</span>
-            <span class="block">✓ Clasificación</span>
-            <span class="block">✓ Priorización</span>
-          </p>
-        </div>
-
-        <!-- Coordinator -->
-        <div class="p-5 rounded-2xl bg-white/60 dark:bg-gradient-to-br dark:from-green-500/10 dark:to-green-500/5 border border-white/60 dark:border-green-500/20 backdrop-blur-lg text-center hover:border-[#004f45]/30 transition">
-          <div class="text-2xl mb-2">📋</div>
-          <h3 class="text-sm font-black mb-2 text-[#181c1c] dark:text-white">Coordinador</h3>
-          <p class="text-xs text-[#3e4946] dark:text-white/70 space-y-0.5">
-            <span class="block">✓ Gestión completa</span>
-            <span class="block">✓ Asignaciones</span>
-            <span class="block">✓ Usuarios</span>
-          </p>
-        </div>
-
-        <!-- Director -->
-        <div class="p-5 rounded-2xl bg-white/60 dark:bg-gradient-to-br dark:from-red-500/10 dark:to-red-500/5 border border-white/60 dark:border-red-500/20 backdrop-blur-lg text-center hover:border-[#004f45]/30 transition">
-          <div class="text-2xl mb-2">🏛️</div>
-          <h3 class="text-sm font-black mb-2 text-[#181c1c] dark:text-white">Director</h3>
-          <p class="text-xs text-[#3e4946] dark:text-white/70 space-y-0.5">
-            <span class="block">✓ Acceso total</span>
-            <span class="block">✓ Análisis avanzado</span>
-            <span class="block">✓ Reportería</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="py-16 px-4">
-    <div class="max-w-4xl mx-auto">
-      <div class="p-8 md:p-10 rounded-3xl bg-white/60 dark:bg-gradient-to-r dark:from-[#004f45]/20 dark:to-[#84d5c5]/20 border border-white/70 dark:border-[#84d5c5]/30 backdrop-blur-xl shadow-lg">
-        <div class="text-center">
-          <h2 class="text-3xl md:text-4xl font-black mb-3 text-[#181c1c] dark:text-white">
-            ¿Listo para optimizar tu proceso académico?
-          </h2>
-          <p class="text-base text-[#3e4946] dark:text-white/70 mb-6">
-            Únete a cientos de instituciones que ya utilizan Triage Académico
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a routerLink="/registro" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[#84d5c5] to-[#004f45] text-slate-950 font-bold text-sm hover:shadow-lg transition">
-              Crear Cuenta
-            </a>
-            <a routerLink="/login" class="px-6 py-3 rounded-xl bg-[#004f45]/15 dark:bg-white/10 text-[#004f45] dark:text-white hover:bg-[#004f45]/25 dark:hover:bg-white/20 border border-[#bec9c5]/30 dark:border-white/20 font-bold text-sm transition">
-              Tengo una Cuenta
-            </a>
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-6 mt-12">
+          <div>
+            <h3 class="text-2xl font-black text-[#004f45]">95%</h3>
+            <p class="text-sm text-slate-500">Menos tiempo de gestión</p>
+          </div>
+          <div>
+            <h3 class="text-2xl font-black text-[#004f45]">24/7</h3>
+            <p class="text-sm text-slate-500">Disponibilidad</p>
+          </div>
+          <div>
+            <h3 class="text-2xl font-black text-[#004f45]">100%</h3>
+            <p class="text-sm text-slate-500">Trazabilidad</p>
           </div>
         </div>
       </div>
+
+      <!-- Right Card -->
+      <div class="relative">
+        <div class="rounded-3xl bg-white/70 backdrop-blur-xl border border-white shadow-2xl p-8">
+
+          <div class="space-y-5">
+
+            <div class="flex justify-between items-center">
+              <h3 class="font-black text-lg">Panel en Tiempo Real</h3>
+              <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
+                Activo
+              </span>
+            </div>
+
+            <div class="space-y-4">
+              <div class="p-4 rounded-2xl bg-[#f8fcfb] border">
+                <p class="font-semibold">Solicitudes pendientes</p>
+                <h4 class="text-2xl font-black text-[#004f45]">128</h4>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-[#f8fcfb] border">
+                <p class="font-semibold">Procesadas hoy</p>
+                <h4 class="text-2xl font-black text-[#004f45]">87</h4>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-[#f8fcfb] border">
+                <p class="font-semibold">Tiempo promedio</p>
+                <h4 class="text-2xl font-black text-[#004f45]">12m</h4>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="border-t border-white/10 bg-slate-950/50 py-8 px-4 text-center text-white/60">
-    <p>© 2026 Triage Académico. Todos los derechos reservados.</p>
+  <!-- FEATURES -->
+  <section id="features" class="py-24">
+    <div class="w-full mx-auto px-6">
+
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-black mb-4">
+          Funcionalidades <span class="text-[#004f45]">Potenciadas por IA</span>
+        </h2>
+        <p class="text-slate-600 text-lg max-w-2xl mx-auto">
+          Diseñado para optimizar cada etapa del proceso académico.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+
+        <div class="p-8 rounded-3xl bg-white shadow-lg border hover:-translate-y-2 transition">
+          <div class="text-4xl mb-4">🎯</div>
+          <h3 class="font-black text-xl mb-3">Clasificación Automática</h3>
+          <p class="text-slate-600">
+            IA que detecta tipo, urgencia y categoría del trámite.
+          </p>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-white shadow-lg border hover:-translate-y-2 transition">
+          <div class="text-4xl mb-4">⚡</div>
+          <h3 class="font-black text-xl mb-3">Asignación Inteligente</h3>
+          <p class="text-slate-600">
+            Distribución automática según perfil y carga operativa.
+          </p>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-white shadow-lg border hover:-translate-y-2 transition">
+          <div class="text-4xl mb-4">📊</div>
+          <h3 class="font-black text-xl mb-3">Analytics en Vivo</h3>
+          <p class="text-slate-600">
+            Métricas y dashboards para decisiones estratégicas.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section id="roles" class="py-24 bg-[#eef8f5]">
+    <div class="w-full mx-auto px-6">
+
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-black">
+          Acceso según <span class="text-[#004f45]">rol institucional</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-5 gap-6">
+
+        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
+          👨‍🎓
+          <h3 class="font-black mt-3">Estudiante</h3>
+        </div>
+
+        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
+          👨‍🏫
+          <h3 class="font-black mt-3">Docente</h3>
+        </div>
+
+        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
+          💼
+          <h3 class="font-black mt-3">Administrativo</h3>
+        </div>
+
+        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
+          📋
+          <h3 class="font-black mt-3">Coordinador</h3>
+        </div>
+
+        <div class="p-6 bg-white rounded-3xl text-center shadow-md">
+          🏛️
+          <h3 class="font-black mt-3">Director</h3>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-24">
+    <div class="w-full mx-auto px-6">
+
+      <div class="rounded-3xl bg-gradient-to-r from-[#004f45] to-[#0a6b5d] text-white p-14 text-center shadow-2xl">
+
+        <h2 class="text-4xl font-black mb-4">
+          Transforma la gestión académica
+        </h2>
+
+        <p class="text-lg opacity-90 mb-8">
+          Lleva tu institución al siguiente nivel con automatización inteligente.
+        </p>
+
+        <a routerLink="/registro"
+          class="px-8 py-4 bg-white text-[#004f45] rounded-2xl font-black shadow-lg hover:scale-105 transition">
+          Crear Cuenta Gratis
+        </a>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 border-t border-[#dbe5e2] text-center text-slate-500">
+    © 2026 Triage Académico · Universidad del Quindío
   </footer>
+
 </div>

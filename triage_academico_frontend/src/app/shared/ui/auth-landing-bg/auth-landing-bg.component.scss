@@ -86,26 +86,26 @@
 }
 
 .glow-top {
-    width: 560px;
-    height: 560px;
-    top: -200px;
-    right: -160px;
+    width: 420px;
+    height: 420px;
+    top: -140px;
+    right: -120px;
     background: #34d399;
     animation: float-orb 14s ease-in-out infinite;
 }
 
 .glow-bottom {
-    width: 480px;
-    height: 480px;
-    bottom: -180px;
-    left: -140px;
+    width: 380px;
+    height: 380px;
+    bottom: -130px;
+    left: -110px;
     background: #38bdf8;
     animation: float-orb 16s ease-in-out infinite reverse;
 }
 
 .glow-center {
-    width: 320px;
-    height: 320px;
+    width: 260px;
+    height: 260px;
     top: 45%;
     left: 8%;
     background: #818cf8;

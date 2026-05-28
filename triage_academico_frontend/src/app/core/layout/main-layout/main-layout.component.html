@@ -1,10 +1,10 @@
-<div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+<div class="fixed inset-0 z-0 pointer-events-none overflow-visible">
     <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#a0f2e1] rounded-full blur-[120px] opacity-20"></div>
     <div class="absolute bottom-[-10%] right-[-5%] w-[40%] h-[60%] bg-[#dded49] rounded-full blur-[120px] opacity-10"></div>
     <div class="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-[#ffdf93] rounded-full blur-[100px] opacity-10"></div>
 </div>
 
-<div class="flex h-screen relative z-10 font-['Inter']">
+<div class="flex min-h-screen relative z-10 font-['Inter']">
     <app-sidebar
         [mobileMenuOpen]="mobileMenuOpen"
         [currentUser]="currentUser"
@@ -12,14 +12,14 @@
         (logoutClick)="logout()"
     />
 
-    <div class="flex-grow md:pl-64 flex flex-col h-screen overflow-hidden w-full">
+    <div class="flex-grow md:pl-64 flex flex-col min-h-screen overflow-auto w-full">
         <app-header
             [currentUser]="currentUser"
             (menuToggle)="toggleMobileMenu()"
         />
 
         <main class="flex-grow overflow-y-auto p-6 md:p-12 scrollbar-hide w-full bg-[#f6faf9]/20">
-            <div class="max-w-[1280px] mx-auto w-full">
+            <div class="w-full">
                 <router-outlet />
             </div>
         </main>
