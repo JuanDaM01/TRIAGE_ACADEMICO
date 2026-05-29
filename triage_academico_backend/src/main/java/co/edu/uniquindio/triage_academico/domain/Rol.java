@@ -33,8 +33,11 @@ public class Rol {
 
     private String descripcion;
 
-    public Object name() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'name'");
+    public NombreRol getNombre() {
+        return this.nombre;
+    }
+
+    public void setNombre(NombreRol nombre) {
+        this.nombre = nombre;
     }
 }

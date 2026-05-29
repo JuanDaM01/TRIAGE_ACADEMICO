@@ -346,7 +346,7 @@ public class SolicitudServiceImpl implements SolicitudService {
 
                 // Verificar que el ejecutor sea el solicitante o un ADMINISTRATIVO
                 boolean esSolicitante = solicitud.getSolicitanteId().equals(ejecutor.getId());
-                boolean esAdmin = ejecutor.getRol().name().equals("ADMINISTRATIVO");
+                boolean esAdmin = ejecutor.getRol().getNombre().name().equals("ADMINISTRATIVO");
 
                 if (!esSolicitante && !esAdmin) {
                         throw new ReglaNegocioException(

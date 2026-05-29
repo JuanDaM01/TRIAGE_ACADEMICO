@@ -18,14 +18,11 @@ import co.edu.uniquindio.triage_academico.dto.response.HistorialSolicitudRespons
 import co.edu.uniquindio.triage_academico.dto.response.SolicitudResponse;
 
 public interface SolicitudService {
-
     SolicitudResponse crearSolicitud(CrearSolicitudRequest request, Long usuarioId);
 
     SolicitudResponse editarSolicitud(Long id, EditarSolicitudRequest request);
 
     SolicitudResponse obtenerPorId(Long id);
-
-    List<HistorialSolicitudResponse> obtenerHistorial(Long id);
 
     SolicitudResponse aplicarSugerencia(Long id);
 
@@ -37,13 +34,10 @@ public interface SolicitudService {
 
     SolicitudResponse cerrarSolicitud(CerrarSolicitudRequest request, Long id);
 
-    Page<SolicitudResponse> consultarSolicitudes(
-            EstadoSolicitud estado,
-            TipoSolicitud tipoSolicitud,
-            NivelPrioridad nivelPrioridad,
-            Long responsableId,
-            Pageable pageable
-    );
-
     void eliminarSolicitud(Long id);
+
+    List<HistorialSolicitudResponse> obtenerHistorial(Long id);
+
+    Page<SolicitudResponse> consultarSolicitudes(EstadoSolicitud estado, TipoSolicitud tipoSolicitud,
+            NivelPrioridad nivelPrioridad, Long responsableId, Pageable pageable);
 }

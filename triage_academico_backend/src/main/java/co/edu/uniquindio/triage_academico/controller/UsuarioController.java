@@ -43,7 +43,7 @@ public class UsuarioController {
             @RequestParam(required = false) String email,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Specification<Usuario> specification = Specification.where(null);
+        Specification<Usuario> specification = (root, query, cb) -> cb.conjunction();
 
         if (rol != null) {
             specification = specification.and((root, query, cb) -> cb.equal(root.get("rol").get("nombre"), rol));

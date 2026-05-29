@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { catchError, finalize, of, switchMap, take, timeout } from 'rxjs';
 import { SolicitudService } from '@core/services/solicitud.service';
 import { HistorialSolicitud } from '@models';
 import { AccionPipe } from '@shared/pipes/accion.pipe';
@@ -25,29 +26,56 @@ export class HistorialSolicitudComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.solicitudId = Number(this.route.snapshot.paramMap.get('id'));
-        if (this.solicitudId) {
-            this.cargarHistorial();
-        } else {
-            this.errorMessage = 'ID de solicitud no válido';
-            this.loading = false;
-        }
+        this.route.paramMap.pipe(
+            take(1),
+            switchMap(params => {
+                const idParam = params.get('id');
+                const id = Number(idParam);
+                if (!idParam || Number.isNaN(id) || id <= 0) {
+                    this.errorMessage = 'ID de solicitud no válido';
+                    this.loading = false;
+                    return of([] as HistorialSolicitud[]);
+                }
+
+                this.solicitudId = id;
+                this.loading = true;
+                this.errorMessage = '';
+                return this.solicitudService.getHistorialSolicitud(id);
+            }),
+            timeout(15000),
+            catchError((error) => {
+                console.error('Error al cargar historial', error);
+                this.errorMessage = 'No se pudo cargar el historial de la solicitud.';
+                return of([] as HistorialSolicitud[]);
+            }),
+            finalize(() => {
+                this.loading = false;
+            })
+        ).subscribe((data) => {
+            this.historial = data;
+        });
     }
 
     cargarHistorial(): void {
+        // Mantener compatibilidad con llamadas directas si se necesita reutilizar este método
         this.loading = true;
         this.errorMessage = '';
 
-        this.solicitudService.getHistorialSolicitud(this.solicitudId).subscribe({
-            next: (data) => {
+        this.solicitudService.getHistorialSolicitud(this.solicitudId)
+            .pipe(
+                timeout(15000),
+                catchError((error) => {
+                    console.error('Error al cargar historial', error);
+                    this.errorMessage = 'No se pudo cargar el historial de la solicitud.';
+                    return of([] as HistorialSolicitud[]);
+                }),
+                finalize(() => {
+                    this.loading = false;
+                })
+            )
+            .subscribe((data) => {
                 this.historial = data;
-                this.loading = false;
-            },
-            error: () => {
-                this.errorMessage = 'No se pudo cargar el historial de la solicitud.';
-                this.loading = false;
-            }
-        });
+            });
     }
 
     formatearFecha(fecha: Date | string): string {
