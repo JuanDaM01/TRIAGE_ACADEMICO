@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
-import { SolicitudService } from '@core/services/solicitud.service';
-import { EditarSolicitudRequest, CanalOrigen, TipoSolicitud, EstadoSolicitud } from '@models';
+import { SolicitudService, EditarSolicitudRequest } from '@core/services/solicitud.service';
+import { CanalOrigen, TipoSolicitud, EstadoSolicitud } from '@models';
 
 @Component({
     selector: 'app-solicitud-editar',
@@ -85,7 +85,8 @@ export class SolicitudEditarComponent implements OnInit {
     }
 
     onSubmit(): void {
-        if (this.solicitudForm.invalid || !this.editable) {
+        if (this.solicitudForm.invalid || !this.editable || this.saving) {
+            this.solicitudForm.markAllAsTouched();
             return;
         }
 
@@ -98,46 +99,86 @@ export class SolicitudEditarComponent implements OnInit {
                 const version = solicitud.version;
 
                 if (version === null || version === undefined) {
-                    this.errorMessage = 'No fue posible validar la versión de la solicitud. Intenta nuevamente.';
+                    this.errorMessage = 'No fue posible validar la versión de la solicitud. Actualiza la página e intenta nuevamente.';
                     this.saving = false;
                     this.cdr.detectChanges();
                     return;
                 }
 
-                const formValue = this.solicitudForm.value;
+                const formValue = this.solicitudForm.getRawValue();
+
                 const request: EditarSolicitudRequest = {
-                    descripcion: formValue.descripcion,
+                    descripcion: String(formValue.descripcion || '').trim(),
                     tipoSolicitud: formValue.tipoSolicitud,
                     canalOrigen: formValue.canalOrigen,
-                    version: version
+                    version: Number(version)
                 };
 
-                this.solicitudService.editarSolicitud(this.solicitudId, request).subscribe({
+                this.solicitudService.editarSolicitud(this.solicitudId, request).subscribe({ //REQUEST ME MARCA ERROR
                     next: () => {
                         this.saving = false;
                         this.success = true;
                         this.errorMessage = '';
                         this.cdr.detectChanges();
+
                         setTimeout(() => {
                             this.router.navigate(['/app/solicitudes', this.solicitudId]);
-                        }, 1200);
+                        }, 1000);
                     },
                     error: (err) => {
                         this.saving = false;
-                        this.errorMessage =
-                            err.error?.message ||
-                            err.error?.error ||
-                            'No se pudo actualizar la solicitud. Intenta nuevamente.';
+                        this.success = false;
+                        this.errorMessage = this.obtenerMensajeErrorEdicion(err);
                         this.cdr.detectChanges();
                     }
                 });
             },
-            error: () => {
+            error: (err) => {
                 this.saving = false;
-                this.errorMessage = 'No se pudo validar el estado de la solicitud. Intenta nuevamente.';
+                this.success = false;
+                this.errorMessage = this.obtenerMensajeErrorEdicion(err) || 'No se pudo validar el estado de la solicitud. Intenta nuevamente.';
                 this.cdr.detectChanges();
             }
         });
+    }
+
+    private obtenerMensajeErrorEdicion(err: any): string {
+        const erroresValidacion = err?.error?.errores;
+
+        if (erroresValidacion && typeof erroresValidacion === 'object') {
+            const mensajes = Object.values(erroresValidacion);
+            if (mensajes.length > 0) {
+                return String(mensajes[0]);
+            }
+        }
+
+        const mensajeBackend =
+            err?.error?.mensaje ||
+            err?.error?.message ||
+            err?.error?.error ||
+            (typeof err?.error === 'string' ? err.error : '');
+
+        if (err?.status === 400) {
+            return mensajeBackend || 'La información enviada no es válida. Revisa los campos del formulario.';
+        }
+
+        if (err?.status === 403) {
+            return 'No tienes permisos para editar esta solicitud.';
+        }
+
+        if (err?.status === 404) {
+            return 'La solicitud no fue encontrada.';
+        }
+
+        if (err?.status === 409) {
+            return mensajeBackend || 'La solicitud fue modificada por otro usuario. Actualiza la página e intenta nuevamente.';
+        }
+
+        if (err?.status === 500) {
+            return mensajeBackend || 'El servidor no pudo actualizar la solicitud. Revisa la consola del backend.';
+        }
+
+        return mensajeBackend || 'No se pudo actualizar la solicitud. Intenta nuevamente.';
     }
 
     cancelar(): void {

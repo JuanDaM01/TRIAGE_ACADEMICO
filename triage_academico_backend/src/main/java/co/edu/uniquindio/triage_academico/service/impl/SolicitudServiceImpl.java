@@ -16,6 +16,7 @@ import co.edu.uniquindio.triage_academico.domain.SolicitudAcademica;
 import co.edu.uniquindio.triage_academico.domain.SugerenciaIA;
 import co.edu.uniquindio.triage_academico.domain.Usuario;
 import co.edu.uniquindio.triage_academico.domain.enums.AccionHistorial;
+import co.edu.uniquindio.triage_academico.domain.enums.CanalOrigen;
 import co.edu.uniquindio.triage_academico.domain.enums.EstadoSolicitud;
 import co.edu.uniquindio.triage_academico.domain.enums.NivelPrioridad;
 import co.edu.uniquindio.triage_academico.domain.enums.TipoSolicitud;
@@ -88,10 +89,7 @@ public class SolicitudServiceImpl implements SolicitudService {
         public SolicitudResponse editarSolicitud(Long id, EditarSolicitudRequest request) {
                 log.info("Editando solicitud: {}", id);
 
-                SolicitudAcademica solicitud = solicitudRepository.findById(id)
-                                .orElseThrow(() -> new RecursoNoEncontradoException("Solicitud", id));
-
-                obtenerSolicitudConVersion(id, request.getVersion());
+                SolicitudAcademica solicitud = obtenerSolicitudConVersion(id, request.getVersion());
 
                 if (solicitud.getEstado() != EstadoSolicitud.REGISTRADA) {
                         throw new InvalidTransitionException(
@@ -99,21 +97,35 @@ public class SolicitudServiceImpl implements SolicitudService {
                                                         + solicitud.getEstado());
                 }
 
-                String cambios = String.format("Descripción: '%s' → '%s', Tipo: %s → %s, Canal: %s → %s",
-                                solicitud.getDescripcion(), request.getDescripcion(),
-                                solicitud.getTipoSolicitud(), request.getTipoSolicitud(),
-                                solicitud.getCanalOrigen(), request.getCanalOrigen());
+                String descripcionAnterior = solicitud.getDescripcion();
+                TipoSolicitud tipoAnterior = solicitud.getTipoSolicitud();
+                CanalOrigen canalAnterior = solicitud.getCanalOrigen();
 
-                solicitud.setDescripcion(request.getDescripcion());
+                solicitud.setDescripcion(request.getDescripcion().trim());
                 solicitud.setTipoSolicitud(request.getTipoSolicitud());
                 solicitud.setCanalOrigen(request.getCanalOrigen());
                 solicitud.setFechaActualizacion(LocalDateTime.now());
 
                 Usuario ejecutor = authService.getUsuarioAutenticado();
+
+                String cambios = String.format(
+                                "Solicitud editada. Descripción: '%s' → '%s'. Tipo: %s → %s. Canal: %s → %s.",
+                                descripcionAnterior,
+                                solicitud.getDescripcion(),
+                                tipoAnterior,
+                                solicitud.getTipoSolicitud(),
+                                canalAnterior,
+                                solicitud.getCanalOrigen());
+
+                if (cambios.length() > 1000) {
+                        cambios = cambios.substring(0, 1000);
+                }
+
                 registrarHistorial(solicitud, AccionHistorial.EDICION, ejecutor.getId(), cambios);
 
-                solicitudRepository.save(solicitud);
-                return mapToResponse(solicitud);
+                SolicitudAcademica solicitudGuardada = solicitudRepository.save(solicitud);
+
+                return mapToResponse(solicitudGuardada);
         }
 
         // Obtener por ID con historial (RF-06)
@@ -339,11 +351,24 @@ public class SolicitudServiceImpl implements SolicitudService {
                 SolicitudAcademica solicitud = solicitudRepository.findById(id)
                                 .orElseThrow(() -> new RecursoNoEncontradoException("Solicitud", id));
 
-                if (!solicitud.getVersion().equals(versionCliente)) {
+                if (versionCliente == null) {
                         throw new ReglaNegocioException(
-                                        "Conflicto de concurrencia: version esperada " + versionCliente
-                                                        + ", version actual " + solicitud.getVersion());
+                                        "No se recibió la versión de la solicitud. Actualice la información e intente nuevamente.");
                 }
+
+                Integer versionActual = solicitud.getVersion();
+
+                if (versionActual == null) {
+                        versionActual = 0;
+                        solicitud.setVersion(versionActual);
+                }
+
+                if (!versionActual.equals(versionCliente)) {
+                        throw new ReglaNegocioException(
+                                        "Conflicto de concurrencia: versión esperada " + versionCliente
+                                                        + ", versión actual " + versionActual);
+                }
+
                 return solicitud;
         }
 

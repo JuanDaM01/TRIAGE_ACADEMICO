@@ -8,14 +8,16 @@ import lombok.Data;
 
 @Data
 public class EditarSolicitudRequest {
-    @NotBlank(message = "La descripcion es obligatoria")
+
+    @NotBlank(message = "La descripción es obligatoria")
     private String descripcion;
-    
+
     @NotNull(message = "El tipo de solicitud es obligatorio")
     private TipoSolicitud tipoSolicitud;
 
     @NotNull(message = "El canal de origen es obligatorio")
     private CanalOrigen canalOrigen;
 
+    @NotNull(message = "La versión de la solicitud es obligatoria")
     private Integer version;
 }
