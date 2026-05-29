@@ -51,17 +51,17 @@ export const routes: Routes = [
             {
                 path: 'usuarios',
                 loadComponent: () => import('./features/usuarios/lista/usuariosLista.component').then(m => m.UsuariosListaComponent),
-                canActivate: [roleGuard(['COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
             },
             {
                 path: 'usuarios/gestion',
                 loadComponent: () => import('./features/usuarios/gestion/usuarioGestion.component').then(m => m.UsuarioGestionComponent),
-                canActivate: [roleGuard(['COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
             },
             {
                 path: 'usuarios/gestion/:id',
                 loadComponent: () => import('./features/usuarios/gestion/usuarioGestion.component').then(m => m.UsuarioGestionComponent),
-                canActivate: [roleGuard(['COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
             },
 
             {

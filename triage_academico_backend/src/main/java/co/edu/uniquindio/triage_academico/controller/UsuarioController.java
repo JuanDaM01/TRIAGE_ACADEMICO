@@ -35,7 +35,7 @@ public class UsuarioController {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<Page<UsuarioResponse>> consultarUsuarios(
             @RequestParam(required = false) NombreRol rol,
             @RequestParam(required = false) Boolean activo,
@@ -46,30 +46,25 @@ public class UsuarioController {
         Specification<Usuario> specification = Specification.where(null);
 
         if (rol != null) {
-            specification = specification.and((root, query, cb) ->
-                    cb.equal(root.get("rol").get("nombre"), rol));
+            specification = specification.and((root, query, cb) -> cb.equal(root.get("rol").get("nombre"), rol));
         }
 
         if (activo != null) {
-            specification = specification.and((root, query, cb) ->
-                    cb.equal(root.get("activo"), activo));
+            specification = specification.and((root, query, cb) -> cb.equal(root.get("activo"), activo));
         }
 
         if (StringUtils.hasText(nombre)) {
             String filtroNombre = "%" + nombre.trim().toLowerCase() + "%";
 
-            specification = specification.and((root, query, cb) ->
-                    cb.or(
-                            cb.like(cb.lower(root.get("nombre")), filtroNombre),
-                            cb.like(cb.lower(root.get("apellido")), filtroNombre)
-                    ));
+            specification = specification.and((root, query, cb) -> cb.or(
+                    cb.like(cb.lower(root.get("nombre")), filtroNombre),
+                    cb.like(cb.lower(root.get("apellido")), filtroNombre)));
         }
 
         if (StringUtils.hasText(email)) {
             String filtroEmail = "%" + email.trim().toLowerCase() + "%";
 
-            specification = specification.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("email")), filtroEmail));
+            specification = specification.and((root, query, cb) -> cb.like(cb.lower(root.get("email")), filtroEmail));
         }
 
         Page<UsuarioResponse> usuarios = usuarioRepository
@@ -80,18 +75,23 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<UsuarioResponse> obtenerUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
         return ResponseEntity.ok(mapearUsuario(usuario));
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<UsuarioResponse> crearUsuario(@Valid @RequestBody RegistroUsuarioRequest request) {
 
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new BusinessException("El email ya se encuentra registrado.");
+        }
+
+        if (request.getRol() == NombreRol.COORDINADOR || request.getRol() == NombreRol.DIRECTOR) {
+            throw new BusinessException(
+                    "No está permitido crear usuarios coordinadores o directores desde este panel.");
         }
 
         Rol rol = buscarRol(request.getRol());
@@ -114,7 +114,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<UsuarioResponse> actualizarUsuario(
             @PathVariable Long id,
             @Valid @RequestBody ActualizarUsuarioRequest request) {
@@ -148,7 +148,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/activar")
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<UsuarioResponse> activarUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
         usuario.setActivo(true);
@@ -157,7 +157,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/desactivar")
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<UsuarioResponse> desactivarUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
         usuario.setActivo(false);
@@ -166,7 +166,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
 

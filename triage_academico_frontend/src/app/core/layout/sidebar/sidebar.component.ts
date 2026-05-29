@@ -21,7 +21,7 @@ export class SidebarComponent {
     @Output() menuClose = new EventEmitter<void>();
     @Output() logoutClick = new EventEmitter<void>();
 
-    constructor(public authService: AuthService) {}
+    constructor(public authService: AuthService) { }
 
     isStudentRole(): boolean {
         return this.currentUser?.rol === Rol.ESTUDIANTE;
@@ -31,7 +31,12 @@ export class SidebarComponent {
         if (!this.currentUser) {
             return false;
         }
-        return [Rol.COORDINADOR, Rol.DIRECTOR].includes(this.currentUser.rol);
+
+        return [
+            Rol.ADMINISTRATIVO,
+            Rol.COORDINADOR,
+            Rol.DIRECTOR
+        ].includes(this.currentUser.rol);
     }
 
     getRolLabel(): string {

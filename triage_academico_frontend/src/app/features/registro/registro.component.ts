@@ -34,7 +34,6 @@ export class RegistroComponent {
     rolesDisponibles = [
         { label: 'Estudiante', value: Rol.ESTUDIANTE },
         { label: 'Docente', value: Rol.DOCENTE },
-        { label: 'Administrativo', value: Rol.ADMINISTRATIVO }
     ];
 
     constructor(

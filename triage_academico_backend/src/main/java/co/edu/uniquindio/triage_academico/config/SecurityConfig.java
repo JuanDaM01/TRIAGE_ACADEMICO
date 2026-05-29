@@ -93,7 +93,7 @@ public class SecurityConfig {
                                                 // ========== Usuarios ==========
                                                 // Gestión de usuarios - Solo coordinadores y directores
                                                 .requestMatchers("/api/usuarios/**")
-                                                .hasAnyRole("COORDINADOR", "DIRECTOR")
+                                                .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
 
                                                 // Cualquier otra cosa requiere autenticación
                                                 .anyRequest().authenticated())

@@ -21,7 +21,11 @@ export class UsuarioGestionComponent implements OnInit {
     success = false;
     errorMessage = '';
 
-    readonly roles = Object.values(Rol);
+    readonly roles = [
+    Rol.ESTUDIANTE,
+    Rol.DOCENTE,
+    Rol.ADMINISTRATIVO
+];
 
     constructor(
         private fb: FormBuilder,

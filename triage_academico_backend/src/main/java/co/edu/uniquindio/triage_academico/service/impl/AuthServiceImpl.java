@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import co.edu.uniquindio.triage_academico.Util.JwtUtils;
 import co.edu.uniquindio.triage_academico.domain.Rol;
 import co.edu.uniquindio.triage_academico.domain.Usuario;
+import co.edu.uniquindio.triage_academico.domain.enums.NombreRol;
 import co.edu.uniquindio.triage_academico.dto.request.LoginRequest;
 import co.edu.uniquindio.triage_academico.dto.request.RegistroUsuarioRequest;
 import co.edu.uniquindio.triage_academico.dto.response.TokenResponse;
@@ -74,6 +75,13 @@ public class AuthServiceImpl implements AuthService {
     public TokenResponse registrar(RegistroUsuarioRequest request) {
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new BusinessException("El email ya esta registrado");
+        }
+
+        if (request.getRol() == NombreRol.ADMINISTRATIVO ||
+                request.getRol() == NombreRol.COORDINADOR ||
+                request.getRol() == NombreRol.DIRECTOR) {
+            throw new BusinessException(
+                    "El registro público solo permite cuentas de estudiantes y docentes. Los usuarios administrativos deben ser creados desde el panel institucional.");
         }
 
         Rol rol = rolRepository.findByNombre(request.getRol())
