@@ -110,8 +110,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             case Rol.ESTUDIANTE: return 'Estudiante';
             case Rol.DOCENTE: return 'Docente';
             case Rol.ADMINISTRATIVO: return 'Administrativo';
-            case Rol.COORDINADOR: return 'Coordinador';
-            case Rol.DIRECTOR: return 'Director';
             default: return 'Usuario';
         }
     }

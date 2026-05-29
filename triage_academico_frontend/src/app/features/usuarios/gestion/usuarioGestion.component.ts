@@ -165,9 +165,7 @@ export class UsuarioGestionComponent implements OnInit {
         const rolMap: Record<Rol, string> = {
             [Rol.ESTUDIANTE]:     'Estudiante',
             [Rol.DOCENTE]:        'Docente',
-            [Rol.ADMINISTRATIVO]: 'Administrativo',
-            [Rol.COORDINADOR]:    'Coordinador',
-            [Rol.DIRECTOR]:       'Director'
+            [Rol.ADMINISTRATIVO]: 'Administrativo'
         };
         return rolMap[rol] ?? rol;
     }

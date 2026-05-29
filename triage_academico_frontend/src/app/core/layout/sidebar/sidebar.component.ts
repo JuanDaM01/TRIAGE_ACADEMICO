@@ -32,22 +32,14 @@ export class SidebarComponent {
             return false;
         }
 
-        return [
-            Rol.ADMINISTRATIVO,
-            Rol.COORDINADOR,
-            Rol.DIRECTOR
-        ].includes(this.currentUser.rol);
+        return this.currentUser.rol === Rol.ADMINISTRATIVO;
     }
     canUseIA(): boolean {
         if (!this.currentUser) {
             return false;
         }
 
-        return [
-            Rol.ADMINISTRATIVO,
-            Rol.COORDINADOR,
-            Rol.DIRECTOR
-        ].includes(this.currentUser.rol);
+        return this.currentUser.rol === Rol.ADMINISTRATIVO;
     }
 
     getRolLabel(): string {
@@ -58,8 +50,6 @@ export class SidebarComponent {
             case Rol.ESTUDIANTE: return 'Estudiante';
             case Rol.DOCENTE: return 'Docente';
             case Rol.ADMINISTRATIVO: return 'Administrativo';
-            case Rol.COORDINADOR: return 'Coordinador';
-            case Rol.DIRECTOR: return 'Director';
             default: return this.currentUser.rol;
         }
     }
@@ -72,8 +62,6 @@ export class SidebarComponent {
             case Rol.ESTUDIANTE: return '🎓';
             case Rol.DOCENTE: return '👨‍🏫';
             case Rol.ADMINISTRATIVO: return '💼';
-            case Rol.COORDINADOR: return '📋';
-            case Rol.DIRECTOR: return '🏛️';
             default: return '👤';
         }
     }

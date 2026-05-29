@@ -24,9 +24,7 @@ export class HeaderComponent {
         const labels: Record<string, string> = {
             ESTUDIANTE: 'Estudiante',
             DOCENTE: 'Docente',
-            ADMINISTRATIVO: 'Administrativo',
-            COORDINADOR: 'Coordinador',
-            DIRECTOR: 'Director'
+            ADMINISTRATIVO: 'Administrativo'
         };
         return labels[this.currentUser.rol] ?? this.currentUser.rol;
     }

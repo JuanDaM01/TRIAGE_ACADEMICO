@@ -71,7 +71,7 @@ export class LandingComponent {
     {
       icon: 'SG',
       title: 'Seguridad por roles',
-      description: 'Organiza el acceso de estudiantes, docentes, administrativos, coordinadores y directores.'
+      description: 'Organiza el acceso de estudiantes, docentes y administrativos.'
     },
     {
       icon: 'UX',
@@ -101,16 +101,7 @@ export class LandingComponent {
       description: 'Apoya la clasificación, validación y priorización.',
       items: ['Clasificar trámites', 'Priorizar casos', 'Actualizar estados']
     },
-    {
-      name: 'Coordinador',
-      description: 'Supervisa procesos y realiza asignaciones.',
-      items: ['Gestionar usuarios', 'Asignar responsables', 'Consultar métricas']
-    },
-    {
-      name: 'Director',
-      description: 'Accede a una vista estratégica del proceso académico.',
-      items: ['Analítica general', 'Reportería', 'Control institucional']
-    }
+    
   ];
 
   readonly processSteps: ProcessStep[] = [

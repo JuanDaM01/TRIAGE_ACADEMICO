@@ -51,7 +51,7 @@ public class SolicitudController {
 
     // RF-01
     @PostMapping
-    @PreAuthorize("hasAnyRole('ESTUDIANTE', 'ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ESTUDIANTE', 'DOCENTE', 'ADMINISTRATIVO')")
     public ResponseEntity<SolicitudResponse> crearSolicitud(@Valid @RequestBody CrearSolicitudRequest request) {
         Long usuarioId = request.getSolicitanteId();
         if (usuarioId == null || usuarioId == 0L) {
@@ -71,14 +71,14 @@ public class SolicitudController {
     }
 
     @PostMapping("/{id}/aplicar-sugerencia")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<SolicitudResponse> aplicarSugerencia(@PathVariable Long id) {
         return ResponseEntity.ok(solicitudService.aplicarSugerencia(id));
     }
 
     // RF-02 + RF-03
     @PatchMapping("/{id}/clasificar")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<SolicitudResponse> clasificar(
             @PathVariable Long id,
             @Valid @RequestBody ClasificarSolicitudRequest request) {
@@ -87,7 +87,7 @@ public class SolicitudController {
 
     // RF-04: CLASIFICADA a EN_ATENCION
     @PatchMapping("/{id}/asignar")
-    @PreAuthorize("hasAnyRole('COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<SolicitudResponse> asignarResponsable(
             @PathVariable Long id,
             @Valid @RequestBody AsignarResponsableRequest request) {
@@ -96,7 +96,7 @@ public class SolicitudController {
 
     // RF-04: EN_ATENCION a ATENDIDA
     @PatchMapping("/{id}/atender")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<SolicitudResponse> atender(
             @PathVariable Long id,
             @Valid @RequestBody AtenderSolicitudRequest request) {
@@ -105,7 +105,7 @@ public class SolicitudController {
 
     // RF-04 + RF-08: ATENDIDA a CERRADA
     @PatchMapping("/{id}/cerrar")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<SolicitudResponse> cerrar(
             @PathVariable Long id,
             @Valid @RequestBody CerrarSolicitudRequest request) {

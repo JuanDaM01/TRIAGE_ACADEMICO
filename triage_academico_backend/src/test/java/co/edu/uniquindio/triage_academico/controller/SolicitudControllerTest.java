@@ -225,7 +225,7 @@ class SolicitudControllerTest {
 
         @Test
         @DisplayName("PATCH /api/solicitudes/{id}/asignar - debe retornar 200")
-        @WithMockUser(roles = "COORDINADOR")
+        @WithMockUser(roles = "ADMINISTRATIVO")
         void asignarResponsable_debeRetornar200() throws Exception {
                 AsignarResponsableRequest request = AsignarResponsableRequest.builder()
                                 .responsableId(3L)
@@ -247,7 +247,7 @@ class SolicitudControllerTest {
 
         @Test
         @DisplayName("PATCH /api/solicitudes/{id}/asignar - sin responsableId debe retornar 400")
-        @WithMockUser(roles = "COORDINADOR")
+        @WithMockUser(roles = "ADMINISTRATIVO")
         void asignarResponsable_sinResponsableId_debeRetornar400() throws Exception {
                 AsignarResponsableRequest request = AsignarResponsableRequest.builder()
                                 .responsableId(null)
@@ -262,7 +262,7 @@ class SolicitudControllerTest {
 
         @Test
         @DisplayName("PATCH /api/solicitudes/{id}/asignar - solicitud no existe debe retornar 404")
-        @WithMockUser(roles = "COORDINADOR")
+        @WithMockUser(roles = "ADMINISTRATIVO")
         void asignarResponsable_solicitudNoExiste_debeRetornar404() throws Exception {
                 AsignarResponsableRequest request = AsignarResponsableRequest.builder()
                                 .responsableId(3L)

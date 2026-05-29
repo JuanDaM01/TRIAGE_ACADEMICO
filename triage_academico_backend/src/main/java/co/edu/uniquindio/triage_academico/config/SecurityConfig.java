@@ -42,11 +42,9 @@ public class SecurityConfig {
                                                 .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
 
                                                 // ========== Solicitudes ==========
-                                                // Crear solicitud - Estudiantes, Docentes, Administrativos,
-                                                // Coordinadores, Directores
+                                                // Crear solicitud - Estudiantes, Docentes, Administrativos
                                                 .requestMatchers(HttpMethod.POST, "/api/solicitudes")
-                                                .hasAnyRole("ESTUDIANTE", "DOCENTE", "ADMINISTRATIVO", "COORDINADOR",
-                                                                "DIRECTOR")
+                                                .hasAnyRole("ESTUDIANTE", "DOCENTE", "ADMINISTRATIVO")
 
                                                 // Consultar solicitudes (todos los autenticados)
                                                 .requestMatchers(HttpMethod.GET, "/api/solicitudes")
@@ -59,41 +57,40 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/*/editar")
                                                 .hasAnyRole("ESTUDIANTE", "DOCENTE", "ADMINISTRATIVO")
 
-                                                // Clasificar - Solo administrativos, coordinadores, directores
+                                                // Clasificar - Solo administrativos
                                                 .requestMatchers(HttpMethod.PATCH, "/api/solicitudes/*/clasificar")
-                                                .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
-                                                // Asignar responsable - Solo coordinadores y directores
+                                                // Asignar responsable - Solo administrativos
                                                 .requestMatchers(HttpMethod.PATCH, "/api/solicitudes/*/asignar")
-                                                .hasAnyRole("COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
-                                                // Atender - Solo administrativos, coordinadores, directores
+                                                // Atender - Solo administrativos
                                                 .requestMatchers(HttpMethod.PATCH, "/api/solicitudes/*/atender")
-                                                .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
-                                                // Cerrar - Solo administrativos, coordinadores, directores
+                                                // Cerrar - Solo administrativos
                                                 .requestMatchers(HttpMethod.PATCH, "/api/solicitudes/*/cerrar")
-                                                .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
-                                                // Aplicar sugerencia IA - Solo administrativos, coordinadores,
-                                                // directores
+                                                // Aplicar sugerencia IA - Solo administrativos
                                                 .requestMatchers(HttpMethod.POST,
                                                                 "/api/solicitudes/*/aplicar-sugerencia")
-                                                .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
-                                                // Estadísticas - Solo coordinadores y directores
+                                                // Estadísticas - Solo administrativos
                                                 .requestMatchers(HttpMethod.GET, "/api/solicitudes/estadisticas")
-                                                .hasAnyRole("COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
                                                 // ========== IA ==========
-                                                // Solo administrativos, coordinadores, directores
+                                                // Solo administrativos
                                                 .requestMatchers("/api/ia/**")
-                                                .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
                                                 // ========== Usuarios ==========
-                                                // Gestión de usuarios - Solo coordinadores y directores
+                                                // Gestión de usuarios - Solo administrativos
                                                 .requestMatchers("/api/usuarios/**")
-                                                .hasAnyRole("ADMINISTRATIVO", "COORDINADOR", "DIRECTOR")
+                                                .hasRole("ADMINISTRATIVO")
 
                                                 // Cualquier otra cosa requiere autenticación
                                                 .anyRequest().authenticated())

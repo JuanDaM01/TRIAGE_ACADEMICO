@@ -157,9 +157,7 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
         const rolMap: Record<string, string> = {
             [Rol.ESTUDIANTE]: 'Estudiante',
             [Rol.DOCENTE]: 'Docente',
-            [Rol.ADMINISTRATIVO]: 'Administrativo',
-            [Rol.COORDINADOR]: 'Coordinador',
-            [Rol.DIRECTOR]: 'Director'
+            [Rol.ADMINISTRATIVO]: 'Administrativo'
         };
         return rolMap[rol] || rol;
     }

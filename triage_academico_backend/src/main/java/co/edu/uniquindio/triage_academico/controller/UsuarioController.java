@@ -35,7 +35,7 @@ public class UsuarioController {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<Page<UsuarioResponse>> consultarUsuarios(
             @RequestParam(required = false) NombreRol rol,
             @RequestParam(required = false) Boolean activo,
@@ -75,24 +75,21 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<UsuarioResponse> obtenerUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
         return ResponseEntity.ok(mapearUsuario(usuario));
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<UsuarioResponse> crearUsuario(@Valid @RequestBody RegistroUsuarioRequest request) {
 
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new BusinessException("El email ya se encuentra registrado.");
         }
 
-        if (request.getRol() == NombreRol.COORDINADOR || request.getRol() == NombreRol.DIRECTOR) {
-            throw new BusinessException(
-                    "No está permitido crear usuarios coordinadores o directores desde este panel.");
-        }
+        // Roles eliminados: capacidades administrativas centralizadas en ADMINISTRATIVO.
 
         Rol rol = buscarRol(request.getRol());
 
@@ -114,7 +111,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<UsuarioResponse> actualizarUsuario(
             @PathVariable Long id,
             @Valid @RequestBody ActualizarUsuarioRequest request) {
@@ -148,7 +145,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/activar")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<UsuarioResponse> activarUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
         usuario.setActivo(true);
@@ -157,7 +154,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/desactivar")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<UsuarioResponse> desactivarUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
         usuario.setActivo(false);
@@ -166,7 +163,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
 

@@ -11,7 +11,7 @@ const homeRedirectGuard = () => {
     const auth = inject(AuthService);
     const router = inject(Router);
     const user = auth.getCurrentUser();
-    const staffRoles = ['DOCENTE', 'ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'];
+    const staffRoles = ['DOCENTE', 'ADMINISTRATIVO'];
     if (user && staffRoles.includes(user.rol)) {
         return router.createUrlTree(['/app/dashboard']);
     }
@@ -42,7 +42,7 @@ export const routes: Routes = [
             {
                 path: 'dashboard',
                 loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
-                canActivate: [roleGuard(['DOCENTE', 'ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['DOCENTE', 'ADMINISTRATIVO'])]
             },
             {
                 path: 'solicitudes',
@@ -51,24 +51,24 @@ export const routes: Routes = [
             {
                 path: 'usuarios',
                 loadComponent: () => import('./features/usuarios/lista/usuariosLista.component').then(m => m.UsuariosListaComponent),
-                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['ADMINISTRATIVO'])]
             },
             {
                 path: 'usuarios/gestion',
                 loadComponent: () => import('./features/usuarios/gestion/usuarioGestion.component').then(m => m.UsuarioGestionComponent),
-                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['ADMINISTRATIVO'])]
             },
             {
                 path: 'usuarios/gestion/:id',
                 loadComponent: () => import('./features/usuarios/gestion/usuarioGestion.component').then(m => m.UsuarioGestionComponent),
-                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['ADMINISTRATIVO'])]
             },
 
             {
                 path: 'ia',
                 loadComponent: () => import('./features/ia/sugerencia/iaSugerencia.component')
                     .then(m => m.IASugerenciaComponent),
-                canActivate: [roleGuard(['ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR'])]
+                canActivate: [roleGuard(['ADMINISTRATIVO'])]
             },
 
             {

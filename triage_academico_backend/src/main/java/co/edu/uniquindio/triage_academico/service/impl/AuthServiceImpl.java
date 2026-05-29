@@ -77,9 +77,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException("El email ya esta registrado");
         }
 
-        if (request.getRol() == NombreRol.ADMINISTRATIVO ||
-                request.getRol() == NombreRol.COORDINADOR ||
-                request.getRol() == NombreRol.DIRECTOR) {
+        if (request.getRol() == NombreRol.ADMINISTRATIVO) {
             throw new BusinessException(
                     "El registro público solo permite cuentas de estudiantes y docentes. Los usuarios administrativos deben ser creados desde el panel institucional.");
         }

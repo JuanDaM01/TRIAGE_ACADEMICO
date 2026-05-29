@@ -19,7 +19,7 @@ public class IAController {
 
     // RF-10
     @PostMapping("/sugerir-clasificacion")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<SugerenciaClasificacionResponse> sugerirClasificacion(
             @Valid @RequestBody SugerenciaClasificacionRequest request) {
         return ResponseEntity.ok(iaService.sugerirClasificacion(request.getSolicitudId(), request.getDescripcion()));
@@ -27,7 +27,7 @@ public class IAController {
 
     // RF-09
     @GetMapping("/resumen/{solicitudId}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATIVO', 'COORDINADOR', 'DIRECTOR')")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ResumenSolicitudResponse> generarResumen(@PathVariable Long solicitudId) {
         return ResponseEntity.ok(iaService.generarResumen(solicitudId));
     }

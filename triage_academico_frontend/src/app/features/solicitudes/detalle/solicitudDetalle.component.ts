@@ -108,8 +108,6 @@ export class SolicitudDetalleComponent implements OnInit {
 
     puedeVerAcciones(): boolean {
         return this.authService.hasRole('ADMINISTRATIVO') ||
-            this.authService.hasRole('COORDINADOR') ||
-            this.authService.hasRole('DIRECTOR') ||
             this.authService.hasRole('DOCENTE') ||
             this.authService.hasRole('ESTUDIANTE');
     }
@@ -135,9 +133,7 @@ export class SolicitudDetalleComponent implements OnInit {
         return !!this.solicitud &&
             this.solicitud.estado === EstadoSolicitud.REGISTRADA &&
             (
-                this.authService.hasRole('ADMINISTRATIVO') ||
-                this.authService.hasRole('COORDINADOR') ||
-                this.authService.hasRole('DIRECTOR')
+                this.authService.hasRole('ADMINISTRATIVO')
             );
     }
 
@@ -145,8 +141,7 @@ export class SolicitudDetalleComponent implements OnInit {
         return !!this.solicitud &&
             this.solicitud.estado === EstadoSolicitud.CLASIFICADA &&
             (
-                this.authService.hasRole('COORDINADOR') ||
-                this.authService.hasRole('DIRECTOR')
+                this.authService.hasRole('ADMINISTRATIVO')
             );
     }
 
@@ -154,9 +149,7 @@ export class SolicitudDetalleComponent implements OnInit {
         return !!this.solicitud &&
             this.solicitud.estado === EstadoSolicitud.EN_ATENCION &&
             (
-                this.authService.hasRole('ADMINISTRATIVO') ||
-                this.authService.hasRole('COORDINADOR') ||
-                this.authService.hasRole('DIRECTOR')
+                this.authService.hasRole('ADMINISTRATIVO')
             );
     }
 
@@ -357,9 +350,7 @@ export class SolicitudDetalleComponent implements OnInit {
         return !!this.solicitud &&
             this.solicitud.estado === EstadoSolicitud.ATENDIDA &&
             (
-                this.authService.hasRole('ADMINISTRATIVO') ||
-                this.authService.hasRole('COORDINADOR') ||
-                this.authService.hasRole('DIRECTOR')
+                this.authService.hasRole('ADMINISTRATIVO')
             );
     }
 
