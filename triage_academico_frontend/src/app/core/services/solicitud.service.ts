@@ -70,6 +70,10 @@ export class SolicitudService {
         return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/clasificar`, request);
     }
 
+    aplicarSugerencia(id: number): Observable<SolicitudAcademica> {
+        return this.http.post<SolicitudAcademica>(`${this.API_URL}/${id}/aplicar-sugerencia`, {});
+    }
+
     asignarResponsable(id: number, responsableId: number, version: number): Observable<SolicitudAcademica> {
         return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/asignar`, { responsableId: Number(responsableId), version: Number(version) });
     }

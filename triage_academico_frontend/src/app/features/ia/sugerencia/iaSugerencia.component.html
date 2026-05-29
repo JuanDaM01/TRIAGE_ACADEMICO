@@ -156,12 +156,12 @@
                     <span class="text-[11px] uppercase tracking-[0.18em] font-black text-[#004f45] dark:text-[#84d5c5]">
                         Descripción de la solicitud
                     </span>
-                    <textarea rows="7" formControlName="descripcion"
+                    <textarea rows="7" formControlName="descripcion" readonly
                         placeholder="Ejemplo: Solicito homologación de una asignatura cursada en otra universidad..."
                         class="mt-2 w-full resize-y bg-white/70 dark:bg-[#181c1c]/60 border border-[#bec9c5]/30 dark:border-white/10 text-[#181c1c] dark:text-white text-sm rounded-2xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] dark:focus:border-[#84d5c5] transition-all placeholder:text-[#3e4946]/40 dark:placeholder:text-white/30 leading-relaxed">
                     </textarea>
                     <span *ngIf="descripcionInvalida" class="mt-2 block text-xs font-bold text-[#93000a]">
-                        La descripción es obligatoria y debe tener mínimo 10 caracteres.
+                        La descripción se cargará automáticamente desde la solicitud.
                     </span>
                 </label>
 
@@ -187,6 +187,12 @@
                     class="p-4 bg-[#ffdad6] text-[#93000a] text-sm rounded-2xl font-semibold flex items-center gap-2 border border-[#93000a]/20">
                     <span class="material-symbols-outlined">error</span>
                     {{ errorSugerencia }}
+                </div>
+
+                <div *ngIf="successMessage"
+                    class="p-4 bg-[#dcfce7] text-[#166534] text-sm rounded-2xl font-semibold flex items-center gap-2 border border-[#16653420]">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    {{ successMessage }}
                 </div>
 
             </form>
@@ -294,7 +300,13 @@
                     Respuesta de la IA
                 </h3>
             </div>
-            <button type="button" (click)="copiarResultado()"
+            <button type="button" *ngIf="tabActiva === 'sugerencia'" (click)="aplicarSugerencia()"
+                [disabled]="aplicandoSugerencia || !sugerencia"
+                class="bg-[#004f45] hover:bg-[#003d35] text-white font-bold text-sm py-3 px-5 rounded-2xl flex items-center justify-center gap-2 transition-all border border-[#bec9c5]/30 dark:border-white/10 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined text-[18px]">{{ aplicandoSugerencia ? 'hourglass_top' : 'check_circle' }}</span>
+                {{ aplicandoSugerencia ? 'Aplicando...' : 'Aplicar sugerencia' }}
+            </button>
+            <button type="button" *ngIf="tabActiva === 'resumen'" (click)="copiarResultado()"
                 class="bg-white hover:bg-[#004f45]/5 dark:bg-[#181c1c]/60 text-[#004f45] dark:text-[#84d5c5] font-bold text-sm py-3 px-5 rounded-2xl flex items-center justify-center gap-2 transition-all border border-[#bec9c5]/30 dark:border-white/10 shadow-sm">
                 <span class="material-symbols-outlined text-[18px]">{{ copiado ? 'check_circle' : 'content_copy' }}</span>
                 {{ copiado ? 'Copiado' : 'Copiar' }}

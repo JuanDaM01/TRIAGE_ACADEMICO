@@ -1,9 +1,10 @@
 ﻿import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { finalize, switchMap, tap } from 'rxjs';
 
 import { IAService, ResumenResponse, SugerenciaRequest } from '@core/services/ia.service';
+import { SolicitudService } from '@core/services/solicitud.service';
 import { NivelPrioridad, SugerenciaIA, TipoSolicitud } from '@models';
 
 type TabIA = 'sugerencia' | 'resumen';
@@ -19,15 +20,18 @@ export class IASugerenciaComponent {
 
     private readonly fb = inject(FormBuilder);
     private readonly iaService = inject(IAService);
+    private readonly solicitudService = inject(SolicitudService);
     private readonly cdr = inject(ChangeDetectorRef);
 
     tabActiva: TabIA = 'sugerencia';
 
     loadingSugerencia = false;
     loadingResumen = false;
+    aplicandoSugerencia = false;
 
     errorSugerencia = '';
     errorResumen = '';
+    successMessage = '';
 
     sugerencia: SugerenciaIA | null = null;
     resumen: ResumenResponse | null = null;
@@ -55,6 +59,7 @@ export class IASugerenciaComponent {
         this.tabActiva = tab;
         this.errorSugerencia = '';
         this.errorResumen = '';
+        this.successMessage = '';
         this.copiado = false;
     }
 
@@ -66,27 +71,59 @@ export class IASugerenciaComponent {
     }
 
     obtenerSugerencia(): void {
-        if (this.sugerenciaForm.invalid || this.loadingSugerencia) {
-            this.sugerenciaForm.markAllAsTouched();
+        if (this.loadingSugerencia) {
             return;
         }
 
+        const solicitudIdControl = this.sugerenciaForm.get('solicitudId');
+
+        if (!solicitudIdControl || solicitudIdControl.invalid) {
+            this.sugerenciaForm.markAllAsTouched();
+            this.errorSugerencia = 'Debe ingresar un ID de solicitud válido.';
+            return;
+        }
+
+        const solicitudId = Number(solicitudIdControl.value);
+
         this.loadingSugerencia = true;
         this.errorSugerencia = '';
+        this.successMessage = '';
         this.sugerencia = null;
         this.copiado = false;
 
-        const request: SugerenciaRequest = {
-            solicitudId: Number(this.sugerenciaForm.value.solicitudId),
-            descripcion: String(this.sugerenciaForm.value.descripcion ?? '').trim()
-        };
+        this.solicitudService.getSolicitudById(solicitudId)
+            .pipe(
+                tap((solicitud) => {
+                    if (!solicitud?.descripcion) {
+                        throw new Error('La solicitud no tiene descripción registrada.');
+                    }
 
-        this.iaService.obtenerSugerencia(request)
-            .pipe(finalize(() => { this.loadingSugerencia = false; this.cdr.detectChanges(); }))
+                    this.sugerenciaForm.patchValue({
+                        descripcion: solicitud.descripcion
+                    });
+                }),
+                switchMap((solicitud) => {
+                    return this.iaService.obtenerSugerencia({
+                        solicitudId: solicitud.id,
+                        descripcion: solicitud.descripcion
+                    });
+                }),
+                finalize(() => {
+                    this.loadingSugerencia = false;
+                    this.cdr.detectChanges();
+                })
+            )
             .subscribe({
-                next: (respuesta) => { this.sugerencia = respuesta; },
-                error: (error) => {
-                    this.errorSugerencia = error?.error?.message ?? error?.message ?? 'No se pudo obtener la sugerencia de IA.';
+                next: (respuesta) => {
+                    this.sugerencia = respuesta;
+                    this.successMessage = 'Sugerencia generada correctamente.';
+                },
+                error: (err) => {
+                    this.errorSugerencia =
+                        err.error?.message ??
+                        err.error?.mensaje ??
+                        err.message ??
+                        'No se pudo obtener la sugerencia de IA.';
                 }
             });
     }
@@ -112,10 +149,50 @@ export class IASugerenciaComponent {
             });
     }
 
+    aplicarSugerencia(): void {
+        const solicitudIdControl = this.sugerenciaForm.get('solicitudId');
+        const solicitudId = solicitudIdControl ? Number(solicitudIdControl.value) : null;
+
+        if (!solicitudId) {
+            this.errorSugerencia = 'Debe ingresar el ID de la solicitud.';
+            return;
+        }
+
+        if (!this.sugerencia) {
+            this.errorSugerencia = 'Primero debe generar una sugerencia.';
+            return;
+        }
+
+        this.aplicandoSugerencia = true;
+        this.errorSugerencia = '';
+        this.successMessage = '';
+
+        this.solicitudService.aplicarSugerencia(solicitudId)
+            .pipe(
+                finalize(() => {
+                    this.aplicandoSugerencia = false;
+                    this.cdr.detectChanges();
+                })
+            )
+            .subscribe({
+                next: () => {
+                    this.successMessage = 'La sugerencia fue aplicada correctamente a la solicitud.';
+                },
+                error: (err) => {
+                    this.errorSugerencia =
+                        err.error?.message ??
+                        err.error?.mensaje ??
+                        err.message ??
+                        'No se pudo aplicar la sugerencia.';
+                }
+            });
+    }
+
     limpiarSugerencia(): void {
         this.sugerenciaForm.reset({ solicitudId: '', descripcion: '' });
         this.sugerencia = null;
         this.errorSugerencia = '';
+        this.successMessage = '';
         this.copiado = false;
     }
 
