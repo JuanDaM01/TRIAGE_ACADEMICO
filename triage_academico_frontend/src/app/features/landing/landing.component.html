@@ -1,18 +1,4 @@
 <main class="landing-page">
-<<<<<<< Updated upstream
-  <div class="bg-shape bg-shape--one"></div>
-  <div class="bg-shape bg-shape--two"></div>
-  <div class="bg-shape bg-shape--three"></div>
-
-  <nav class="landing-navbar" aria-label="Navegación principal">
-    <div class="navbar-container">
-      <a class="brand" routerLink="/" aria-label="Ir al inicio">
-        <span class="brand-logo">
-          <img [src]="logoSrc" alt="Logo Universidad del Quindío" />
-        </span>
-
-        <span class="brand-info">
-=======
   <div class="background-decoration background-decoration--one"></div>
   <div class="background-decoration background-decoration--two"></div>
   <div class="background-decoration background-decoration--three"></div>
@@ -25,26 +11,17 @@
         </span>
 
         <span class="brand-text">
->>>>>>> Stashed changes
           <strong>Triage Académico</strong>
           <small>Gestión inteligente</small>
         </span>
       </a>
 
       <div class="nav-links">
-<<<<<<< Updated upstream
-        <button type="button" (click)="scrollToSection('caracteristicas')">
-          Características
-        </button>
-
-        <button type="button" (click)="scrollToSection('proceso')">
-=======
         <button type="button" (click)="scrollToSection('features')">
           Características
         </button>
 
         <button type="button" (click)="scrollToSection('process')">
->>>>>>> Stashed changes
           Proceso
         </button>
 
@@ -68,11 +45,7 @@
         class="menu-button"
         [class.menu-button--active]="mobileMenuOpen"
         [attr.aria-expanded]="mobileMenuOpen"
-<<<<<<< Updated upstream
-        aria-label="Abrir menú"
-=======
         aria-label="Abrir menú de navegación"
->>>>>>> Stashed changes
         (click)="toggleMobileMenu()"
       >
         <span></span>
@@ -81,21 +54,12 @@
       </button>
     </div>
 
-<<<<<<< Updated upstream
-    <div class="mobile-menu" [class.mobile-menu--open]="mobileMenuOpen">
-      <button type="button" (click)="scrollToSection('caracteristicas')">
-        Características
-      </button>
-
-      <button type="button" (click)="scrollToSection('proceso')">
-=======
     <div class="mobile-panel" [class.mobile-panel--open]="mobileMenuOpen">
       <button type="button" (click)="scrollToSection('features')">
         Características
       </button>
 
       <button type="button" (click)="scrollToSection('process')">
->>>>>>> Stashed changes
         Proceso
       </button>
 
@@ -113,134 +77,6 @@
     </div>
   </nav>
 
-<<<<<<< Updated upstream
-  <section class="hero">
-    <div class="hero-container">
-      <div class="institutional-mark">
-        <img [src]="logoSrc" alt="Logo Universidad del Quindío" />
-        <span>Universidad del Quindío</span>
-      </div>
-
-      <span class="eyebrow">
-        Plataforma académica inteligente
-      </span>
-
-      <h1>
-        Gestiona tus trámites académicos de forma simple y segura
-      </h1>
-
-      <p>
-        Un sistema diseñado para organizar, clasificar y hacer seguimiento a
-        solicitudes académicas dentro de un entorno institucional claro,
-        moderno y confiable.
-      </p>
-
-      <div class="hero-actions">
-        <a routerLink="/login" class="btn btn--primary btn--large">
-          Iniciar sesión
-        </a>
-
-        <a routerLink="/registro" class="btn btn--outline btn--large">
-          Crear cuenta
-        </a>
-      </div>
-
-      <div class="hero-summary">
-        <article>
-          <strong>Clasifica</strong>
-          <span>Solicitudes académicas</span>
-        </article>
-
-        <article>
-          <strong>Organiza</strong>
-          <span>Estados y responsables</span>
-        </article>
-
-        <article>
-          <strong>Acompaña</strong>
-          <span>El seguimiento del trámite</span>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section id="caracteristicas" class="section">
-    <div class="section-header">
-      <span class="eyebrow">Características</span>
-
-      <h2>
-        Una gestión académica más clara
-      </h2>
-
-      <p>
-        La plataforma concentra las funciones necesarias para orientar los
-        trámites académicos sin sobrecargar la experiencia del usuario.
-      </p>
-    </div>
-
-    <div class="cards-grid cards-grid--three">
-      <article class="info-card" *ngFor="let feature of features">
-        <span class="card-indicator"></span>
-
-        <h3>{{ feature.title }}</h3>
-
-        <p>{{ feature.description }}</p>
-      </article>
-    </div>
-  </section>
-
-  <section id="proceso" class="section section--soft">
-    <div class="section-header">
-      <span class="eyebrow">Proceso</span>
-
-      <h2>
-        Del registro a la atención
-      </h2>
-
-      <p>
-        El flujo se presenta de manera sencilla para que cada usuario entienda
-        el recorrido de su solicitud.
-      </p>
-    </div>
-
-    <div class="process-list">
-      <article class="process-item" *ngFor="let step of steps">
-        <span>{{ step.number }}</span>
-
-        <div>
-          <h3>{{ step.title }}</h3>
-          <p>{{ step.description }}</p>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section id="roles" class="section">
-    <div class="section-header">
-      <span class="eyebrow">Roles</span>
-
-      <h2>
-        Acceso según el perfil institucional
-      </h2>
-
-      <p>
-        Cada perfil trabaja con información y acciones acordes con su función
-        dentro del proceso académico.
-      </p>
-    </div>
-
-    <div class="cards-grid cards-grid--three">
-      <article class="role-card" *ngFor="let role of roles">
-        <h3>{{ role.title }}</h3>
-        <p>{{ role.description }}</p>
-      </article>
-    </div>
-  </section>
-
-  <footer class="landing-footer">
-    <strong>Triage Académico</strong>
-    <span>Universidad del Quindío · 2026</span>
-=======
   <section class="hero-section">
     <div class="hero-content">
       <div class="hero-copy">
@@ -470,6 +306,5 @@
   <footer class="landing-footer">
     <strong>Triage Académico</strong>
     <span>© 2026. Todos los derechos reservados.</span>
->>>>>>> Stashed changes
   </footer>
 </main>

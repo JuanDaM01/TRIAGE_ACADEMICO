@@ -3,23 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 interface LandingFeature {
-<<<<<<< Updated upstream
-  title: string;
-  description: string;
-}
-
-interface LandingStep {
-  number: string;
-=======
   icon: string;
->>>>>>> Stashed changes
   title: string;
   description: string;
 }
 
 interface LandingRole {
-<<<<<<< Updated upstream
-=======
   name: string;
   description: string;
   items: string[];
@@ -32,7 +21,6 @@ interface HeroMetric {
 
 interface ProcessStep {
   step: string;
->>>>>>> Stashed changes
   title: string;
   description: string;
 }
@@ -49,38 +37,6 @@ export class LandingComponent {
 
   mobileMenuOpen = false;
 
-<<<<<<< Updated upstream
-  readonly features: LandingFeature[] = [
-    {
-      title: 'Clasificación académica',
-      description: 'Organiza las solicitudes según su tipo, prioridad y responsable institucional.'
-    },
-    {
-      title: 'Seguimiento claro',
-      description: 'Permite consultar el estado del trámite desde una experiencia simple y ordenada.'
-    },
-    {
-      title: 'Gestión por roles',
-      description: 'Adapta las acciones disponibles según el perfil de cada usuario del sistema.'
-    }
-  ];
-
-  readonly steps: LandingStep[] = [
-    {
-      number: '01',
-      title: 'Registro',
-      description: 'El usuario ingresa su solicitud académica desde la plataforma.'
-    },
-    {
-      number: '02',
-      title: 'Clasificación',
-      description: 'El sistema organiza la información para orientar el trámite.'
-    },
-    {
-      number: '03',
-      title: 'Atención',
-      description: 'El responsable institucional revisa y gestiona la solicitud.'
-=======
   readonly heroMetrics: HeroMetric[] = [
     {
       value: 'IA',
@@ -126,30 +82,11 @@ export class LandingComponent {
       icon: 'NV',
       title: 'Notificaciones y trazabilidad',
       description: 'Facilita el seguimiento de cada solicitud y mantiene informado al usuario durante el proceso.'
->>>>>>> Stashed changes
     }
   ];
 
   readonly roles: LandingRole[] = [
     {
-<<<<<<< Updated upstream
-      title: 'Estudiantes',
-      description: 'Radican y consultan sus solicitudes académicas.'
-    },
-    {
-      title: 'Docentes',
-      description: 'Revisan trámites asociados a su participación académica.'
-    },
-    {
-      title: 'Administrativos',
-      description: 'Apoyan la gestión, validación y seguimiento institucional.'
-    }
-  ];
-
-  toggleMobileMenu(): void {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
-  }
-=======
       name: 'Estudiante',
       description: 'Gestiona y consulta sus solicitudes académicas.',
       items: ['Crear solicitudes', 'Ver seguimiento', 'Consultar historial']
@@ -198,22 +135,10 @@ export class LandingComponent {
       description: 'Cada usuario puede consultar el estado y la trazabilidad de sus trámites.'
     }
   ];
->>>>>>> Stashed changes
 
   scrollToSection(sectionId: string): void {
     this.mobileMenuOpen = false;
 
-<<<<<<< Updated upstream
-    const section = document.getElementById(sectionId);
-
-    if (!section) {
-      return;
-    }
-
-    const navbarOffset = 88;
-    const sectionPosition = section.getBoundingClientRect().top + window.scrollY;
-    const finalPosition = sectionPosition - navbarOffset;
-=======
     const element = document.getElementById(sectionId);
 
     if (!element) {
@@ -223,18 +148,14 @@ export class LandingComponent {
     const navbarOffset = 92;
     const elementPosition = element.getBoundingClientRect().top + window.scrollY;
     const finalPosition = elementPosition - navbarOffset;
->>>>>>> Stashed changes
 
     window.scrollTo({
       top: finalPosition,
       behavior: 'smooth'
     });
   }
-<<<<<<< Updated upstream
-=======
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
   }
->>>>>>> Stashed changes
 }
