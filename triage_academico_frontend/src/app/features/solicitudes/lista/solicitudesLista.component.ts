@@ -1,6 +1,7 @@
-﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { SolicitudService } from '@core/services/solicitud.service';
 import { AuthService } from '@core/auth/auth.service';
 import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad, Rol } from '@models';
@@ -15,9 +16,13 @@ import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad, Rol } from '@model
 export class SolicitudesListaComponent implements OnInit {
 
     solicitudes: SolicitudAcademica[] = [];
+    solicitudesOriginales: SolicitudAcademica[] = [];
     readonly EstadoSolicitud = EstadoSolicitud;
     loading = true;
+    terminoBusqueda = '';
     errorMessage = '';
+
+    private readonly destroy$ = new Subject<void>();
 
     // Estado para el modal de confirmación
     solicitudAEliminar: SolicitudAcademica | null = null;
@@ -26,11 +31,25 @@ export class SolicitudesListaComponent implements OnInit {
     constructor(
         private solicitudService: SolicitudService,
         private authService: AuthService,
+        private route: ActivatedRoute,
         private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
+        this.route.queryParamMap
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(params => {
+                this.terminoBusqueda = params.get('q') ?? '';
+                this.aplicarBusquedaGlobal();
+                this.cdr.detectChanges();
+            });
+
         this.cargarSolicitudes();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     cargarSolicitudes(): void {
@@ -39,7 +58,8 @@ export class SolicitudesListaComponent implements OnInit {
 
         this.solicitudService.getAllSolicitudes().subscribe({
             next: (data) => {
-                this.solicitudes = data;
+                this.solicitudesOriginales = data ?? [];
+                this.aplicarBusquedaGlobal();
                 this.loading = false;
                 this.cdr.detectChanges();
             },
@@ -82,7 +102,8 @@ export class SolicitudesListaComponent implements OnInit {
 
         this.solicitudService.eliminarSolicitud(this.solicitudAEliminar.id).subscribe({
             next: () => {
-                this.solicitudes = this.solicitudes.filter(s => s.id !== this.solicitudAEliminar!.id);
+                this.solicitudesOriginales = this.solicitudesOriginales.filter(s => s.id !== this.solicitudAEliminar!.id);
+                this.aplicarBusquedaGlobal();
                 this.solicitudAEliminar = null;
                 this.eliminando = false;
                 this.cdr.detectChanges();
@@ -121,24 +142,65 @@ export class SolicitudesListaComponent implements OnInit {
 
     getProgressPercentage(estado: EstadoSolicitud): number {
         switch (estado) {
-            case EstadoSolicitud.REGISTRADA:  return 20;
+            case EstadoSolicitud.REGISTRADA: return 20;
             case EstadoSolicitud.CLASIFICADA: return 40;
             case EstadoSolicitud.EN_ATENCION: return 65;
-            case EstadoSolicitud.ATENDIDA:    return 85;
-            case EstadoSolicitud.CERRADA:     return 100;
+            case EstadoSolicitud.ATENDIDA: return 85;
+            case EstadoSolicitud.CERRADA: return 100;
             default: return 0;
         }
     }
 
     getProgressColorClass(estado: EstadoSolicitud): string {
         switch (estado) {
-            case EstadoSolicitud.REGISTRADA:  return 'bg-[#6e7976]';
+            case EstadoSolicitud.REGISTRADA: return 'bg-[#6e7976]';
             case EstadoSolicitud.CLASIFICADA: return 'bg-[#745900]';
             case EstadoSolicitud.EN_ATENCION: return 'bg-[#0369a1]';
-            case EstadoSolicitud.ATENDIDA:    return 'bg-[#004f45]';
-            case EstadoSolicitud.CERRADA:     return 'bg-[#2c3131]';
+            case EstadoSolicitud.ATENDIDA: return 'bg-[#004f45]';
+            case EstadoSolicitud.CERRADA: return 'bg-[#2c3131]';
             default: return 'bg-gray-400';
         }
+    }
+
+    private aplicarBusquedaGlobal(): void {
+        const termino = this.normalizarTexto(this.terminoBusqueda);
+
+        if (!termino) {
+            this.solicitudes = [...this.solicitudesOriginales];
+            return;
+        }
+
+        this.solicitudes = this.solicitudesOriginales.filter(sol =>
+            this.solicitudCoincideConBusqueda(sol, termino)
+        );
+    }
+
+    private solicitudCoincideConBusqueda(sol: SolicitudAcademica, termino: string): boolean {
+        const campos = [
+            sol.id,
+            sol.descripcion,
+            sol.tipoSolicitud,
+            this.getEstadoLabel(sol.estado),
+            sol.estado,
+            sol.nivelPrioridad,
+            sol.nivelPrioridad ? this.getPrioridadLabel(sol.nivelPrioridad) : '',
+            sol.canalOrigen,
+            sol.solicitanteId,
+            sol.responsableId,
+            sol.justificacionPrioridad
+        ];
+
+        return campos.some(valor =>
+            this.normalizarTexto(valor).includes(termino)
+        );
+    }
+
+    private normalizarTexto(valor: unknown): string {
+        return String(valor ?? '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
     }
 
     puedeEditar(): boolean {

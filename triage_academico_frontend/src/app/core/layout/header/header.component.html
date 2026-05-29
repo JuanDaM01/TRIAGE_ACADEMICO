@@ -5,10 +5,12 @@
             <div class="relative group">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#3e4946]/60 group-focus-within:text-[#004f45] transition-colors">search</span>
                 <input
-                    class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-full pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] focus:bg-white transition-all duration-300 placeholder:text-[#3e4946]/50 backdrop-blur-sm"
-                    placeholder="Buscar solicitudes, trámites o ayuda..."
-                    type="text"
-                />
+    class="w-full bg-[#ebefee]/50 border border-[#bec9c5]/30 text-[#181c1c] text-sm rounded-full pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#004f45]/20 focus:border-[#004f45] focus:bg-white transition-all duration-300 placeholder:text-[#3e4946]/50 backdrop-blur-sm"
+    placeholder="Buscar solicitudes, trámites o usuarios..."
+    type="text"
+    [value]="searchTerm"
+    (input)="onSearchInput($any($event.target).value)"
+/>
             </div>
         </div>
 

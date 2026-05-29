@@ -1,6 +1,6 @@
 ﻿import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, finalize, takeUntil } from 'rxjs';
 
@@ -40,11 +40,31 @@ export class UsuariosListaComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly usuarioService: UsuarioService,
+        private readonly route: ActivatedRoute,
         private readonly cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
-        this.cargarUsuarios();
+        this.route.queryParamMap
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(params => {
+                const termino = (params.get('q') ?? '').trim();
+
+                this.filtros.page = 0;
+
+                if (!termino) {
+                    this.filtros.nombre = '';
+                    this.filtros.email = '';
+                } else if (termino.includes('@')) {
+                    this.filtros.email = termino;
+                    this.filtros.nombre = '';
+                } else {
+                    this.filtros.nombre = termino;
+                    this.filtros.email = '';
+                }
+
+                this.cargarUsuarios();
+            });
     }
 
     ngOnDestroy(): void {
