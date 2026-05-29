@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import co.edu.uniquindio.triage_academico.domain.enums.EstadoSolicitud;
 import co.edu.uniquindio.triage_academico.domain.enums.NivelPrioridad;
@@ -109,6 +110,15 @@ public class SolicitudController {
             @PathVariable Long id,
             @Valid @RequestBody CerrarSolicitudRequest request) {
         return ResponseEntity.ok(solicitudService.cerrarSolicitud(request, id));
+    }
+
+    // Eliminar solicitud (solo estado REGISTRADA, solo solicitante o
+    // ADMINISTRATIVO)
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ESTUDIANTE', 'ADMINISTRATIVO')")
+    public ResponseEntity<Void> eliminarSolicitud(@PathVariable Long id) {
+        solicitudService.eliminarSolicitud(id);
+        return ResponseEntity.noContent().build();
     }
 
     // RF-07: Consulta de Solicitudes con filtros

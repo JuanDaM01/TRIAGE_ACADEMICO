@@ -317,6 +317,36 @@ public class SolicitudServiceImpl implements SolicitudService {
                 return mapToResponse(solicitud);
         }
 
+        // Eliminar solicitud solo en estado REGISTRADA
+        @Override
+        @Transactional
+        public void eliminarSolicitud(Long id) {
+                log.info("Eliminando solicitud: {}", id);
+
+                SolicitudAcademica solicitud = solicitudRepository.findById(id)
+                                .orElseThrow(() -> new RecursoNoEncontradoException("Solicitud", id));
+
+                if (solicitud.getEstado() != EstadoSolicitud.REGISTRADA) {
+                        throw new InvalidTransitionException(
+                                        "Solo se pueden eliminar solicitudes en estado REGISTRADA. Estado actual: "
+                                                        + solicitud.getEstado());
+                }
+
+                Usuario ejecutor = authService.getUsuarioAutenticado();
+
+                // Verificar que el ejecutor sea el solicitante o un ADMINISTRATIVO
+                boolean esSolicitante = solicitud.getSolicitanteId().equals(ejecutor.getId());
+                boolean esAdmin = ejecutor.getRol().name().equals("ADMINISTRATIVO");
+
+                if (!esSolicitante && !esAdmin) {
+                        throw new ReglaNegocioException(
+                                        "No tienes permisos para eliminar esta solicitud.");
+                }
+
+                solicitudRepository.deleteById(id);
+                log.info("Solicitud {} eliminada por usuario {}", id, ejecutor.getId());
+        }
+
         // Métodos privados auxiliares
         private void registrarHistorial(SolicitudAcademica solicitud, AccionHistorial accion, Long usuarioId,
                         String observacion) {

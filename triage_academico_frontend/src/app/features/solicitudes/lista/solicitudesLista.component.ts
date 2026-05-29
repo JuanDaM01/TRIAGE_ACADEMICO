@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SolicitudService } from '@core/services/solicitud.service';
 import { AuthService } from '@core/auth/auth.service';
-import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad } from '@models';
+import { SolicitudAcademica, EstadoSolicitud, NivelPrioridad, Rol } from '@models';
 
 @Component({
     selector: 'app-solicitudes-lista',
@@ -18,6 +18,10 @@ export class SolicitudesListaComponent implements OnInit {
     readonly EstadoSolicitud = EstadoSolicitud;
     loading = true;
     errorMessage = '';
+
+    // Estado para el modal de confirmación
+    solicitudAEliminar: SolicitudAcademica | null = null;
+    eliminando = false;
 
     constructor(
         private solicitudService: SolicitudService,
@@ -42,6 +46,55 @@ export class SolicitudesListaComponent implements OnInit {
             error: () => {
                 this.errorMessage = 'No se pudieron cargar las solicitudes.';
                 this.loading = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // Determina si el usuario actual puede eliminar una solicitud
+    puedeEliminar(sol: SolicitudAcademica): boolean {
+        if (sol.estado !== EstadoSolicitud.REGISTRADA) return false;
+        const usuario = this.authService.getCurrentUser();
+        if (!usuario) return false;
+        const esSolicitante = sol.solicitanteId === usuario.id;
+        const esAdmin = usuario.rol === Rol.ADMINISTRATIVO;
+        return esSolicitante || esAdmin;
+    }
+
+    // Abre el modal de confirmación
+    confirmarEliminar(sol: SolicitudAcademica): void {
+        this.solicitudAEliminar = sol;
+        this.cdr.detectChanges();
+    }
+
+    // Cancela la eliminación
+    cancelarEliminar(): void {
+        this.solicitudAEliminar = null;
+        this.eliminando = false;
+        this.cdr.detectChanges();
+    }
+
+    // Ejecuta la eliminación
+    ejecutarEliminar(): void {
+        if (!this.solicitudAEliminar?.id) return;
+
+        this.eliminando = true;
+
+        this.solicitudService.eliminarSolicitud(this.solicitudAEliminar.id).subscribe({
+            next: () => {
+                this.solicitudes = this.solicitudes.filter(s => s.id !== this.solicitudAEliminar!.id);
+                this.solicitudAEliminar = null;
+                this.eliminando = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                this.errorMessage =
+                    err.error?.mensaje ??
+                    err.error?.message ??
+                    err.error?.error ??
+                    'No se pudo eliminar la solicitud.';
+                this.solicitudAEliminar = null;
+                this.eliminando = false;
                 this.cdr.detectChanges();
             }
         });

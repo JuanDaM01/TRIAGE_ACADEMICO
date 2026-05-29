@@ -40,7 +40,7 @@ export class SolicitudService {
     }
 
     editarSolicitud(id: number, request: EditarSolicitudRequest): Observable<SolicitudAcademica> {
-    return this.http.put<SolicitudAcademica>(`${this.API_URL}/${id}/editar`, request);
+        return this.http.put<SolicitudAcademica>(`${this.API_URL}/${id}/editar`, request);
     }
 
     consultarSolicitudes(filtros: SolicitudFiltros = {}): Observable<PageResponse<SolicitudAcademica>> {
@@ -76,6 +76,10 @@ export class SolicitudService {
 
     atenderSolicitud(id: number, observacion: string, version: number): Observable<SolicitudAcademica> {
         return this.http.patch<SolicitudAcademica>(`${this.API_URL}/${id}/atender`, { observacion: observacion.trim(), version: Number(version) });
+    }
+
+    eliminarSolicitud(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.API_URL}/${id}`);
     }
 
     cerrarSolicitud(id: number, observacionCierre: string, version: number): Observable<SolicitudAcademica> {

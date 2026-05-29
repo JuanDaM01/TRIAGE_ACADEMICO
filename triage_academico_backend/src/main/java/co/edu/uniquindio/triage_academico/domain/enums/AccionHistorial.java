@@ -6,5 +6,6 @@ public enum AccionHistorial {
     ASIGNACION_RESPONSABLE,
     ATENCION,
     CIERRE,
-    EDICION
+    EDICION,
+    ELIMINACION
 }

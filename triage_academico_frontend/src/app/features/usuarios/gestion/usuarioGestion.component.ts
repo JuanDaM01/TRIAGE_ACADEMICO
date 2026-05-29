@@ -1,10 +1,9 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UsuarioService } from '@core/services/usuario.service';
 import { Usuario, UsuarioRegistro, Rol } from '@models';
-import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-usuario-gestion',
@@ -32,20 +31,21 @@ export class UsuarioGestionComponent implements OnInit {
         private fb: FormBuilder,
         private usuarioService: UsuarioService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef   // ← FIX: forzar detección de cambios
     ) {
         this.usuarioForm = this.fb.group({
-            nombre: ['', [Validators.required, Validators.minLength(2)]],
+            nombre:   ['', [Validators.required, Validators.minLength(2)]],
             apellido: ['', [Validators.required, Validators.minLength(2)]],
-            email: ['', [Validators.required, Validators.email]],
+            email:    ['', [Validators.required, Validators.email]],
             password: ['', [Validators.minLength(6)]],
-            rol: [Rol.ESTUDIANTE, Validators.required]
+            rol:      [Rol.ESTUDIANTE, Validators.required]
         });
     }
 
     ngOnInit(): void {
         const id = this.route.snapshot.paramMap.get('id');
-        if (id) {
+        if (id && !isNaN(Number(id))) {
             this.isEditMode = true;
             this.usuarioId = Number(id);
             this.cargarUsuario();
@@ -54,41 +54,47 @@ export class UsuarioGestionComponent implements OnInit {
 
     cargarUsuario(): void {
         if (!this.usuarioId) {
-            this.loading = false;
             this.errorMessage = 'No se encontró el identificador del usuario.';
             return;
         }
 
-        this.loading = true;
-        this.success = false;
+        // FIX: resetear estado antes de la petición
+        this.loading      = true;
+        this.success      = false;
         this.errorMessage = '';
+        this.cdr.detectChanges();
 
-        this.usuarioService.getUsuarioById(this.usuarioId)
-            .pipe(
-                finalize(() => {
-                    this.loading = false;
-                })
-            )
-            .subscribe({
-                next: (usuario: Usuario) => {
-                    const rolUsuario = String(usuario.rol) as Rol;
+        this.usuarioService.getUsuarioById(this.usuarioId).subscribe({
+            next: (usuario: Usuario) => {
+                // FIX: normalizar el rol a mayúsculas para evitar mismatch con el enum
+                const rolNormalizado = (String(usuario.rol).toUpperCase()) as Rol;
+                const rolValido = Object.values(Rol).includes(rolNormalizado)
+                    ? rolNormalizado
+                    : Rol.ESTUDIANTE;
 
-                    this.usuarioForm.patchValue({
-                        nombre: usuario.nombre,
-                        apellido: usuario.apellido,
-                        email: usuario.email,
-                        rol: rolUsuario,
-                        password: ''
-                    });
-                },
-                error: (err) => {
-                    this.errorMessage =
-                        err.error?.mensaje ??
-                        err.error?.message ??
-                        err.error?.error ??
-                        'No se pudo cargar el usuario.';
-                }
-            });
+                this.usuarioForm.patchValue({
+                    nombre:   usuario.nombre   ?? '',
+                    apellido: usuario.apellido ?? '',
+                    email:    usuario.email    ?? '',
+                    rol:      rolValido,
+                    password: ''
+                });
+
+                // FIX: loading se apaga aquí, no en finalize()
+                this.loading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                // FIX: loading se apaga explícitamente en error también
+                this.loading = false;
+                this.errorMessage =
+                    err.error?.mensaje  ??
+                    err.error?.message  ??
+                    err.error?.error    ??
+                    'No se pudo cargar el usuario. Verifica tu conexión e inténtalo de nuevo.';
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     onSubmit(): void {
@@ -97,14 +103,15 @@ export class UsuarioGestionComponent implements OnInit {
             return;
         }
 
-        this.loading = true;
-        this.success = false;
+        this.loading      = true;
+        this.success      = false;
         this.errorMessage = '';
 
         if (this.isEditMode && this.usuarioId) {
             const usuarioData = { ...this.usuarioForm.value };
 
-            if (!usuarioData.password) {
+            // No enviar contraseña vacía al backend
+            if (!usuarioData.password || usuarioData.password.trim() === '') {
                 delete usuarioData.password;
             }
 
@@ -112,19 +119,17 @@ export class UsuarioGestionComponent implements OnInit {
                 next: () => {
                     this.loading = false;
                     this.success = true;
-
-                    setTimeout(() => {
-                        this.router.navigate(['/app/usuarios']);
-                    }, 1000);
+                    this.cdr.detectChanges();
+                    setTimeout(() => this.router.navigate(['/app/usuarios']), 1500);
                 },
                 error: (err) => {
                     this.loading = false;
-                    this.success = false;
                     this.errorMessage =
-                        err.error?.mensaje ??
-                        err.error?.message ??
-                        err.error?.error ??
+                        err.error?.mensaje  ??
+                        err.error?.message  ??
+                        err.error?.error    ??
                         'No se pudo actualizar el usuario.';
+                    this.cdr.detectChanges();
                 }
             });
 
@@ -137,19 +142,17 @@ export class UsuarioGestionComponent implements OnInit {
             next: () => {
                 this.loading = false;
                 this.success = true;
-
-                setTimeout(() => {
-                    this.router.navigate(['/app/usuarios']);
-                }, 1000);
+                this.cdr.detectChanges();
+                setTimeout(() => this.router.navigate(['/app/usuarios']), 1500);
             },
             error: (err) => {
                 this.loading = false;
-                this.success = false;
                 this.errorMessage =
-                    err.error?.mensaje ??
-                    err.error?.message ??
-                    err.error?.error ??
+                    err.error?.mensaje  ??
+                    err.error?.message  ??
+                    err.error?.error    ??
                     'No se pudo crear el usuario.';
+                this.cdr.detectChanges();
             }
         });
     }
@@ -160,12 +163,12 @@ export class UsuarioGestionComponent implements OnInit {
 
     getRolNombre(rol: Rol): string {
         const rolMap: Record<Rol, string> = {
-            [Rol.ESTUDIANTE]: 'Estudiante',
-            [Rol.DOCENTE]: 'Docente',
+            [Rol.ESTUDIANTE]:     'Estudiante',
+            [Rol.DOCENTE]:        'Docente',
             [Rol.ADMINISTRATIVO]: 'Administrativo',
-            [Rol.COORDINADOR]: 'Coordinador',
-            [Rol.DIRECTOR]: 'Director'
+            [Rol.COORDINADOR]:    'Coordinador',
+            [Rol.DIRECTOR]:       'Director'
         };
-        return rolMap[rol] || rol;
+        return rolMap[rol] ?? rol;
     }
 }
