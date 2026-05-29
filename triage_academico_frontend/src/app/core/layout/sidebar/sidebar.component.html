@@ -1,12 +1,11 @@
-<nav
-    [class.hidden]="!mobileMenuOpen"
-    class="fixed left-0 top-0 h-full w-64 md:flex flex-col bg-[#0d1f1c] text-white border-r border-[#1e3530]/80 backdrop-blur-xl shadow-xl py-8 z-50 transition-all duration-300"
->
+<nav [class.hidden]="!mobileMenuOpen"
+    class="fixed left-0 top-0 h-full w-64 md:flex flex-col bg-[#0d1f1c] text-white border-r border-[#1e3530]/80 backdrop-blur-xl shadow-xl py-8 z-50 transition-all duration-300">
 
     <!-- Brand / Logo -->
     <div class="px-6 mb-8">
         <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-2xl bg-[#004f45] text-[#84d5c5] flex items-center justify-center font-bold text-lg shadow-md ring-2 ring-[#84d5c5]/20">
+            <div
+                class="w-11 h-11 rounded-2xl bg-[#004f45] text-[#84d5c5] flex items-center justify-center font-bold text-lg shadow-md ring-2 ring-[#84d5c5]/20">
                 TA
             </div>
             <div>
@@ -14,11 +13,8 @@
                 <p class="text-[11px] text-[#84d5c5]/60 uppercase tracking-[0.18em]">Portal académico</p>
             </div>
         </div>
-        <button
-            type="button"
-            (click)="menuClose.emit()"
-            class="md:hidden absolute right-4 top-6 text-white/70 hover:text-white p-1 rounded-lg"
-        >
+        <button type="button" (click)="menuClose.emit()"
+            class="md:hidden absolute right-4 top-6 text-white/70 hover:text-white p-1 rounded-lg">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
@@ -27,75 +23,58 @@
     <div class="flex-grow flex flex-col gap-1 overflow-y-auto px-2">
         <p class="text-[10px] text-[#84d5c5]/40 uppercase tracking-[0.22em] font-semibold px-4 mb-2">Navegación</p>
 
-        <a
-            *ngIf="!isStudentRole()"
-            routerLink="/app/dashboard"
-            routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
-            [routerLinkActiveOptions]="{ exact: true }"
+        <a *ngIf="!isStudentRole()" routerLink="/app/dashboard"
+            routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold" [routerLinkActiveOptions]="{ exact: true }"
             (click)="onNavClick()"
-            class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm"
-        >
+            class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm">
             <span class="material-symbols-outlined">home</span>
             Panel de Control
         </a>
 
-        <a
-            routerLink="/app/solicitudes"
-            routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
-            [routerLinkActiveOptions]="{ exact: true }"
-            (click)="onNavClick()"
-            class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm"
-        >
+        <a routerLink="/app/solicitudes" routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
+            [routerLinkActiveOptions]="{ exact: true }" (click)="onNavClick()"
+            class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm">
             <span class="material-symbols-outlined">list_alt</span>
             {{ isStudentRole() ? 'Mis Solicitudes' : 'Solicitudes' }}
         </a>
 
-        <a
-            routerLink="/app/solicitudes/crear"
-            routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
+        <a routerLink="/app/solicitudes/crear" routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
             (click)="onNavClick()"
-            class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm"
-        >
+            class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm">
             <span class="material-symbols-outlined">post_add</span>
             Nueva Solicitud
         </a>
 
         <ng-container *ngIf="isAdminRole()">
             <div class="h-px bg-[#1e3530] my-4 mx-4"></div>
-            <p class="text-[10px] text-[#84d5c5]/40 uppercase tracking-[0.22em] font-semibold px-4 mb-2">Administración</p>
+            <p class="text-[10px] text-[#84d5c5]/40 uppercase tracking-[0.22em] font-semibold px-4 mb-2">Administración
+            </p>
 
-            <a
-                routerLink="/app/usuarios"
-                routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
+            <a routerLink="/app/usuarios" routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
                 (click)="onNavClick()"
-                class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm"
-            >
+                class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm">
                 <span class="material-symbols-outlined">group</span>
                 Usuarios
             </a>
         </ng-container>
 
-        <div class="h-px bg-[#1e3530] my-4 mx-4"></div>
-        <p class="text-[10px] text-[#84d5c5]/40 uppercase tracking-[0.22em] font-semibold px-4 mb-2">Asistencia</p>
+        <ng-container *ngIf="canUseIA()">
+            <div class="h-px bg-[#1e3530] my-4 mx-4"></div>
+            <p class="text-[10px] text-[#84d5c5]/40 uppercase tracking-[0.22em] font-semibold px-4 mb-2">Asistencia</p>
 
-        <a
-            routerLink="/app/ia"
-            routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
-            (click)="onNavClick()"
-            class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm"
-        >
-            <span class="material-symbols-outlined">psychology</span>
-            Asistencia IA
-        </a>
+            <a routerLink="/app/ia" routerLinkActive="bg-[#004f45]/60 text-[#84d5c5] font-semibold"
+                (click)="onNavClick()"
+                class="flex items-center gap-3 text-white/60 hover:text-white hover:bg-[#004f45]/30 rounded-2xl px-4 py-3 mx-2 my-0.5 transition-all duration-200 text-sm">
+                <span class="material-symbols-outlined">psychology</span>
+                Asistencia IA
+            </a>
+        </ng-container>
     </div>
 
     <!-- Logout -->
     <div class="mt-auto px-2 flex flex-col gap-1 pt-4 border-t border-[#1e3530] mx-4">
-        <button
-            type="button"
-            (click)="onLogout()"
-            class="w-full flex items-center gap-3 text-white/50 hover:text-white hover:bg-red-500/10 rounded-2xl px-4 py-2.5 transition-all duration-200 text-sm cursor-pointer border-none bg-transparent"
-        >
+        <button type="button" (click)="onLogout()"
+            class="w-full flex items-center gap-3 text-white/50 hover:text-white hover:bg-red-500/10 rounded-2xl px-4 py-2.5 transition-all duration-200 text-sm cursor-pointer border-none bg-transparent">
             <span class="material-symbols-outlined text-[20px]">logout</span>
             Cerrar sesión
         </button>

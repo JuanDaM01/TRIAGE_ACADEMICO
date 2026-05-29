@@ -38,6 +38,17 @@ export class SidebarComponent {
             Rol.DIRECTOR
         ].includes(this.currentUser.rol);
     }
+    canUseIA(): boolean {
+        if (!this.currentUser) {
+            return false;
+        }
+
+        return [
+            Rol.ADMINISTRATIVO,
+            Rol.COORDINADOR,
+            Rol.DIRECTOR
+        ].includes(this.currentUser.rol);
+    }
 
     getRolLabel(): string {
         if (!this.currentUser) {

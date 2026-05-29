@@ -33,4 +33,6 @@ public interface SolicitudService {
 
     Page<SolicitudResponse> consultarSolicitudes(EstadoSolicitud estado, TipoSolicitud tipoSolicitud,
             NivelPrioridad nivelPrioridad, Long responsableId, Pageable pageable);
+
+    void eliminarSolicitud(Long id);
 }

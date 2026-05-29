@@ -32,4 +32,9 @@ public class Rol {
     private NombreRol nombre;
 
     private String descripcion;
+
+    public Object name() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'name'");
+    }
 }
