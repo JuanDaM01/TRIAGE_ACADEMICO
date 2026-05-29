@@ -23,14 +23,6 @@ public interface SolicitudRepository extends JpaRepository<SolicitudAcademica, L
 
         List<SolicitudAcademica> findByNivelPrioridad(NivelPrioridad nivelPrioridad);
 
-        @Query("SELECT DISTINCT s FROM SolicitudAcademica s " +
-                        "LEFT JOIN FETCH s.historial h " +
-                        "LEFT JOIN FETCH s.asignaciones a " +
-                        "LEFT JOIN FETCH a.responsable " +
-                        "WHERE s.id = :id " +
-                        "ORDER BY h.fechaHoraAccion ASC")
-        Optional<SolicitudAcademica> findWithHistorialById(@Param("id") Long id);
-
         @EntityGraph(attributePaths = { "asignaciones", "asignaciones.responsable" })
         @Query("SELECT DISTINCT s FROM SolicitudAcademica s " +
                         "LEFT JOIN s.asignaciones a " +

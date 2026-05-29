@@ -27,6 +27,7 @@ import co.edu.uniquindio.triage_academico.dto.request.ClasificarSolicitudRequest
 import co.edu.uniquindio.triage_academico.dto.request.CrearSolicitudRequest;
 import co.edu.uniquindio.triage_academico.dto.request.EditarSolicitudRequest;
 import co.edu.uniquindio.triage_academico.dto.response.HistorialSolicitudResponse;
+import co.edu.uniquindio.triage_academico.repository.HistorialSolicitudRepository;
 import co.edu.uniquindio.triage_academico.dto.response.SolicitudResponse;
 import co.edu.uniquindio.triage_academico.exception.IAException;
 import co.edu.uniquindio.triage_academico.exception.InvalidTransitionException;
@@ -52,6 +53,7 @@ public class SolicitudServiceImpl implements SolicitudService {
         private final AsignacionRepository asignacionRepository;
         private final UsuarioRepository usuarioRepository;
         private final AuthService authService;
+        private final HistorialSolicitudRepository historialSolicitudRepository;
 
         // RF-01: Crear Solicitud
         @Override
@@ -132,7 +134,7 @@ public class SolicitudServiceImpl implements SolicitudService {
         @Override
         @Transactional(readOnly = true)
         public SolicitudResponse obtenerPorId(Long id) {
-                SolicitudAcademica solicitud = solicitudRepository.findWithHistorialById(id)
+                SolicitudAcademica solicitud = solicitudRepository.findById(id)
                                 .orElseThrow(() -> new RecursoNoEncontradoException(
                                                 "Solicitud no encontrada con id: " + id));
                 return mapToResponse(solicitud);
@@ -141,11 +143,13 @@ public class SolicitudServiceImpl implements SolicitudService {
         @Override
         @Transactional(readOnly = true)
         public List<HistorialSolicitudResponse> obtenerHistorial(Long id) {
-                SolicitudAcademica solicitud = solicitudRepository.findWithHistorialById(id)
-                                .orElseThrow(() -> new RecursoNoEncontradoException(
-                                                "Solicitud no encontrada con id: " + id));
-
-                return mapHistorial(solicitud);
+                if (!solicitudRepository.existsById(id)) {
+                        throw new RecursoNoEncontradoException("Solicitud no encontrada con id: " + id);
+                }
+                return historialSolicitudRepository.findAllBySolicitudIdOrderByFechaHoraAccionAsc(id)
+                        .stream()
+                        .map(this::mapHistorialItem)
+                        .toList();
         }
 
         // RF-10: Aplicar sugerencia de IA
@@ -377,14 +381,18 @@ public class SolicitudServiceImpl implements SolicitudService {
                         return List.of();
                 }
                 return solicitud.getHistorial().stream()
-                                .map(h -> HistorialSolicitudResponse.builder()
-                                                .id(h.getId())
-                                                .fechaHoraAccion(h.getFechaHoraAccion())
-                                                .accion(h.getAccion())
-                                                .usuarioId(h.getUsuarioId())
-                                                .observacion(h.getObservacion())
-                                                .build())
+                                .map(this::mapHistorialItem)
                                 .toList();
+        }
+
+        private HistorialSolicitudResponse mapHistorialItem(HistorialSolicitud historial) {
+                return HistorialSolicitudResponse.builder()
+                                .id(historial.getId())
+                                .fechaHoraAccion(historial.getFechaHoraAccion())
+                                .accion(historial.getAccion())
+                                .usuarioId(historial.getUsuarioId())
+                                .observacion(historial.getObservacion())
+                                .build();
         }
 
         private SolicitudAcademica obtenerSolicitudConVersion(Long id, Integer versionCliente) {
@@ -454,7 +462,10 @@ public class SolicitudServiceImpl implements SolicitudService {
                                 .fechaCierre(solicitud.getFechaCierre())
                                 .fechaResolucion(solicitud.getFechaResolucion())
                                 .observacionCierre(solicitud.getObservacionCierre())
-                                .historial(mapHistorial(solicitud))
+                                .historial(historialSolicitudRepository.findAllBySolicitudIdOrderByFechaHoraAccionAsc(solicitud.getId())
+                                        .stream()
+                                        .map(this::mapHistorialItem)
+                                        .toList())
                                 .version(solicitud.getVersion())
                                 .build();
         }
