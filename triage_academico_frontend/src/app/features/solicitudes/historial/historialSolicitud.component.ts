@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, finalize, of, switchMap, take, timeout } from 'rxjs';
@@ -22,69 +22,67 @@ export class HistorialSolicitudComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private solicitudService: SolicitudService
+        private solicitudService: SolicitudService,
+        private cdr: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
         this.route.paramMap.pipe(
             take(1),
             switchMap(params => {
-                const idParam = params.get('id');
-                const id = Number(idParam);
-                if (!idParam || Number.isNaN(id) || id <= 0) {
+                const id = Number(params.get('id'));
+                if (!id || id <= 0) {
                     this.errorMessage = 'ID de solicitud no válido';
                     this.loading = false;
+                    this.cdr.detectChanges();
                     return of([] as HistorialSolicitud[]);
                 }
-
                 this.solicitudId = id;
-                this.loading = true;
-                this.errorMessage = '';
                 return this.solicitudService.getHistorialSolicitud(id);
             }),
             timeout(15000),
-            catchError((error) => {
-                console.error('Error al cargar historial', error);
-                this.errorMessage = 'No se pudo cargar el historial de la solicitud.';
+            catchError(() => {
+                this.errorMessage = 'No se pudo cargar el historial.';
                 return of([] as HistorialSolicitud[]);
             }),
             finalize(() => {
                 this.loading = false;
+                this.cdr.detectChanges();
             })
-        ).subscribe((data) => {
+        ).subscribe(data => {
             this.historial = data;
+            this.cdr.detectChanges();
         });
-    }
-
-    cargarHistorial(): void {
-        // Mantener compatibilidad con llamadas directas si se necesita reutilizar este método
-        this.loading = true;
-        this.errorMessage = '';
-
-        this.solicitudService.getHistorialSolicitud(this.solicitudId)
-            .pipe(
-                timeout(15000),
-                catchError((error) => {
-                    console.error('Error al cargar historial', error);
-                    this.errorMessage = 'No se pudo cargar el historial de la solicitud.';
-                    return of([] as HistorialSolicitud[]);
-                }),
-                finalize(() => {
-                    this.loading = false;
-                })
-            )
-            .subscribe((data) => {
-                this.historial = data;
-            });
     }
 
     formatearFecha(fecha: Date | string): string {
         return new Date(fecha).toLocaleString('es-ES', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
         });
+    }
+
+    getAccionColor(accion: string): string {
+        const map: Record<string, string> = {
+            REGISTRO:              'bg-[#e0f4f1] text-[#004f45]',
+            CLASIFICACION:         'bg-[#fff8e1] text-[#594400]',
+            ASIGNACION_RESPONSABLE:'bg-[#e0f2fe] text-[#0369a1]',
+            EDICION:               'bg-[#f3f4f6] text-[#374151]',
+            ATENCION:              'bg-[#dcfce7] text-[#166534]',
+            CIERRE:                'bg-[#f3f4f6] text-[#374151]',
+        };
+        return map[accion] ?? 'bg-[#ebefee] text-[#3e4946]';
+    }
+
+    getAccionIcon(accion: string): string {
+        const map: Record<string, string> = {
+            REGISTRO:              'edit_note',
+            CLASIFICACION:         'category',
+            ASIGNACION_RESPONSABLE:'person_add',
+            EDICION:               'edit',
+            ATENCION:              'task_alt',
+            CIERRE:                'lock',
+        };
+        return map[accion] ?? 'history';
     }
 }
