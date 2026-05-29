@@ -597,4 +597,34 @@
     .status-flow::before {
         display: none;
     }
+
+    .card,
+    .stat-card,
+    .panel-card {
+        background: rgba(255, 255, 255, 0.84);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 40px rgba(22, 27, 40, 0.07);
+        backdrop-filter: blur(18px) saturate(150%);
+    }
+
+    .status-critical {
+        background: rgba(255, 230, 226, 0.9);
+        color: #9f1c16;
+    }
+
+    .status-warning {
+        background: rgba(255, 244, 199, 0.9);
+        color: #8a5a00;
+    }
+
+    .status-info {
+        background: rgba(216, 236, 255, 0.9);
+        color: #155e75;
+    }
+
+    .status-success {
+        background: rgba(201, 247, 220, 0.9);
+        color: #07551f;
+    }
 }

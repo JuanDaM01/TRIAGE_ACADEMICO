@@ -1,3 +1,9 @@
 :host {
-    display: block;
+  display: block;
+}
+
+.sidebar {
+  background: linear-gradient(180deg, #06251d 0%, #041b16 100%);
+  border-right: 1px solid rgba(201, 247, 220, 0.08);
+  box-shadow: 12px 0 40px rgba(7, 85, 31, 0.12);
 }

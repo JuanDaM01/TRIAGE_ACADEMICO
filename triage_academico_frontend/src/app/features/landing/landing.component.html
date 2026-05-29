@@ -1,4 +1,5 @@
 <main class="landing-page">
+<<<<<<< Updated upstream
   <div class="bg-shape bg-shape--one"></div>
   <div class="bg-shape bg-shape--two"></div>
   <div class="bg-shape bg-shape--three"></div>
@@ -11,17 +12,39 @@
         </span>
 
         <span class="brand-info">
+=======
+  <div class="background-decoration background-decoration--one"></div>
+  <div class="background-decoration background-decoration--two"></div>
+  <div class="background-decoration background-decoration--three"></div>
+
+  <nav class="landing-navbar" aria-label="Navegación principal">
+    <div class="navbar-content">
+      <a class="brand" routerLink="/" aria-label="Ir al inicio">
+        <span class="brand-mark">
+          <img [src]="logoSrc" alt="Logo Universidad del Quindío" />
+        </span>
+
+        <span class="brand-text">
+>>>>>>> Stashed changes
           <strong>Triage Académico</strong>
           <small>Gestión inteligente</small>
         </span>
       </a>
 
       <div class="nav-links">
+<<<<<<< Updated upstream
         <button type="button" (click)="scrollToSection('caracteristicas')">
           Características
         </button>
 
         <button type="button" (click)="scrollToSection('proceso')">
+=======
+        <button type="button" (click)="scrollToSection('features')">
+          Características
+        </button>
+
+        <button type="button" (click)="scrollToSection('process')">
+>>>>>>> Stashed changes
           Proceso
         </button>
 
@@ -45,7 +68,11 @@
         class="menu-button"
         [class.menu-button--active]="mobileMenuOpen"
         [attr.aria-expanded]="mobileMenuOpen"
+<<<<<<< Updated upstream
         aria-label="Abrir menú"
+=======
+        aria-label="Abrir menú de navegación"
+>>>>>>> Stashed changes
         (click)="toggleMobileMenu()"
       >
         <span></span>
@@ -54,12 +81,21 @@
       </button>
     </div>
 
+<<<<<<< Updated upstream
     <div class="mobile-menu" [class.mobile-menu--open]="mobileMenuOpen">
       <button type="button" (click)="scrollToSection('caracteristicas')">
         Características
       </button>
 
       <button type="button" (click)="scrollToSection('proceso')">
+=======
+    <div class="mobile-panel" [class.mobile-panel--open]="mobileMenuOpen">
+      <button type="button" (click)="scrollToSection('features')">
+        Características
+      </button>
+
+      <button type="button" (click)="scrollToSection('process')">
+>>>>>>> Stashed changes
         Proceso
       </button>
 
@@ -77,6 +113,7 @@
     </div>
   </nav>
 
+<<<<<<< Updated upstream
   <section class="hero">
     <div class="hero-container">
       <div class="institutional-mark">
@@ -203,5 +240,236 @@
   <footer class="landing-footer">
     <strong>Triage Académico</strong>
     <span>Universidad del Quindío · 2026</span>
+=======
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-copy">
+        <span class="eyebrow">
+          Plataforma académica inteligente
+        </span>
+
+        <h1>
+          Gestiona tus
+          <span>trámites académicos</span>
+          de forma moderna y eficiente
+        </h1>
+
+        <p>
+          Una plataforma para clasificar, priorizar, asignar y hacer seguimiento
+          a solicitudes académicas desde una experiencia clara, segura y
+          orientada a cada rol institucional.
+        </p>
+
+        <div class="hero-actions">
+          <a routerLink="/registro" class="btn btn--primary btn--large">
+            Comenzar ahora
+          </a>
+
+          <button
+            type="button"
+            class="btn btn--glass btn--large"
+            (click)="scrollToSection('features')"
+          >
+            Conocer más
+          </button>
+        </div>
+
+        <div class="hero-metrics" aria-label="Resumen de capacidades">
+          <div class="metric" *ngFor="let metric of heroMetrics">
+            <strong>{{ metric.value }}</strong>
+            <span>{{ metric.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Vista previa del sistema">
+        <div class="dashboard-card">
+          <div class="dashboard-header">
+            <div>
+              <span class="dashboard-kicker">Panel de control</span>
+              <h2>Triage en curso</h2>
+            </div>
+
+            <span class="status-pill">Activo</span>
+          </div>
+
+          <div class="priority-card priority-card--high">
+            <div>
+              <span>Solicitud prioritaria</span>
+              <strong>Homologación académica</strong>
+            </div>
+
+            <small>Alta</small>
+          </div>
+
+          <div class="priority-card priority-card--medium">
+            <div>
+              <span>Asignada a</span>
+              <strong>Coordinación del programa</strong>
+            </div>
+
+            <small>En revisión</small>
+          </div>
+
+          <div class="dashboard-grid">
+            <div>
+              <strong>36</strong>
+              <span>Solicitudes</span>
+            </div>
+
+            <div>
+              <strong>12</strong>
+              <span>Asignadas</span>
+            </div>
+
+            <div>
+              <strong>8</strong>
+              <span>Resueltas</span>
+            </div>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item timeline-item--done">
+              <span></span>
+              <p>Solicitud recibida</p>
+            </div>
+
+            <div class="timeline-item timeline-item--done">
+              <span></span>
+              <p>Clasificación IA aplicada</p>
+            </div>
+
+            <div class="timeline-item">
+              <span></span>
+              <p>Asignación en validación</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="section">
+    <div class="section-header">
+      <span class="eyebrow">Características principales</span>
+
+      <h2>
+        Una experiencia académica más
+        <span>ordenada, visual y rápida</span>
+      </h2>
+
+      <p>
+        La vista integra tarjetas, métricas y jerarquías visuales para que la
+        plataforma se perciba más profesional y consistente con el resto del
+        sistema.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <article class="feature-card" *ngFor="let feature of features">
+        <div class="feature-icon">
+          {{ feature.icon }}
+        </div>
+
+        <h3>{{ feature.title }}</h3>
+
+        <p>{{ feature.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="process" class="section process-section">
+    <div class="section-header section-header--left">
+      <span class="eyebrow">Flujo de trabajo</span>
+
+      <h2>
+        Del registro al seguimiento
+        <span>sin perder trazabilidad</span>
+      </h2>
+
+      <p>
+        El sistema permite representar un proceso académico completo, desde la
+        recepción de la solicitud hasta su seguimiento por parte del usuario.
+      </p>
+    </div>
+
+    <div class="process-grid">
+      <article class="process-card" *ngFor="let item of processSteps">
+        <span class="process-number">{{ item.step }}</span>
+
+        <h3>{{ item.title }}</h3>
+
+        <p>{{ item.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="roles" class="section roles-section">
+    <div class="section-header">
+      <span class="eyebrow">Acceso personalizado</span>
+
+      <h2>
+        Herramientas diferentes
+        <span>para cada rol</span>
+      </h2>
+
+      <p>
+        Cada tipo de usuario accede únicamente a las acciones que necesita para
+        cumplir su función dentro del proceso académico.
+      </p>
+    </div>
+
+    <div class="roles-grid">
+      <article class="role-card" *ngFor="let role of roles">
+        <div class="role-top">
+          <span>{{ role.name.charAt(0) }}</span>
+
+          <div>
+            <h3>{{ role.name }}</h3>
+            <p>{{ role.description }}</p>
+          </div>
+        </div>
+
+        <ul>
+          <li *ngFor="let item of role.items">
+            {{ item }}
+          </li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-card">
+      <div>
+        <span class="eyebrow">Listo para comenzar</span>
+
+        <h2>
+          Optimiza la gestión de solicitudes académicas desde una sola
+          plataforma.
+        </h2>
+
+        <p>
+          Regístrate o inicia sesión para acceder al sistema de acuerdo con tu
+          rol institucional.
+        </p>
+      </div>
+
+      <div class="cta-actions">
+        <a routerLink="/registro" class="btn btn--primary btn--large">
+          Crear cuenta
+        </a>
+
+        <a routerLink="/login" class="btn btn--glass btn--large">
+          Tengo una cuenta
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <strong>Triage Académico</strong>
+    <span>© 2026. Todos los derechos reservados.</span>
+>>>>>>> Stashed changes
   </footer>
 </main>
