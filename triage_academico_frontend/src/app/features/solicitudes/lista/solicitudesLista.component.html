@@ -13,7 +13,7 @@
           Consulta, audita y haz seguimiento del estado de triage de todos tus requerimientos académicos y adiciones.
         </p>
       </div>
-      
+
       <a routerLink="/app/solicitudes/crear"
         class="bg-[#dded49] hover:bg-[#c1d02c] text-[#1a1d00] font-bold text-sm py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg shrink-0 decoration-transparent">
         <span class="material-symbols-outlined text-[20px] font-bold">add_circle</span>
@@ -35,7 +35,9 @@
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
       <div>
-        <p class="text-[11px] text-[#004f45] dark:text-[#84d5c5] uppercase tracking-[0.22em] font-black mb-1">Seguimiento académico</p>
+        <p class="text-[11px] text-[#004f45] dark:text-[#84d5c5] uppercase tracking-[0.22em] font-black mb-1">
+          Seguimiento académico
+        </p>
         <h3 class="text-xl md:text-2xl font-black text-[#181c1c] dark:text-white flex items-center gap-2">
           <span class="material-symbols-outlined text-[#004f45] dark:text-[#84d5c5]">view_list</span>
           Listado de solicitudes
@@ -44,6 +46,7 @@
           La información se agrupa por identificación, tipo de solicitud, prioridad, estado del proceso y acción de consulta.
         </p>
       </div>
+
       <div
         *ngIf="!loading"
         class="bg-[#ebefee]/80 dark:bg-[#3e4946]/20 border border-[#bec9c5]/30 dark:border-white/10 rounded-2xl px-4 py-3 flex items-center gap-3 shrink-0">
@@ -51,8 +54,12 @@
           <span class="material-symbols-outlined">folder_open</span>
         </div>
         <div>
-          <p class="text-[10px] uppercase tracking-widest font-black text-[#3e4946]/60 dark:text-white/50">Total cargadas</p>
-          <p class="text-2xl font-black text-[#004f45] dark:text-[#84d5c5] leading-none">{{ solicitudes.length }}</p>
+          <p class="text-[10px] uppercase tracking-widest font-black text-[#3e4946]/60 dark:text-white/50">
+            Total cargadas
+          </p>
+          <p class="text-2xl font-black text-[#004f45] dark:text-[#84d5c5] leading-none">
+            {{ solicitudes.length }}
+          </p>
         </div>
       </div>
     </div>
@@ -62,7 +69,9 @@
       <div class="w-20 h-20 rounded-full bg-[#f0f4f3] dark:bg-[#84d5c5]/10 flex items-center justify-center text-[#3e4946]/40 dark:text-[#84d5c5]/70 mb-4 shadow-inner">
         <span class="material-symbols-outlined text-[42px]">drafts</span>
       </div>
-      <h4 class="text-xl font-bold text-[#181c1c] dark:text-white mb-2">Sin solicitudes registradas</h4>
+      <h4 class="text-xl font-bold text-[#181c1c] dark:text-white mb-2">
+        Sin solicitudes registradas
+      </h4>
       <p class="text-sm text-[#3e4946]/70 dark:text-white/60 max-w-[320px] mb-6 leading-relaxed">
         No tienes ningún trámite académico activo o registrado en el sistema.
       </p>
@@ -100,9 +109,11 @@
               <span class="text-xs font-black text-[#004f45] dark:text-[#84d5c5] bg-[#004f45]/10 dark:bg-[#84d5c5]/10 px-2.5 py-1 rounded-md shrink-0">
                 ID #{{ sol.id }}
               </span>
+
               <span class="text-xs font-semibold text-[#3e4946] dark:text-white/70 bg-[#ebefee] dark:bg-[#3e4946]/30 px-2.5 py-1 rounded-md shrink-0">
                 {{ sol.tipoSolicitud }}
               </span>
+
               <span
                 *ngIf="sol.nivelPrioridad"
                 [class.bg-\[#fee2e2\]]="sol.nivelPrioridad === 'CRITICA'"
@@ -116,6 +127,7 @@
                 class="text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 shadow-sm">
                 {{ getPrioridadLabel(sol.nivelPrioridad) }}
               </span>
+
               <span
                 *ngIf="!sol.nivelPrioridad"
                 class="text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 bg-[#ebefee] text-[#3e4946]/70 dark:bg-[#3e4946]/30 dark:text-white/60">
@@ -137,7 +149,9 @@
           <div class="w-full lg:w-[260px] shrink-0 border-t lg:border-t-0 lg:border-l border-[#bec9c5]/20 dark:border-white/10 pt-4 lg:pt-0 lg:pl-5">
 
             <div class="flex items-center justify-between gap-2 mb-2">
-              <span class="text-xs text-[#3e4946]/70 dark:text-white/60 font-semibold">Estado de Triage</span>
+              <span class="text-xs text-[#3e4946]/70 dark:text-white/60 font-semibold">
+                Estado de Triage
+              </span>
               <span class="text-xs font-bold text-[#004f45] dark:text-[#84d5c5] bg-[#ebefee] dark:bg-[#3e4946]/30 px-3 py-1 rounded-full shadow-sm shrink-0">
                 {{ getEstadoLabel(sol.estado) }}
               </span>
@@ -151,11 +165,19 @@
             </div>
 
             <div class="space-y-2">
+
               <!-- Ver detalles -->
               <a [routerLink]="['/app/solicitudes', sol.id]"
                 class="w-full bg-white hover:bg-[#004f45]/5 dark:bg-[#181c1c] text-[#004f45] dark:text-[#84d5c5] font-bold text-xs py-2.5 px-4 rounded-xl border border-[#bec9c5]/30 hover:border-[#004f45]/50 transition-all flex items-center justify-center gap-1.5 decoration-transparent shadow-sm hover:shadow">
                 <span class="material-symbols-outlined text-[16px]">visibility</span>
                 Ver detalles
+              </a>
+
+              <!-- Ver historial -->
+              <a [routerLink]="['/app/solicitudes', sol.id, 'historial']"
+                class="w-full bg-white hover:bg-[#004f45]/5 dark:bg-[#181c1c] text-[#004f45] dark:text-[#84d5c5] font-bold text-xs py-2.5 px-4 rounded-xl border border-[#bec9c5]/30 hover:border-[#004f45]/50 transition-all flex items-center justify-center gap-1.5 decoration-transparent shadow-sm hover:shadow">
+                <span class="material-symbols-outlined text-[16px]">history</span>
+                Ver historial
               </a>
 
               <!-- Editar (solo REGISTRADA) -->
@@ -175,6 +197,7 @@
                 <span class="material-symbols-outlined text-[16px]">delete</span>
                 Eliminar solicitud
               </button>
+
             </div>
 
           </div>
@@ -227,6 +250,7 @@
           class="flex-1 bg-white hover:bg-[#ebefee] dark:bg-[#3e4946]/30 text-[#004f45] dark:text-white font-bold text-sm py-3 px-5 rounded-2xl border border-[#bec9c5]/40 transition-all disabled:opacity-50">
           Cancelar
         </button>
+
         <button
           type="button"
           (click)="ejecutarEliminar()"

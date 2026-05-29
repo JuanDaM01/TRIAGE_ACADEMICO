@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import java.util.List;
+import co.edu.uniquindio.triage_academico.dto.response.HistorialSolicitudResponse;
+
 import co.edu.uniquindio.triage_academico.domain.enums.EstadoSolicitud;
 import co.edu.uniquindio.triage_academico.domain.enums.NivelPrioridad;
 import co.edu.uniquindio.triage_academico.domain.enums.TipoSolicitud;
@@ -47,6 +50,12 @@ public class SolicitudController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SolicitudResponse> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(solicitudService.obtenerPorId(id));
+    }
+
+    @GetMapping("/{id}/historial")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<HistorialSolicitudResponse>> obtenerHistorial(@PathVariable Long id) {
+        return ResponseEntity.ok(solicitudService.obtenerHistorial(id));
     }
 
     // RF-01

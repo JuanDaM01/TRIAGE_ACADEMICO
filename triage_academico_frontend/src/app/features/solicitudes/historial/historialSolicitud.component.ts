@@ -50,7 +50,7 @@ export class HistorialSolicitudComponent implements OnInit {
         });
     }
 
-    formatearFecha(fecha: Date): string {
+    formatearFecha(fecha: Date | string): string {
         return new Date(fecha).toLocaleString('es-ES', {
             day: '2-digit',
             month: '2-digit',

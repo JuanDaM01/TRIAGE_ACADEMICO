@@ -1,5 +1,7 @@
 package co.edu.uniquindio.triage_academico.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,14 +14,18 @@ import co.edu.uniquindio.triage_academico.dto.request.CerrarSolicitudRequest;
 import co.edu.uniquindio.triage_academico.dto.request.ClasificarSolicitudRequest;
 import co.edu.uniquindio.triage_academico.dto.request.CrearSolicitudRequest;
 import co.edu.uniquindio.triage_academico.dto.request.EditarSolicitudRequest;
+import co.edu.uniquindio.triage_academico.dto.response.HistorialSolicitudResponse;
 import co.edu.uniquindio.triage_academico.dto.response.SolicitudResponse;
 
 public interface SolicitudService {
+
     SolicitudResponse crearSolicitud(CrearSolicitudRequest request, Long usuarioId);
 
     SolicitudResponse editarSolicitud(Long id, EditarSolicitudRequest request);
 
     SolicitudResponse obtenerPorId(Long id);
+
+    List<HistorialSolicitudResponse> obtenerHistorial(Long id);
 
     SolicitudResponse aplicarSugerencia(Long id);
 
@@ -31,8 +37,13 @@ public interface SolicitudService {
 
     SolicitudResponse cerrarSolicitud(CerrarSolicitudRequest request, Long id);
 
-    Page<SolicitudResponse> consultarSolicitudes(EstadoSolicitud estado, TipoSolicitud tipoSolicitud,
-            NivelPrioridad nivelPrioridad, Long responsableId, Pageable pageable);
+    Page<SolicitudResponse> consultarSolicitudes(
+            EstadoSolicitud estado,
+            TipoSolicitud tipoSolicitud,
+            NivelPrioridad nivelPrioridad,
+            Long responsableId,
+            Pageable pageable
+    );
 
     void eliminarSolicitud(Long id);
 }

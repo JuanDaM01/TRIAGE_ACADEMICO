@@ -138,6 +138,16 @@ public class SolicitudServiceImpl implements SolicitudService {
                 return mapToResponse(solicitud);
         }
 
+        @Override
+        @Transactional(readOnly = true)
+        public List<HistorialSolicitudResponse> obtenerHistorial(Long id) {
+                SolicitudAcademica solicitud = solicitudRepository.findWithHistorialById(id)
+                                .orElseThrow(() -> new RecursoNoEncontradoException(
+                                                "Solicitud no encontrada con id: " + id));
+
+                return mapHistorial(solicitud);
+        }
+
         // RF-10: Aplicar sugerencia de IA
         @Override
         @Transactional

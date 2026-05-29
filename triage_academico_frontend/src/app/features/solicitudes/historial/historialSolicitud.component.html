@@ -1,7 +1,9 @@
 <div class="historial-container">
     <div class="header">
         <h1>Historial de Solicitud #{{ solicitudId }}</h1>
-        <a routerLink="/app/solicitudes/{{ solicitudId }}" class="back-link">← Volver al detalle</a>
+        <a [routerLink]="['/app/solicitudes', solicitudId]" class="back-link">
+            ← Volver al detalle
+        </a>
     </div>
 
     <div *ngIf="loading" class="loading">
@@ -20,26 +22,16 @@
         <div *ngFor="let item of historial" class="historial-item">
             <div class="historial-header">
                 <span class="accion-badge">{{ item.accion | accion }}</span>
-                <span class="fecha">{{ formatearFecha(item.fecha) }}</span>
+                <span class="fecha">{{ formatearFecha(item.fechaHoraAccion) }}</span>
             </div>
+
             <div class="historial-content">
-                <p class="usuario">
-                    <strong>Usuario:</strong> {{ item.usuario.nombre }} {{ item.usuario.apellido }} ({{ item.usuario.email }})
+                <p class="usuario" *ngIf="item.usuarioId">
+                    <strong>Usuario ID:</strong> {{ item.usuarioId }}
                 </p>
-                <p *ngIf="item.observaciones" class="observaciones">
-                    <strong>Observaciones:</strong> {{ item.observaciones }}
-                </p>
-                <div *ngIf="item.estadoAnterior || item.estadoNuevo" class="estados">
-                    <span *ngIf="item.estadoAnterior" class="estado-antes">
-                        Antes: {{ item.estadoAnterior }}
-                    </span>
-                    <span class="arrow">→</span>
-                    <span *ngIf="item.estadoNuevo" class="estado-despues">
-                        Después: {{ item.estadoNuevo }}
-                    </span>
-                </div>
-                <p *ngIf="item.motivoRechazo" class="motivo-rechazo">
-                    <strong>Motivo de rechazo:</strong> {{ item.motivoRechazo }}
+
+                <p *ngIf="item.observacion" class="observaciones">
+                    <strong>Observación:</strong> {{ item.observacion }}
                 </p>
             </div>
         </div>
