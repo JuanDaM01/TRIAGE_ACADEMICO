@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UsuarioService } from '@core/services/usuario.service';
 import { Usuario, UsuarioRegistro, Rol } from '@models';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-usuario-gestion',
@@ -22,10 +23,10 @@ export class UsuarioGestionComponent implements OnInit {
     errorMessage = '';
 
     readonly roles = [
-    Rol.ESTUDIANTE,
-    Rol.DOCENTE,
-    Rol.ADMINISTRATIVO
-];
+        Rol.ESTUDIANTE,
+        Rol.DOCENTE,
+        Rol.ADMINISTRATIVO
+    ];
 
     constructor(
         private fb: FormBuilder,
@@ -52,65 +53,105 @@ export class UsuarioGestionComponent implements OnInit {
     }
 
     cargarUsuario(): void {
-        if (!this.usuarioId) return;
+        if (!this.usuarioId) {
+            this.loading = false;
+            this.errorMessage = 'No se encontró el identificador del usuario.';
+            return;
+        }
 
         this.loading = true;
-        this.usuarioService.getUsuarioById(this.usuarioId).subscribe({
-            next: (usuario) => {
-                this.usuarioForm.patchValue({
-                    nombre: usuario.nombre,
-                    apellido: usuario.apellido,
-                    email: usuario.email,
-                    rol: usuario.rol,
-                    password: ''
-                });
-                this.loading = false;
-            },
-            error: () => {
-                this.errorMessage = 'No se pudo cargar el usuario.';
-                this.loading = false;
-            }
-        });
+        this.success = false;
+        this.errorMessage = '';
+
+        this.usuarioService.getUsuarioById(this.usuarioId)
+            .pipe(
+                finalize(() => {
+                    this.loading = false;
+                })
+            )
+            .subscribe({
+                next: (usuario: Usuario) => {
+                    const rolUsuario = String(usuario.rol) as Rol;
+
+                    this.usuarioForm.patchValue({
+                        nombre: usuario.nombre,
+                        apellido: usuario.apellido,
+                        email: usuario.email,
+                        rol: rolUsuario,
+                        password: ''
+                    });
+                },
+                error: (err) => {
+                    this.errorMessage =
+                        err.error?.mensaje ??
+                        err.error?.message ??
+                        err.error?.error ??
+                        'No se pudo cargar el usuario.';
+                }
+            });
     }
 
     onSubmit(): void {
-        if (this.usuarioForm.invalid) return;
+        if (this.usuarioForm.invalid) {
+            this.usuarioForm.markAllAsTouched();
+            return;
+        }
 
         this.loading = true;
+        this.success = false;
         this.errorMessage = '';
 
         if (this.isEditMode && this.usuarioId) {
             const usuarioData = { ...this.usuarioForm.value };
+
             if (!usuarioData.password) {
                 delete usuarioData.password;
             }
+
             this.usuarioService.actualizarUsuario(this.usuarioId, usuarioData).subscribe({
                 next: () => {
+                    this.loading = false;
                     this.success = true;
+
                     setTimeout(() => {
                         this.router.navigate(['/app/usuarios']);
-                    }, 1500);
+                    }, 1000);
                 },
                 error: (err) => {
-                    this.errorMessage = err.error?.message ?? 'No se pudo actualizar el usuario.';
                     this.loading = false;
+                    this.success = false;
+                    this.errorMessage =
+                        err.error?.mensaje ??
+                        err.error?.message ??
+                        err.error?.error ??
+                        'No se pudo actualizar el usuario.';
                 }
             });
-        } else {
-            const usuarioRegistro: UsuarioRegistro = this.usuarioForm.value;
-            this.usuarioService.crearUsuario(usuarioRegistro).subscribe({
-                next: () => {
-                    this.success = true;
-                    setTimeout(() => {
-                        this.router.navigate(['/app/usuarios']);
-                    }, 1500);
-                },
-                error: (err) => {
-                    this.errorMessage = err.error?.message ?? 'No se pudo crear el usuario.';
-                    this.loading = false;
-                }
-            });
+
+            return;
         }
+
+        const usuarioRegistro: UsuarioRegistro = this.usuarioForm.value;
+
+        this.usuarioService.crearUsuario(usuarioRegistro).subscribe({
+            next: () => {
+                this.loading = false;
+                this.success = true;
+
+                setTimeout(() => {
+                    this.router.navigate(['/app/usuarios']);
+                }, 1000);
+            },
+            error: (err) => {
+                this.loading = false;
+                this.success = false;
+                this.errorMessage =
+                    err.error?.mensaje ??
+                    err.error?.message ??
+                    err.error?.error ??
+                    'No se pudo crear el usuario.';
+            }
+        });
     }
 
     cancelar(): void {
