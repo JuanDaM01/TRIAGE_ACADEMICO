@@ -94,8 +94,8 @@ export class IASugerenciaComponent {
         this.solicitudService.getSolicitudById(solicitudId)
             .pipe(
                 tap((solicitud) => {
-                    if (!solicitud?.descripcion) {
-                        throw new Error('La solicitud no tiene descripción registrada.');
+                    if (!solicitud?.descripcion || solicitud.descripcion.trim().length < 10) {
+                        throw new Error('La solicitud no tiene una descripción válida para analizar.');
                     }
 
                     this.sugerenciaForm.patchValue({
@@ -104,8 +104,8 @@ export class IASugerenciaComponent {
                 }),
                 switchMap((solicitud) => {
                     return this.iaService.obtenerSugerencia({
-                        solicitudId: solicitud.id,
-                        descripcion: solicitud.descripcion
+                        solicitudId: solicitudId,
+                        descripcion: solicitud.descripcion.trim()
                     });
                 }),
                 finalize(() => {
@@ -120,8 +120,10 @@ export class IASugerenciaComponent {
                 },
                 error: (err) => {
                     this.errorSugerencia =
-                        err.error?.message ??
+                        err.error?.errores?.descripcion ??
                         err.error?.mensaje ??
+                        err.error?.message ??
+                        err.error?.error ??
                         err.message ??
                         'No se pudo obtener la sugerencia de IA.';
                 }
@@ -272,10 +274,10 @@ export class IASugerenciaComponent {
     getPrioridadClasses(prioridad?: NivelPrioridad | string): string {
         switch (String(prioridad ?? '')) {
             case 'CRITICA': return 'bg-[#fee2e2] text-[#93000a]';
-            case 'ALTA':    return 'bg-[#fff4c7] text-[#745900]';
-            case 'MEDIA':   return 'bg-[#e0f2fe] text-[#0369a1]';
-            case 'BAJA':    return 'bg-[#dcfce7] text-[#166534]';
-            default:        return 'bg-[#ebefee] text-[#3e4946]/70';
+            case 'ALTA': return 'bg-[#fff4c7] text-[#745900]';
+            case 'MEDIA': return 'bg-[#e0f2fe] text-[#0369a1]';
+            case 'BAJA': return 'bg-[#dcfce7] text-[#166534]';
+            default: return 'bg-[#ebefee] text-[#3e4946]/70';
         }
     }
 
